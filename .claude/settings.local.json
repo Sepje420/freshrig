@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Seppe/Desktop/PROJECTS/**)",
+      "Bash(npm create:*)",
+      "Bash(where npm:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/nodejs:/c/Users/Seppe/AppData/Roaming/npm\")",
+      "Read(//c/Program Files/nodejs//**)",
+      "Read(//c//**)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tauri:*)",
+      "Bash(npx tsc:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/nodejs:/c/Users/Seppe/AppData/Roaming/npm:$HOME/.cargo/bin\")",
+      "Bash(cargo build:*)",
+      "Bash(npx vite:*)",
+      "Bash(npx @tauri-apps/cli icon src-tauri/icons/app-icon.svg)",
+      "Bash(cargo clippy:*)"
+    ]
+  }
+}

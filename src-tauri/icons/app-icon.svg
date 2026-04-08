@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0f18"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00e8bc"/>
+      <stop offset="100%" stop-color="#00d4aa"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="128" fill="url(#bg)"/>
+  <!-- Outer frame -->
+  <rect x="200" y="180" width="624" height="664" rx="40" fill="none" stroke="url(#accent)" stroke-width="36"/>
+  <!-- Screen area -->
+  <rect x="260" y="240" width="504" height="380" rx="16" fill="url(#accent)" opacity="0.15"/>
+  <!-- FR text -->
+  <text x="512" y="480" text-anchor="middle" font-family="Segoe UI Variable, system-ui, sans-serif" font-weight="800" font-size="220" fill="url(#accent)">FR</text>
+  <!-- Stand -->
+  <rect x="432" y="844" width="160" height="16" rx="8" fill="url(#accent)" opacity="0.6"/>
+  <rect x="488" y="780" width="48" height="72" rx="4" fill="url(#accent)" opacity="0.4"/>
+</svg>

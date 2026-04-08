@@ -1,0 +1,122 @@
+import {
+  Globe,
+  Gamepad2,
+  MessageCircle,
+  Code,
+  Play,
+  FileText,
+  Wrench,
+  Shield,
+  Cpu,
+  Check,
+  X,
+  Loader2,
+  Clock,
+} from "lucide-react";
+import type { AppEntry, InstallProgress, AppCategory } from "../../types/apps";
+
+interface AppCardProps {
+  app: AppEntry;
+  selected: boolean;
+  progress: InstallProgress | undefined;
+  onToggle: () => void;
+}
+
+const iconMap: Record<string, React.ElementType> = {
+  globe: Globe,
+  "gamepad-2": Gamepad2,
+  "message-circle": MessageCircle,
+  code: Code,
+  play: Play,
+  "file-text": FileText,
+  wrench: Wrench,
+  shield: Shield,
+  cpu: Cpu,
+};
+
+const categoryColors: Record<AppCategory, string> = {
+  Browser: "bg-blue-500/20 text-blue-400",
+  Gaming: "bg-purple-500/20 text-purple-400",
+  Communication: "bg-green-500/20 text-green-400",
+  Development: "bg-amber-500/20 text-amber-400",
+  Media: "bg-pink-500/20 text-pink-400",
+  Productivity: "bg-cyan-500/20 text-cyan-400",
+  Utilities: "bg-orange-500/20 text-orange-400",
+  Security: "bg-red-500/20 text-red-400",
+  Runtime: "bg-gray-500/20 text-gray-400",
+};
+
+export function AppCard({ app, selected, progress, onToggle }: AppCardProps) {
+  const Icon = iconMap[app.iconName] ?? Globe;
+  const isInstalling = progress?.status === "Installing";
+  const isCompleted = progress?.status === "Completed";
+  const isFailed = progress?.status === "Failed";
+  const isPending = progress?.status === "Pending";
+  const hasStatus = !!progress;
+
+  return (
+    <button
+      onClick={hasStatus ? undefined : onToggle}
+      disabled={hasStatus}
+      className={`relative w-full text-left rounded-lg border transition-all duration-200 ${
+        selected && !hasStatus
+          ? "bg-accent-muted border-accent/50 shadow-elevated"
+          : "bg-bg-card border-border hover:bg-bg-card-hover hover:border-border-hover shadow-card"
+      } ${hasStatus ? "cursor-default" : "cursor-pointer"}`}
+    >
+      <div className="p-4 flex items-start gap-3">
+        {/* Checkbox / Status */}
+        <div className="shrink-0 mt-0.5">
+          {isCompleted ? (
+            <div className="w-5 h-5 rounded bg-success/20 flex items-center justify-center">
+              <Check className="w-3.5 h-3.5 text-success" />
+            </div>
+          ) : isFailed ? (
+            <div className="w-5 h-5 rounded bg-error/20 flex items-center justify-center">
+              <X className="w-3.5 h-3.5 text-error" />
+            </div>
+          ) : isInstalling ? (
+            <div className="w-5 h-5 rounded bg-accent-muted flex items-center justify-center">
+              <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />
+            </div>
+          ) : isPending ? (
+            <div className="w-5 h-5 rounded bg-bg-tertiary flex items-center justify-center">
+              <Clock className="w-3.5 h-3.5 text-text-muted" />
+            </div>
+          ) : (
+            <div
+              className={`w-5 h-5 rounded border-2 transition-colors ${
+                selected
+                  ? "bg-accent border-accent"
+                  : "border-border-hover bg-transparent"
+              }`}
+            >
+              {selected && <Check className="w-3.5 h-3.5 text-bg-primary" />}
+            </div>
+          )}
+        </div>
+
+        {/* Icon */}
+        <div className="shrink-0 w-9 h-9 rounded-md bg-bg-tertiary flex items-center justify-center">
+          <Icon className="w-4.5 h-4.5 text-text-secondary" />
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-text-primary truncate">{app.name}</h3>
+            <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${categoryColors[app.category]}`}>
+              {app.category}
+            </span>
+          </div>
+          <p className="text-xs text-text-muted mt-0.5 truncate">{app.description}</p>
+          {isFailed && progress?.message && (
+            <p className="text-[11px] text-error mt-1 truncate" title={progress.message}>
+              {progress.message}
+            </p>
+          )}
+        </div>
+      </div>
+    </button>
+  );
+}

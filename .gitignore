@@ -1,0 +1,41 @@
+# Node
+node_modules/
+dist/
+*.log
+npm-debug.log*
+
+# Rust
+src-tauri/target/
+**/*.rs.bk
+
+# Tauri generated
+src-tauri/gen/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Signing keys (NEVER commit)
+*.key
+!*.key.pub
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+*.exe
+*.msi
+*.nsis
+
+# Tauri plugin store
+*.dat

@@ -1,0 +1,23 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - dependabot
+      - renovate
+  categories:
+    - title: "\U0001F680 Features"
+      labels:
+        - enhancement
+        - feature
+    - title: "\U0001F41B Bug Fixes"
+      labels:
+        - bug
+        - fix
+    - title: "\U0001F4D6 Documentation"
+      labels:
+        - documentation
+    - title: "\U0001F527 Maintenance"
+      labels:
+        - chore
+        - dependencies

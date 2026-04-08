@@ -1,0 +1,29 @@
+[package]
+name = "freshrig"
+version = "0.1.0"
+description = "The first tool you run after a fresh Windows install"
+authors = ["FreshRig"]
+edition = "2021"
+
+[lib]
+name = "freshrig_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-opener = "2"
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+wmi = "0.14"
+sha2 = "0.10"
+reqwest = { version = "0.12", features = ["json", "stream"] }
+tokio = { version = "1", features = ["full"] }
+winreg = "0.55"
+flate2 = "1"
+base64 = "0.22"
+tauri-plugin-dialog = "2"
+tauri-plugin-store = "2"

@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  /* ========================================
+     FreshRig Design Tokens
+     Dark-mode first, Windows 11 Fluent-inspired
+     ======================================== */
+
+  /* Background layers */
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #12121a;
+  --color-bg-tertiary: #1a1a25;
+  --color-bg-card: #16161f;
+  --color-bg-card-hover: #1e1e2a;
+  --color-bg-elevated: #1f1f2b;
+
+  /* Accent — electric cyan/teal */
+  --color-accent: #00d4aa;
+  --color-accent-hover: #00e8bc;
+  --color-accent-muted: #00d4aa33;
+  --color-accent-glow: #00d4aa22;
+
+  /* Status */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Text */
+  --color-text-primary: #e8e8ed;
+  --color-text-secondary: #9898a8;
+  --color-text-muted: #5a5a6e;
+
+  /* Borders */
+  --color-border: #2a2a38;
+  --color-border-hover: #3a3a4a;
+
+  /* Typography */
+  --font-sans: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "JetBrains Mono", "Fira Code", monospace;
+
+  /* Radius — Fluent-style rounded */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+html,
+body {
+  background-color: #0a0a0f;
+  color: #e8e8ed;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Fade-in animation for cards */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 150ms ease-out;
+}
+
+/* Checkmark pop animation */
+@keyframes check-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-check-pop {
+  animation: check-pop 500ms ease-out;
+}
