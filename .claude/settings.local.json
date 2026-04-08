@@ -15,7 +15,9 @@
       "Bash(cargo build:*)",
       "Bash(npx vite:*)",
       "Bash(npx @tauri-apps/cli icon src-tauri/icons/app-icon.svg)",
-      "Bash(cargo clippy:*)"
+      "Bash(cargo clippy:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git add:*)"
     ]
   }
 }
