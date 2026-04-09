@@ -15,7 +15,10 @@ fn extract_vendor_id(pnp_id: &str) -> Option<String> {
     let upper = pnp_id.to_uppercase();
     if let Some(pos) = upper.find("VEN_") {
         let start = pos + 4;
-        let end = upper[start..].find('&').map(|i| start + i).unwrap_or(start + 4);
+        let end = upper[start..]
+            .find('&')
+            .map(|i| start + i)
+            .unwrap_or(start + 4);
         if end <= upper.len() {
             return Some(upper[start..end].to_string());
         }
@@ -41,11 +44,7 @@ fn gpu_download_info(vendor_id: &str) -> (&'static str, &'static str, &'static s
             "https://www.intel.com/content/www/us/en/download-center/home.html",
             "https://www.intel.com/content/www/us/en/download-center/home.html",
         ),
-        _ => (
-            "Unknown",
-            "",
-            "",
-        ),
+        _ => ("Unknown", "", ""),
     }
 }
 
@@ -55,22 +54,34 @@ fn motherboard_support_url(manufacturer: &str, product: &str) -> (String, String
 
     if mfr_lower.contains("asus") {
         (
-            format!("https://www.asus.com/support/download-center/?q={}", search_product),
+            format!(
+                "https://www.asus.com/support/download-center/?q={}",
+                search_product
+            ),
             "https://www.asus.com/support/download-center/".to_string(),
         )
     } else if mfr_lower.contains("micro-star") || mfr_lower.contains("msi") {
         (
-            format!("https://www.msi.com/support/search?keyword={}", search_product),
+            format!(
+                "https://www.msi.com/support/search?keyword={}",
+                search_product
+            ),
             "https://www.msi.com/support".to_string(),
         )
     } else if mfr_lower.contains("gigabyte") {
         (
-            format!("https://www.gigabyte.com/Support/Motherboard?q={}", search_product),
+            format!(
+                "https://www.gigabyte.com/Support/Motherboard?q={}",
+                search_product
+            ),
             "https://www.gigabyte.com/Support".to_string(),
         )
     } else if mfr_lower.contains("asrock") {
         (
-            format!("https://www.asrock.com/support/index.asp?q={}", search_product),
+            format!(
+                "https://www.asrock.com/support/index.asp?q={}",
+                search_product
+            ),
             "https://www.asrock.com/support/index.asp".to_string(),
         )
     } else {

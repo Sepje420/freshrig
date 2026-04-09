@@ -43,7 +43,10 @@ fn sanitize_filename(name: &str) -> String {
 #[tauri::command]
 pub async fn save_profile(profile: RigProfile) -> Result<String, String> {
     let dir = profiles_dir()?;
-    let filename = format!("{}.freshrig.json", sanitize_filename(&profile.metadata.name));
+    let filename = format!(
+        "{}.freshrig.json",
+        sanitize_filename(&profile.metadata.name)
+    );
     let path = dir.join(&filename);
 
     let json = serde_json::to_string_pretty(&profile)
@@ -83,9 +86,7 @@ pub async fn list_profiles() -> Result<Vec<ProfileSummary>, String> {
 
     for entry in entries.flatten() {
         let path = entry.path();
-        if path
-            .extension()
-            .is_some_and(|ext| ext == "json")
+        if path.extension().is_some_and(|ext| ext == "json")
             && path
                 .file_name()
                 .is_some_and(|n| n.to_string_lossy().ends_with(".freshrig.json"))
@@ -141,7 +142,10 @@ pub async fn export_profile_to_file(
     let json = serde_json::to_string_pretty(&profile)
         .map_err(|e| format!("Failed to serialize profile: {}", e))?;
 
-    let filename = format!("{}.freshrig.json", sanitize_filename(&profile.metadata.name));
+    let filename = format!(
+        "{}.freshrig.json",
+        sanitize_filename(&profile.metadata.name)
+    );
 
     let file_path = app_handle
         .dialog()
@@ -153,8 +157,7 @@ pub async fn export_profile_to_file(
     match file_path {
         Some(path) => {
             let path_str = path.to_string();
-            fs::write(&path_str, json)
-                .map_err(|e| format!("Failed to write profile: {}", e))?;
+            fs::write(&path_str, json).map_err(|e| format!("Failed to write profile: {}", e))?;
             Ok(path_str)
         }
         None => Err("Save cancelled".to_string()),
@@ -162,9 +165,7 @@ pub async fn export_profile_to_file(
 }
 
 #[tauri::command]
-pub async fn import_profile_from_file(
-    app_handle: tauri::AppHandle,
-) -> Result<RigProfile, String> {
+pub async fn import_profile_from_file(app_handle: tauri::AppHandle) -> Result<RigProfile, String> {
     let file_path = app_handle
         .dialog()
         .file()
@@ -174,8 +175,8 @@ pub async fn import_profile_from_file(
     match file_path {
         Some(path) => {
             let path_str = path.to_string();
-            let data = fs::read_to_string(&path_str)
-                .map_err(|e| format!("Failed to read file: {}", e))?;
+            let data =
+                fs::read_to_string(&path_str).map_err(|e| format!("Failed to read file: {}", e))?;
             let profile: RigProfile = serde_json::from_str(&data)
                 .map_err(|e| format!("Failed to parse profile: {}", e))?;
 
@@ -244,8 +245,8 @@ pub async fn export_profile_as_text(
 
 #[tauri::command]
 pub async fn compress_profile(profile: RigProfile) -> Result<String, String> {
-    let json = serde_json::to_vec(&profile)
-        .map_err(|e| format!("Failed to serialize profile: {}", e))?;
+    let json =
+        serde_json::to_vec(&profile).map_err(|e| format!("Failed to serialize profile: {}", e))?;
 
     let mut encoder = DeflateEncoder::new(Vec::new(), Compression::best());
     encoder
@@ -292,9 +293,7 @@ pub async fn get_current_hardware_snapshot() -> Result<SourceHardware, String> {
         let wmi = WMIConnection::new(com).map_err(|e| format!("WMI error: {}", e))?;
 
         let cpu: Option<String> = wmi
-            .raw_query::<HashMap<String, wmi::Variant>>(
-                "SELECT Name FROM Win32_Processor",
-            )
+            .raw_query::<HashMap<String, wmi::Variant>>("SELECT Name FROM Win32_Processor")
             .ok()
             .and_then(|r| r.first().cloned())
             .and_then(|r| match r.get("Name") {
@@ -303,9 +302,7 @@ pub async fn get_current_hardware_snapshot() -> Result<SourceHardware, String> {
             });
 
         let gpu: Option<String> = wmi
-            .raw_query::<HashMap<String, wmi::Variant>>(
-                "SELECT Name FROM Win32_VideoController",
-            )
+            .raw_query::<HashMap<String, wmi::Variant>>("SELECT Name FROM Win32_VideoController")
             .ok()
             .and_then(|r| r.first().cloned())
             .and_then(|r| match r.get("Name") {
@@ -327,9 +324,7 @@ pub async fn get_current_hardware_snapshot() -> Result<SourceHardware, String> {
             .map(|b| b as f64 / (1024.0 * 1024.0 * 1024.0));
 
         let os: Option<String> = wmi
-            .raw_query::<HashMap<String, wmi::Variant>>(
-                "SELECT Caption FROM Win32_OperatingSystem",
-            )
+            .raw_query::<HashMap<String, wmi::Variant>>("SELECT Caption FROM Win32_OperatingSystem")
             .ok()
             .and_then(|r| r.first().cloned())
             .and_then(|r| match r.get("Caption") {

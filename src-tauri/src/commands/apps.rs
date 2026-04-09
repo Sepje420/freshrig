@@ -22,7 +22,10 @@ pub async fn check_winget_available() -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub async fn install_apps(app_handle: tauri::AppHandle, app_ids: Vec<String>) -> Result<(), String> {
+pub async fn install_apps(
+    app_handle: tauri::AppHandle,
+    app_ids: Vec<String>,
+) -> Result<(), String> {
     let catalog = app_catalog::get_default_catalog();
 
     for app_id in &app_ids {

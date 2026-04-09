@@ -1,7 +1,7 @@
 use std::collections::HashMap;
-use wmi::{COMLibrary, WMIConnection};
 use winreg::enums::HKEY_LOCAL_MACHINE;
 use winreg::RegKey;
+use wmi::{COMLibrary, WMIConnection};
 
 use crate::models::hardware::*;
 

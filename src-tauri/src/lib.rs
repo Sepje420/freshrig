@@ -31,14 +31,11 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
             // System tray
-            let show_item =
-                MenuItem::with_id(app, "show", "Show FreshRig", true, None::<&str>)?;
+            let show_item = MenuItem::with_id(app, "show", "Show FreshRig", true, None::<&str>)?;
             let sep1 = PredefinedMenuItem::separator(app)?;
-            let scan_item =
-                MenuItem::with_id(app, "scan", "Quick Scan", true, None::<&str>)?;
+            let scan_item = MenuItem::with_id(app, "scan", "Quick Scan", true, None::<&str>)?;
             let sep2 = PredefinedMenuItem::separator(app)?;
-            let quit_item =
-                MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+            let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
 
             let menu = Menu::with_items(app, &[&show_item, &sep1, &scan_item, &sep2, &quit_item])?;
 
