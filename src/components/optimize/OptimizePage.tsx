@@ -1,0 +1,243 @@
+import { useEffect, useMemo, useState } from "react";
+import { Sparkles, AlertTriangle, ShieldAlert, Eye } from "lucide-react";
+import { useDebloatStore } from "../../stores/debloatStore";
+import { TweakCard } from "./TweakCard";
+import { ApplyConfirmDialog } from "./ApplyConfirmDialog";
+import { SkeletonRow } from "../ui/Skeleton";
+import type { TweakTier, TweakCategory, DebloatResult } from "../../types/debloat";
+
+const TIER_FILTERS: { value: TweakTier | "all"; label: string; color: string }[] = [
+  { value: "all", label: "All", color: "" },
+  { value: "safe", label: "Safe", color: "text-success" },
+  { value: "moderate", label: "Moderate", color: "text-warning" },
+  { value: "risky", label: "Risky", color: "text-error" },
+];
+
+const CATEGORY_FILTERS: { value: TweakCategory | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "privacy", label: "Privacy" },
+  { value: "bloatware", label: "Bloatware" },
+  { value: "performance", label: "Performance" },
+  { value: "appearance", label: "Appearance" },
+];
+
+export function OptimizePage() {
+  const {
+    tweaks,
+    selectedIds,
+    activeTier,
+    activeCategory,
+    isApplying,
+    isAdmin,
+    loading,
+    fetchTweaks,
+    toggleTweak,
+    clearSelection,
+    checkAdmin,
+    applySelected,
+    setActiveTier,
+    setActiveCategory,
+  } = useDebloatStore();
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [dryRunResults, setDryRunResults] = useState<DebloatResult[] | null>(null);
+
+  useEffect(() => {
+    fetchTweaks();
+    checkAdmin();
+  }, [fetchTweaks, checkAdmin]);
+
+  const filteredTweaks = useMemo(() => {
+    return tweaks.filter((t) => {
+      const matchesTier = activeTier === "all" || t.tier === activeTier;
+      const matchesCat = activeCategory === "all" || t.category === activeCategory;
+      return matchesTier && matchesCat;
+    });
+  }, [tweaks, activeTier, activeCategory]);
+
+  const tierCounts = useMemo(() => {
+    const counts = { safe: 0, moderate: 0, risky: 0 };
+    for (const t of tweaks) {
+      if (t.tier in counts) counts[t.tier as keyof typeof counts]++;
+    }
+    return counts;
+  }, [tweaks]);
+
+  const selectedTweaks = tweaks.filter((t) => selectedIds.has(t.id));
+
+  const handlePreview = async () => {
+    const results = await applySelected(true);
+    setDryRunResults(results);
+    setShowConfirm(true);
+  };
+
+  const handleApplyClick = () => {
+    setDryRunResults(null);
+    setShowConfirm(true);
+  };
+
+  return (
+    <div className="space-y-6 pb-20">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-accent-muted">
+          <Sparkles className="w-5 h-5 text-accent" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">Optimize Windows</h1>
+          <p className="text-sm text-text-secondary mt-0.5">
+            Remove bloatware, disable telemetry, and improve privacy
+          </p>
+        </div>
+      </div>
+
+      {/* Warning banner */}
+      <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-warning/10 border border-warning/20">
+        <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
+        <p className="text-sm text-warning">
+          These changes modify Windows settings. A system restore point will be created before any
+          changes are applied.
+        </p>
+      </div>
+
+      {/* Admin warning */}
+      {!isAdmin && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-error/10 border border-error/20 animate-fade-in">
+          <ShieldAlert className="w-5 h-5 text-error shrink-0" />
+          <div>
+            <p className="text-sm text-error font-medium">Administrator privileges required</p>
+            <p className="text-xs text-error/80 mt-0.5">
+              Some optimizations require admin rights. Right-click FreshRig and select "Run as
+              administrator" for full access.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Tier filter tabs */}
+      <div className="flex items-center gap-1 bg-bg-card border border-border rounded-lg p-1">
+        {TIER_FILTERS.map((filter) => {
+          const isActive = activeTier === filter.value;
+          const count =
+            filter.value === "all"
+              ? tweaks.length
+              : tierCounts[filter.value as keyof typeof tierCounts];
+          return (
+            <button
+              key={filter.value}
+              onClick={() => setActiveTier(filter.value)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                isActive
+                  ? "bg-accent-muted text-accent"
+                  : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
+              }`}
+            >
+              <span className={!isActive ? filter.color : ""}>{filter.label}</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-bg-tertiary text-text-muted">
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Category pills */}
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+        {CATEGORY_FILTERS.map((cat) => {
+          const isActive = activeCategory === cat.value;
+          return (
+            <button
+              key={cat.value}
+              onClick={() => setActiveCategory(cat.value)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                isActive
+                  ? "bg-accent text-bg-primary"
+                  : "bg-bg-tertiary text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              {cat.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="bg-bg-card border border-border rounded-lg divide-y divide-border">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonRow key={i} />
+          ))}
+        </div>
+      )}
+
+      {/* Tweak list */}
+      {!loading && (
+        <div className="grid grid-cols-1 gap-2">
+          {filteredTweaks.map((tweak) => (
+            <TweakCard
+              key={tweak.id}
+              tweak={tweak}
+              selected={selectedIds.has(tweak.id)}
+              onToggle={() => toggleTweak(tweak.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Empty */}
+      {!loading && filteredTweaks.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
+          <Sparkles className="w-12 h-12 text-text-muted mb-4" />
+          <h3 className="text-lg font-semibold text-text-primary mb-1">No tweaks found</h3>
+          <p className="text-sm text-text-secondary">Try a different filter combination.</p>
+        </div>
+      )}
+
+      {/* Bottom action bar */}
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-0 left-[280px] right-0 bg-bg-elevated border-t border-border px-8 py-4 flex items-center justify-between animate-fade-in z-40">
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-text-secondary">
+              {selectedIds.size} tweak{selectedIds.size !== 1 ? "s" : ""} selected
+            </span>
+            <button
+              onClick={clearSelection}
+              className="text-xs text-text-muted hover:text-text-primary transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePreview}
+              disabled={isApplying}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+            >
+              <Eye className="w-4 h-4" />
+              Preview Changes
+            </button>
+            <button
+              onClick={handleApplyClick}
+              disabled={isApplying}
+              className="px-4 py-2 rounded-lg text-sm font-semibold bg-accent text-bg-primary hover:bg-accent-hover shadow-[0_0_20px_rgba(0,212,170,0.3)] transition-all"
+            >
+              Apply Changes
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm dialog */}
+      {showConfirm && (
+        <ApplyConfirmDialog
+          selectedTweaks={selectedTweaks}
+          dryRunResults={dryRunResults}
+          onClose={() => {
+            setShowConfirm(false);
+            setDryRunResults(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}

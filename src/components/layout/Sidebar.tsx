@@ -3,25 +3,29 @@ import {
   Cpu,
   Package,
   BookMarked,
+  Sparkles,
   Settings,
   Monitor,
+  Keyboard,
 } from "lucide-react";
 import { APP_NAME, APP_VERSION } from "../../config/app";
 
 interface SidebarProps {
   currentView: string;
   onNavigate: (view: string) => void;
+  onShowShortcuts?: () => void;
 }
 
 const navItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, enabled: true },
-  { id: "drivers", label: "Drivers", icon: Cpu, enabled: true },
-  { id: "apps", label: "Apps", icon: Package, enabled: true },
-  { id: "profiles", label: "Profiles", icon: BookMarked, enabled: true },
-  { id: "settings", label: "Settings", icon: Settings, enabled: true },
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, enabled: true, shortcut: "Ctrl+1" },
+  { id: "drivers", label: "Drivers", icon: Cpu, enabled: true, shortcut: "Ctrl+2" },
+  { id: "apps", label: "Apps", icon: Package, enabled: true, shortcut: "Ctrl+3" },
+  { id: "profiles", label: "Profiles", icon: BookMarked, enabled: true, shortcut: "Ctrl+4" },
+  { id: "optimize", label: "Optimize", icon: Sparkles, enabled: true, shortcut: "Ctrl+5" },
+  { id: "settings", label: "Settings", icon: Settings, enabled: true, shortcut: "Ctrl+," },
 ];
 
-export function Sidebar({ currentView, onNavigate }: SidebarProps) {
+export function Sidebar({ currentView, onNavigate, onShowShortcuts }: SidebarProps) {
   return (
     <aside className="flex flex-col w-[280px] shrink-0 h-full bg-bg-secondary border-r border-border overflow-y-auto">
       {/* Logo / App Name */}
@@ -61,6 +65,11 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
                       Soon
                     </span>
                   )}
+                  {item.enabled && item.shortcut && (
+                    <span className="ml-auto text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                      {item.shortcut}
+                    </span>
+                  )}
                 </button>
 
                 {/* Coming Soon tooltip */}
@@ -75,9 +84,18 @@ export function Sidebar({ currentView, onNavigate }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Version */}
-      <div className="px-6 py-4 border-t border-border">
+      {/* Footer */}
+      <div className="flex items-center justify-between px-6 py-4 border-t border-border">
         <p className="text-xs text-text-muted">v{APP_VERSION}</p>
+        {onShowShortcuts && (
+          <button
+            onClick={onShowShortcuts}
+            className="flex items-center justify-center w-6 h-6 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+            title="Keyboard Shortcuts"
+          >
+            <Keyboard className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
     </aside>
   );

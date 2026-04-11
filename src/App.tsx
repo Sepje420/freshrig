@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";
+import { useHotkeys } from "react-hotkeys-hook";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { AppLayout } from "./components/layout/AppLayout";
 import { UpdateBanner } from "./components/layout/UpdateBanner";
@@ -9,8 +10,12 @@ import { Dashboard } from "./components/dashboard/Dashboard";
 import { DriversPage } from "./components/drivers/DriversPage";
 import { AppsPage } from "./components/apps/AppsPage";
 import { ProfilesPage } from "./components/profiles/ProfilesPage";
+import { OptimizePage } from "./components/optimize/OptimizePage";
 import { SettingsPage } from "./components/settings/SettingsPage";
 import { AboutPage } from "./components/about/AboutPage";
+import { OnboardingWizard } from "./components/onboarding/OnboardingWizard";
+import { CommandPalette } from "./components/ui/CommandPalette";
+import { ShortcutHelp } from "./components/ui/ShortcutHelp";
 import { ErrorFallback } from "./components/ErrorFallback";
 import { useSettingsStore } from "./stores/settingsStore";
 import { useUpdateStore } from "./stores/updateStore";
@@ -19,7 +24,21 @@ import { APP_VERSION } from "./config/app";
 function App() {
   const [currentView, setCurrentView] = useState("dashboard");
   const [showWhatsNew, setShowWhatsNew] = useState(false);
-  const { loadSettings, settings, setSetting } = useSettingsStore();
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const { loadSettings, settings, setSetting, loaded } = useSettingsStore();
+
+  const navigate = useCallback((view: string) => setCurrentView(view), []);
+
+  // Keyboard shortcuts
+  useHotkeys("ctrl+1", () => navigate("dashboard"), { preventDefault: true });
+  useHotkeys("ctrl+2", () => navigate("drivers"), { preventDefault: true });
+  useHotkeys("ctrl+3", () => navigate("apps"), { preventDefault: true });
+  useHotkeys("ctrl+4", () => navigate("profiles"), { preventDefault: true });
+  useHotkeys("ctrl+5", () => navigate("optimize"), { preventDefault: true });
+  useHotkeys("ctrl+comma", () => navigate("settings"), { preventDefault: true });
+  useHotkeys("ctrl+k", () => setShowCommandPalette((v) => !v), { preventDefault: true });
+  useHotkeys("ctrl+shift+/", () => setShowShortcuts((v) => !v), { preventDefault: true });
 
   // Load settings on startup
   useEffect(() => {
@@ -70,19 +89,31 @@ function App() {
     setSetting("lastSeenVersion", APP_VERSION);
   };
 
+  const handleCompleteOnboarding = useCallback(() => {
+    setSetting("hasCompletedOnboarding", true);
+  }, [setSetting]);
+
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
       <UpdateBanner />
-      <AppLayout currentView={currentView} onNavigate={setCurrentView}>
+      <AppLayout currentView={currentView} onNavigate={navigate} onShowShortcuts={() => setShowShortcuts(true)}>
         <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
           {currentView === "dashboard" && <Dashboard />}
           {currentView === "drivers" && <DriversPage />}
           {currentView === "apps" && <AppsPage />}
           {currentView === "profiles" && <ProfilesPage />}
-          {currentView === "settings" && <SettingsPage onNavigate={setCurrentView} />}
+          {currentView === "optimize" && <OptimizePage />}
+          {currentView === "settings" && <SettingsPage onNavigate={navigate} />}
           {currentView === "about" && <AboutPage />}
         </ErrorBoundary>
       </AppLayout>
+      {loaded && !settings.hasCompletedOnboarding && (
+        <OnboardingWizard onComplete={handleCompleteOnboarding} />
+      )}
+      {showCommandPalette && (
+        <CommandPalette onClose={() => setShowCommandPalette(false)} onNavigate={(v) => { navigate(v); setShowCommandPalette(false); }} />
+      )}
+      {showShortcuts && <ShortcutHelp onClose={() => setShowShortcuts(false)} />}
       {showWhatsNew && <WhatsNewModal onClose={handleCloseWhatsNew} />}
       <Toaster theme="dark" position="bottom-right" richColors />
     </ErrorBoundary>

@@ -99,6 +99,11 @@ pub fn run() {
             commands::installed_apps::get_installed_apps,
             commands::installed_apps::check_apps_installed,
             commands::presets::get_presets,
+            commands::debloat::get_debloat_tweaks,
+            commands::debloat::create_restore_point,
+            commands::debloat::apply_debloat_tweaks,
+            commands::debloat::check_admin_elevation,
+            commands::debloat::get_installed_appx_packages,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

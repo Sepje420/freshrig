@@ -18,6 +18,8 @@ export interface AppSettings {
   startMinimized: boolean;
   // Updates
   lastSeenVersion: string;
+  // Onboarding
+  hasCompletedOnboarding: boolean;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -31,6 +33,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   minimizeToTray: true,
   startMinimized: false,
   lastSeenVersion: "0.2.0",
+  hasCompletedOnboarding: false,
 };
 
 interface SettingsState {
