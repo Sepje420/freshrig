@@ -8,7 +8,15 @@ import {
   Eye,
   EyeOff,
   RefreshCw,
+  Plus,
+  Trash2,
+  Loader2,
+  Link,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
+import { toast } from "sonner";
+import { listen } from "@tauri-apps/api/event";
 import { useAppStore } from "../../stores/appStore";
 import { AppCard } from "./AppCard";
 import { CategoryFilter } from "./CategoryFilter";
@@ -16,9 +24,14 @@ import { InstallProgressPanel } from "./InstallProgressPanel";
 import { SaveProfileDialog } from "../profiles/SaveProfileDialog";
 import { PresetSelector } from "./PresetSelector";
 import { WingetSearchResults } from "./WingetSearchResults";
+import { AddCustomAppDialog } from "./AddCustomAppDialog";
+import { ProFeatureGate } from "../ui/ProFeatureGate";
+import type { CustomAppEntry, DownloadProgress, InstallerType } from "../../types/custom_apps";
 
 export function AppsPage() {
   const [showSaveProfile, setShowSaveProfile] = useState(false);
+  const [showAddCustom, setShowAddCustom] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<DownloadProgress | null>(null);
 
   const {
     catalog,
@@ -44,12 +57,28 @@ export function AppsPage() {
     hideInstalled,
     setHideInstalled,
     checkInstalledApps,
+    customApps,
+    customAppInstalling,
+    fetchCustomApps,
+    addCustomApp,
+    removeCustomApp,
+    installCustomApp,
   } = useAppStore();
 
   useEffect(() => {
     fetchCatalog();
     checkWinget();
-  }, [fetchCatalog, checkWinget]);
+    fetchCustomApps();
+  }, [fetchCatalog, checkWinget, fetchCustomApps]);
+
+  // Listen for custom download progress
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    listen<DownloadProgress>("custom-download-progress", (event) => {
+      setDownloadProgress(event.payload);
+    }).then((fn) => { unlisten = fn; });
+    return () => { unlisten?.(); };
+  }, []);
 
   const filteredApps = useMemo(() => {
     return catalog.filter((app) => {
@@ -112,6 +141,18 @@ export function AppsPage() {
               className="w-full pl-9 pr-3 py-2 rounded-lg bg-bg-tertiary border border-border text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 transition-colors"
             />
           </div>
+
+          {/* Add Custom App */}
+          <ProFeatureGate feature="custom_apps" mode="badge">
+            <button
+              onClick={() => setShowAddCustom(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-text-secondary hover:text-text-primary hover:bg-bg-tertiary border border-border transition-colors"
+              title="Add custom app"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Custom
+            </button>
+          </ProFeatureGate>
 
           {/* Installed filter */}
           {installedCount > 0 && (
@@ -243,6 +284,102 @@ export function AppsPage() {
         </div>
       )}
 
+      {/* Custom Apps section */}
+      {customApps.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider">
+            Custom Apps ({customApps.length})
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {customApps.map((app) => {
+              const isInstalling = customAppInstalling === app.id;
+              const progress = isInstalling && downloadProgress
+                ? Math.round((downloadProgress.downloaded / Math.max(downloadProgress.total, 1)) * 100)
+                : 0;
+              return (
+                <div
+                  key={app.id}
+                  className="relative flex items-start gap-3 px-4 py-3 rounded-lg bg-bg-card border border-border hover:bg-bg-card-hover transition-colors group"
+                >
+                  {/* Icon */}
+                  <div className="flex items-center justify-center w-9 h-9 rounded-md bg-amber-500/10 shrink-0 mt-0.5">
+                    <Package className="w-4.5 h-4.5 text-amber-500" />
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-text-primary truncate">{app.name}</span>
+                      <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-semibold">
+                        Custom
+                      </span>
+                      {app.expectedHash ? (
+                        <span className="shrink-0 flex items-center gap-0.5 text-[10px] text-success" title="Hash verified">
+                          <ShieldCheck className="w-3 h-3" />
+                        </span>
+                      ) : (
+                        <span className="shrink-0 flex items-center gap-0.5 text-[10px] text-text-muted" title="No hash verification">
+                          <ShieldAlert className="w-3 h-3" />
+                        </span>
+                      )}
+                    </div>
+                    {app.description && (
+                      <p className="text-xs text-text-secondary truncate mt-0.5">{app.description}</p>
+                    )}
+                    <div className="flex items-center gap-1 mt-1">
+                      <Link className="w-3 h-3 text-text-muted shrink-0" />
+                      <span className="text-[10px] text-text-muted truncate">{app.downloadUrl}</span>
+                    </div>
+                    {isInstalling && (
+                      <div className="mt-2">
+                        <div className="h-1.5 rounded-full bg-bg-tertiary overflow-hidden">
+                          <div
+                            className="h-full bg-accent rounded-full transition-all duration-300"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-text-muted mt-0.5">
+                          {downloadProgress?.filename} — {progress}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => {
+                        installCustomApp(app);
+                        toast.info(`Installing ${app.name}...`);
+                      }}
+                      disabled={isInstalling}
+                      className="p-1.5 rounded-md text-text-muted hover:text-accent hover:bg-accent-muted transition-colors disabled:opacity-50"
+                      title="Install"
+                    >
+                      {isInstalling ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4" />
+                      )}
+                    </button>
+                    <button
+                      onClick={async () => {
+                        await removeCustomApp(app.id);
+                        toast.success(`Removed ${app.name}`);
+                      }}
+                      className="p-1.5 rounded-md text-text-muted hover:text-error hover:bg-error/10 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Remove"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Winget search results */}
       {showWingetResults && (
         <WingetSearchResults results={wingetResults} isSearching={isSearchingWinget} />
@@ -261,6 +398,33 @@ export function AppsPage() {
         <SaveProfileDialog
           onClose={() => setShowSaveProfile(false)}
           onSaved={() => setShowSaveProfile(false)}
+        />
+      )}
+
+      {/* Add Custom App dialog */}
+      {showAddCustom && (
+        <AddCustomAppDialog
+          onClose={() => setShowAddCustom(false)}
+          onSave={async (data) => {
+            const entry: CustomAppEntry = {
+              id: `custom_${Date.now()}`,
+              name: data.name,
+              description: data.description || null,
+              downloadUrl: data.downloadUrl,
+              installerType: data.installerType as InstallerType,
+              silentArgs: data.silentArgs,
+              expectedHash: data.expectedHash || null,
+              createdAt: new Date().toISOString(),
+              lastUsed: null,
+            };
+            try {
+              await addCustomApp(entry);
+              toast.success(`Added ${data.name}`);
+              setShowAddCustom(false);
+            } catch (err) {
+              toast.error(`Failed: ${err}`);
+            }
+          }}
         />
       )}
     </div>

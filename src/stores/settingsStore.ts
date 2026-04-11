@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { load, Store } from "@tauri-apps/plugin-store";
+import { invoke } from "@tauri-apps/api/core";
 import type { AppCategory } from "../types/apps";
 
 export interface AppSettings {
@@ -32,7 +33,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   accentColor: "#00d4aa",
   minimizeToTray: true,
   startMinimized: false,
-  lastSeenVersion: "0.2.0",
+  lastSeenVersion: "0.3.0",
   hasCompletedOnboarding: false,
 };
 
@@ -40,6 +41,7 @@ interface SettingsState {
   settings: AppSettings;
   loaded: boolean;
   store: Store | null;
+  isPortable: boolean;
   loadSettings: () => Promise<void>;
   setSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => Promise<void>;
   resetSettings: () => Promise<void>;
@@ -65,6 +67,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   settings: { ...DEFAULT_SETTINGS },
   loaded: false,
   store: null,
+  isPortable: false,
 
   loadSettings: async () => {
     if (!(window as unknown as Record<string, unknown>).__TAURI_INTERNALS__) {
@@ -72,6 +75,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       return;
     }
     try {
+      const portable = await invoke<boolean>("check_portable_mode").catch(() => false);
       const store = await load("settings.json", { autoSave: true, defaults: {} });
       const saved: Partial<AppSettings> = {};
       for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof AppSettings)[]) {
@@ -82,7 +86,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       }
       const merged = { ...DEFAULT_SETTINGS, ...saved };
       applyAccentColor(merged.accentColor);
-      set({ settings: merged, loaded: true, store });
+      set({ settings: merged, loaded: true, store, isPortable: portable });
     } catch {
       set({ loaded: true });
     }

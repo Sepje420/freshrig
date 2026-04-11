@@ -194,13 +194,7 @@ pub async fn apply_debloat_tweaks(
     let mut results = Vec::new();
 
     // Log file setup
-    let log_path = std::env::var("APPDATA")
-        .map(|d| {
-            std::path::Path::new(&d)
-                .join("com.freshrig.app")
-                .join("debloat-log.txt")
-        })
-        .ok();
+    let log_path = Some(crate::portable::get_data_dir().join("debloat-log.txt"));
 
     if let Some(ref path) = log_path {
         if let Some(parent) = path.parent() {

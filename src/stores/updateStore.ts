@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { useSettingsStore } from "./settingsStore";
 
 interface UpdateState {
   status:
@@ -32,6 +33,13 @@ export const useUpdateStore = create<UpdateState>((set, get) => ({
   dismissed: false,
 
   checkForUpdates: async (silent = true) => {
+    // Skip auto-update in portable mode
+    if (useSettingsStore.getState().isPortable) {
+      if (!silent) {
+        set({ status: "error", error: "Auto-updates are not available in portable mode. Download new versions from GitHub." });
+      }
+      return;
+    }
     set({ status: "checking", error: null, dismissed: false });
     try {
       const update = await check();

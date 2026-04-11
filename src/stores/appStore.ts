@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import type { AppEntry, AppCategory, InstallProgress } from "../types/apps";
+import type { CustomAppEntry } from "../types/custom_apps";
 
 interface WingetSearchResult {
   name: string;
@@ -26,6 +27,9 @@ interface AppState {
   installedAppIds: Set<string>;
   isCheckingInstalled: boolean;
   hideInstalled: boolean;
+  // Custom apps
+  customApps: CustomAppEntry[];
+  customAppInstalling: string | null;
   // Actions
   fetchCatalog: () => Promise<void>;
   checkWinget: () => Promise<void>;
@@ -38,6 +42,10 @@ interface AppState {
   searchWinget: (query: string) => Promise<void>;
   checkInstalledApps: () => Promise<void>;
   setHideInstalled: (hide: boolean) => void;
+  fetchCustomApps: () => Promise<void>;
+  addCustomApp: (app: CustomAppEntry) => Promise<void>;
+  removeCustomApp: (id: string) => Promise<void>;
+  installCustomApp: (app: CustomAppEntry) => Promise<void>;
 }
 
 let listenerInitialized = false;
@@ -77,6 +85,8 @@ export const useAppStore = create<AppState>((set, get) => {
     installedAppIds: new Set(),
     isCheckingInstalled: false,
     hideInstalled: false,
+    customApps: [],
+    customAppInstalling: null,
 
     fetchCatalog: async () => {
       set({ loading: true });
@@ -203,6 +213,34 @@ export const useAppStore = create<AppState>((set, get) => {
 
     setHideInstalled: (hide: boolean) => {
       set({ hideInstalled: hide });
+    },
+
+    fetchCustomApps: async () => {
+      try {
+        const apps = await invoke<CustomAppEntry[]>("get_custom_apps");
+        set({ customApps: apps });
+      } catch {
+        // Ignore errors (e.g., no file yet)
+      }
+    },
+
+    addCustomApp: async (app: CustomAppEntry) => {
+      await invoke("save_custom_app", { app });
+      await get().fetchCustomApps();
+    },
+
+    removeCustomApp: async (id: string) => {
+      await invoke("delete_custom_app", { appId: id });
+      await get().fetchCustomApps();
+    },
+
+    installCustomApp: async (app: CustomAppEntry) => {
+      set({ customAppInstalling: app.id });
+      try {
+        await invoke("download_and_install_custom_app", { app });
+      } finally {
+        set({ customAppInstalling: null });
+      }
     },
   };
 });

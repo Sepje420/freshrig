@@ -12,12 +12,16 @@ import {
   Info,
   RefreshCw,
   Download,
+  Crown,
+  HardDrive,
+  Usb,
 } from "lucide-react";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { useProfileStore } from "../../stores/profileStore";
 import { useUpdateStore } from "../../stores/updateStore";
+import { useLicenseStore } from "../../stores/licenseStore";
 import { APP_NAME, APP_VERSION } from "../../config/app";
 import type { AppCategory } from "../../types/apps";
 
@@ -48,11 +52,13 @@ interface SettingsPageProps {
 }
 
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
-  const { settings, setSetting, resetSettings } = useSettingsStore();
+  const { settings, setSetting, resetSettings, isPortable } = useSettingsStore();
   const { fetchProfiles } = useProfileStore();
   const { status: updateStatus, newVersion, checkForUpdates, downloadAndInstall } = useUpdateStore();
+  const { licenseKey, validatedAt, isPro, setLicense, clearLicense } = useLicenseStore();
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [licenseInput, setLicenseInput] = useState("");
 
   const handleClearProfiles = async () => {
     try {
@@ -150,6 +156,24 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               onChange={(v) => setSetting("checkForUpdates", v)}
             />
           </SettingRow>
+          <SettingRow
+            label="Mode"
+            description={isPortable ? "Running from portable directory" : "Installed via NSIS installer"}
+          >
+            <div className="flex items-center gap-1.5 text-sm text-text-secondary">
+              {isPortable ? (
+                <>
+                  <Usb className="w-4 h-4 text-accent" />
+                  <span>Portable</span>
+                </>
+              ) : (
+                <>
+                  <HardDrive className="w-4 h-4" />
+                  <span>Installed</span>
+                </>
+              )}
+            </div>
+          </SettingRow>
         </div>
       </section>
 
@@ -166,15 +190,17 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           <SettingRow
             label="Check for updates"
             description={
-              updateStatus === "checking"
-                ? "Checking..."
-                : updateStatus === "up-to-date"
-                  ? "You're up to date"
-                  : updateStatus === "available"
-                    ? `Update available: v${newVersion}`
-                    : updateStatus === "error"
-                      ? "Failed to check for updates"
-                      : "Click to check now"
+              isPortable
+                ? "Auto-updates are not available in portable mode"
+                : updateStatus === "checking"
+                  ? "Checking..."
+                  : updateStatus === "up-to-date"
+                    ? "You're up to date"
+                    : updateStatus === "available"
+                      ? `Update available: v${newVersion}`
+                      : updateStatus === "error"
+                        ? "Failed to check for updates"
+                        : "Click to check now"
             }
           >
             <div className="flex items-center gap-2">
@@ -361,6 +387,95 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               Copy
             </button>
           </SettingRow>
+        </div>
+      </section>
+
+      {/* Section: FreshRig Pro */}
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <Crown className="w-4 h-4 text-amber-500" />
+          {APP_NAME} Pro
+        </h2>
+        <div className="bg-bg-card border border-border rounded-lg divide-y divide-border">
+          {isPro() ? (
+            <>
+              <SettingRow label="Status" description="Your Pro license is active">
+                <span className="flex items-center gap-1.5 text-sm text-amber-500 font-semibold">
+                  <Crown className="w-4 h-4" />
+                  Pro
+                </span>
+              </SettingRow>
+              <SettingRow
+                label="License key"
+                description={validatedAt ? `Activated ${new Date(validatedAt).toLocaleDateString()}` : ""}
+              >
+                <span className="text-sm text-text-secondary font-mono">
+                  {licenseKey ? `${licenseKey.slice(0, 6)}${"*".repeat(Math.max(0, licenseKey.length - 6))}` : ""}
+                </span>
+              </SettingRow>
+              <SettingRow label="Manage license" description="Deactivate your Pro license">
+                <button
+                  onClick={() => {
+                    clearLicense();
+                    toast.success("Pro license deactivated");
+                  }}
+                  className="px-3 py-1.5 rounded-md text-xs text-error hover:bg-error/10 border border-error/20 transition-colors"
+                >
+                  Deactivate
+                </button>
+              </SettingRow>
+            </>
+          ) : (
+            <>
+              <div className="px-4 py-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-amber-500" />
+                  <p className="text-sm font-semibold text-text-primary">Unlock Pro Features</p>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-semibold">
+                    Coming Soon
+                  </span>
+                </div>
+                <ul className="text-xs text-text-secondary space-y-1.5 ml-7">
+                  <li>Unlimited profiles & cloud sync</li>
+                  <li>Full debloating (Moderate + Risky tiers)</li>
+                  <li>Custom app entries</li>
+                  <li>Community profile hub</li>
+                  <li>Export to PowerShell script</li>
+                  <li>Priority support</li>
+                </ul>
+              </div>
+              <div className="px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={licenseInput}
+                    onChange={(e) => setLicenseInput(e.target.value)}
+                    placeholder="Enter license key (FR-...)"
+                    className="flex-1 px-3 py-1.5 rounded-md bg-bg-tertiary border border-border text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 font-mono"
+                  />
+                  <button
+                    onClick={() => {
+                      if (licenseInput.startsWith("FR-")) {
+                        setLicense(licenseInput, "pro");
+                        toast.success("Pro license activated!");
+                        setLicenseInput("");
+                      } else {
+                        toast.error("Invalid license key. Keys start with FR-");
+                      }
+                    }}
+                    disabled={!licenseInput.trim()}
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                      licenseInput.trim()
+                        ? "bg-amber-500 text-black hover:bg-amber-400"
+                        : "bg-bg-tertiary text-text-muted cursor-not-allowed"
+                    }`}
+                  >
+                    Activate
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </section>
 

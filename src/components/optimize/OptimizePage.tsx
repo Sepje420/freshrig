@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, AlertTriangle, ShieldAlert, Eye } from "lucide-react";
+import { Sparkles, AlertTriangle, ShieldAlert, Eye, Crown } from "lucide-react";
 import { useDebloatStore } from "../../stores/debloatStore";
+import { useLicenseStore } from "../../stores/licenseStore";
 import { TweakCard } from "./TweakCard";
 import { ApplyConfirmDialog } from "./ApplyConfirmDialog";
 import { SkeletonRow } from "../ui/Skeleton";
@@ -22,6 +23,7 @@ const CATEGORY_FILTERS: { value: TweakCategory | "all"; label: string }[] = [
 ];
 
 export function OptimizePage() {
+  const isPro = useLicenseStore((s) => s.isPro());
   const {
     tweaks,
     selectedIds,
@@ -133,6 +135,9 @@ export function OptimizePage() {
               }`}
             >
               <span className={!isActive ? filter.color : ""}>{filter.label}</span>
+              {!isPro && (filter.value === "moderate" || filter.value === "risky") && (
+                <Crown className="w-3 h-3 text-amber-500" />
+              )}
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-bg-tertiary text-text-muted">
                 {count}
               </span>

@@ -13,6 +13,7 @@ import {
 import { toast } from "sonner";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { APP_NAME, APP_TAGLINE, APP_VERSION } from "../../config/app";
+import { useSettingsStore } from "../../stores/settingsStore";
 
 const LINKS = [
   { icon: Globe, label: "Website", url: "https://freshrig.app" },
@@ -23,9 +24,11 @@ const LINKS = [
 
 export function AboutPage() {
   const [showSystemInfo, setShowSystemInfo] = useState(false);
+  const isPortable = useSettingsStore((s) => s.isPortable);
 
   const systemInfo = [
     { label: "App Version", value: APP_VERSION },
+    { label: "Mode", value: isPortable ? "Portable" : "Installed" },
     { label: "Framework", value: "Tauri v2" },
     { label: "OS", value: navigator.platform },
     { label: "User Agent", value: navigator.userAgent },

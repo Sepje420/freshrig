@@ -1,6 +1,7 @@
 mod commands;
 mod data;
 mod models;
+pub mod portable;
 
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
@@ -14,12 +15,8 @@ pub fn run() {
     std::panic::set_hook(Box::new(|info| {
         let msg = format!("PANIC: {}", info);
         eprintln!("{}", msg);
-        if let Ok(app_dir) = std::env::var("APPDATA") {
-            let log_path = std::path::Path::new(&app_dir)
-                .join("com.freshrig.app")
-                .join("crash.log");
-            let _ = std::fs::write(&log_path, &msg);
-        }
+        let log_path = portable::get_data_dir().join("crash.log");
+        let _ = std::fs::write(&log_path, &msg);
     }));
 
     tauri::Builder::default()
@@ -104,6 +101,11 @@ pub fn run() {
             commands::debloat::apply_debloat_tweaks,
             commands::debloat::check_admin_elevation,
             commands::debloat::get_installed_appx_packages,
+            commands::custom_apps::get_custom_apps,
+            commands::custom_apps::save_custom_app,
+            commands::custom_apps::delete_custom_app,
+            commands::custom_apps::download_and_install_custom_app,
+            portable::check_portable_mode,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

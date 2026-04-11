@@ -14,11 +14,7 @@ use crate::models::apps::AppEntry;
 use crate::models::profiles::*;
 
 fn profiles_dir() -> Result<PathBuf, String> {
-    let appdata = std::env::var("APPDATA")
-        .map_err(|_| "Could not read APPDATA environment variable".to_string())?;
-    let dir = PathBuf::from(appdata)
-        .join("com.freshrig.app")
-        .join("profiles");
+    let dir = crate::portable::get_data_dir().join("profiles");
     if !dir.exists() {
         fs::create_dir_all(&dir)
             .map_err(|e| format!("Failed to create profiles directory: {}", e))?;
