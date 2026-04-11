@@ -1,10 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
-import { Package, Search, AlertTriangle, Download, BookMarked } from "lucide-react";
+import {
+  Package,
+  Search,
+  AlertTriangle,
+  Download,
+  BookMarked,
+  Eye,
+  EyeOff,
+  RefreshCw,
+} from "lucide-react";
 import { useAppStore } from "../../stores/appStore";
 import { AppCard } from "./AppCard";
 import { CategoryFilter } from "./CategoryFilter";
 import { InstallProgressPanel } from "./InstallProgressPanel";
 import { SaveProfileDialog } from "../profiles/SaveProfileDialog";
+import { PresetSelector } from "./PresetSelector";
+import { WingetSearchResults } from "./WingetSearchResults";
 
 export function AppsPage() {
   const [showSaveProfile, setShowSaveProfile] = useState(false);
@@ -26,6 +37,13 @@ export function AppsPage() {
     installSelected,
     setSearchQuery,
     setActiveCategory,
+    wingetResults,
+    isSearchingWinget,
+    installedAppIds,
+    isCheckingInstalled,
+    hideInstalled,
+    setHideInstalled,
+    checkInstalledApps,
   } = useAppStore();
 
   useEffect(() => {
@@ -40,9 +58,13 @@ export function AppsPage() {
         !searchQuery ||
         app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         app.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const matchesInstalled = !hideInstalled || !installedAppIds.has(app.id);
+      return matchesCategory && matchesSearch && matchesInstalled;
     });
-  }, [catalog, activeCategory, searchQuery]);
+  }, [catalog, activeCategory, searchQuery, hideInstalled, installedAppIds]);
+
+  const installedCount = installedAppIds.size;
+  const showWingetResults = searchQuery.trim().length >= 2;
 
   return (
     <div className="space-y-6 pb-20">
@@ -60,6 +82,9 @@ export function AppsPage() {
           </div>
         </div>
       </div>
+
+      {/* Preset Selector */}
+      <PresetSelector />
 
       {/* Winget warning */}
       {wingetAvailable === false && (
@@ -81,12 +106,46 @@ export function AppsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
             <input
               type="text"
-              placeholder="Search apps..."
+              placeholder="Search apps or winget repository..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 rounded-lg bg-bg-tertiary border border-border text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 transition-colors"
             />
           </div>
+
+          {/* Installed filter */}
+          {installedCount > 0 && (
+            <button
+              onClick={() => setHideInstalled(!hideInstalled)}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
+                hideInstalled
+                  ? "bg-accent-muted text-accent"
+                  : "text-text-muted hover:text-text-primary hover:bg-bg-tertiary"
+              }`}
+              title={hideInstalled ? "Show installed apps" : "Hide installed apps"}
+            >
+              {hideInstalled ? (
+                <EyeOff className="w-3.5 h-3.5" />
+              ) : (
+                <Eye className="w-3.5 h-3.5" />
+              )}
+              {installedCount} installed
+            </button>
+          )}
+
+          {/* Refresh installed */}
+          {installedCount > 0 && (
+            <button
+              onClick={checkInstalledApps}
+              disabled={isCheckingInstalled}
+              className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+              title="Re-scan installed apps"
+            >
+              <RefreshCw
+                className={`w-3.5 h-3.5 ${isCheckingInstalled ? "animate-spin" : ""}`}
+              />
+            </button>
+          )}
 
           {/* Selection info + actions */}
           <div className="flex items-center gap-2 ml-auto">
@@ -169,18 +228,24 @@ export function AppsPage() {
               selected={selectedIds.has(app.id)}
               progress={installProgress.get(app.id)}
               onToggle={() => toggleApp(app.id)}
+              isInstalled={installedAppIds.has(app.id)}
             />
           ))}
         </div>
       )}
 
       {/* Empty state */}
-      {!loading && filteredApps.length === 0 && (
+      {!loading && filteredApps.length === 0 && !showWingetResults && (
         <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
           <Package className="w-12 h-12 text-text-muted mb-4" />
           <h3 className="text-lg font-semibold text-text-primary mb-1">No apps found</h3>
           <p className="text-sm text-text-secondary">Try a different search or category.</p>
         </div>
+      )}
+
+      {/* Winget search results */}
+      {showWingetResults && (
+        <WingetSearchResults results={wingetResults} isSearching={isSearchingWinget} />
       )}
 
       {/* Install progress panel */}

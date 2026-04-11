@@ -16,6 +16,8 @@ export interface AppSettings {
   // System Tray
   minimizeToTray: boolean;
   startMinimized: boolean;
+  // Updates
+  lastSeenVersion: string;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -28,6 +30,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   accentColor: "#00d4aa",
   minimizeToTray: true,
   startMinimized: false,
+  lastSeenVersion: "0.2.0",
 };
 
 interface SettingsState {

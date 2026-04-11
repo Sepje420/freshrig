@@ -20,6 +20,7 @@ interface AppCardProps {
   selected: boolean;
   progress: InstallProgress | undefined;
   onToggle: () => void;
+  isInstalled?: boolean;
 }
 
 const iconMap: Record<string, React.ElementType> = {
@@ -46,7 +47,7 @@ const categoryColors: Record<AppCategory, string> = {
   Runtime: "bg-gray-500/20 text-gray-400",
 };
 
-export function AppCard({ app, selected, progress, onToggle }: AppCardProps) {
+export function AppCard({ app, selected, progress, onToggle, isInstalled }: AppCardProps) {
   const Icon = iconMap[app.iconName] ?? Globe;
   const isInstalling = progress?.status === "Installing";
   const isCompleted = progress?.status === "Completed";
@@ -64,6 +65,14 @@ export function AppCard({ app, selected, progress, onToggle }: AppCardProps) {
           : "bg-bg-card border-border hover:bg-bg-card-hover hover:border-border-hover shadow-card"
       } ${hasStatus ? "cursor-default" : "cursor-pointer"}`}
     >
+      {/* Installed badge */}
+      {isInstalled && !hasStatus && (
+        <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-success/15 text-success text-[9px] font-semibold">
+          <Check className="w-2.5 h-2.5" />
+          Installed
+        </div>
+      )}
+
       <div className="p-4 flex items-start gap-3">
         {/* Checkbox / Status */}
         <div className="shrink-0 mt-0.5">

@@ -3,6 +3,13 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import type { AppEntry, AppCategory, InstallProgress } from "../types/apps";
 
+interface WingetSearchResult {
+  name: string;
+  id: string;
+  version: string;
+  source: string;
+}
+
 interface AppState {
   catalog: AppEntry[];
   selectedIds: Set<string>;
@@ -12,6 +19,14 @@ interface AppState {
   searchQuery: string;
   activeCategory: AppCategory | "all";
   loading: boolean;
+  // Winget search
+  wingetResults: WingetSearchResult[];
+  isSearchingWinget: boolean;
+  // Installed detection
+  installedAppIds: Set<string>;
+  isCheckingInstalled: boolean;
+  hideInstalled: boolean;
+  // Actions
   fetchCatalog: () => Promise<void>;
   checkWinget: () => Promise<void>;
   toggleApp: (id: string) => void;
@@ -20,9 +35,13 @@ interface AppState {
   installSelected: () => Promise<void>;
   setSearchQuery: (q: string) => void;
   setActiveCategory: (cat: AppCategory | "all") => void;
+  searchWinget: (query: string) => Promise<void>;
+  checkInstalledApps: () => Promise<void>;
+  setHideInstalled: (hide: boolean) => void;
 }
 
 let listenerInitialized = false;
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const useAppStore = create<AppState>((set, get) => {
   // Set up event listener once
@@ -53,12 +72,19 @@ export const useAppStore = create<AppState>((set, get) => {
     searchQuery: "",
     activeCategory: "all",
     loading: false,
+    wingetResults: [],
+    isSearchingWinget: false,
+    installedAppIds: new Set(),
+    isCheckingInstalled: false,
+    hideInstalled: false,
 
     fetchCatalog: async () => {
       set({ loading: true });
       try {
         const catalog = await invoke<AppEntry[]>("get_app_catalog");
         set({ catalog, loading: false });
+        // Auto-check installed apps after catalog loads
+        get().checkInstalledApps();
       } catch {
         set({ loading: false });
       }
@@ -127,10 +153,56 @@ export const useAppStore = create<AppState>((set, get) => {
 
     setSearchQuery: (q: string) => {
       set({ searchQuery: q });
+
+      // Debounced winget search
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      if (q.trim().length >= 2) {
+        searchDebounceTimer = setTimeout(() => {
+          get().searchWinget(q);
+        }, 300);
+      } else {
+        set({ wingetResults: [], isSearchingWinget: false });
+      }
     },
 
     setActiveCategory: (cat: AppCategory | "all") => {
       set({ activeCategory: cat });
+    },
+
+    searchWinget: async (query: string) => {
+      if (query.trim().length < 2) {
+        set({ wingetResults: [], isSearchingWinget: false });
+        return;
+      }
+      set({ isSearchingWinget: true });
+      try {
+        const results = await invoke<WingetSearchResult[]>("search_winget_packages", { query });
+        set({ wingetResults: results, isSearchingWinget: false });
+      } catch {
+        set({ wingetResults: [], isSearchingWinget: false });
+      }
+    },
+
+    checkInstalledApps: async () => {
+      const { catalog } = get();
+      if (catalog.length === 0) return;
+
+      set({ isCheckingInstalled: true });
+      try {
+        const wingetIds = catalog.map((a) => a.id);
+        const catalogNames = catalog.map((a) => a.name);
+        const foundIds = await invoke<string[]>("check_apps_installed", {
+          wingetIds,
+          catalogNames,
+        });
+        set({ installedAppIds: new Set(foundIds), isCheckingInstalled: false });
+      } catch {
+        set({ isCheckingInstalled: false });
+      }
+    },
+
+    setHideInstalled: (hide: boolean) => {
+      set({ hideInstalled: hide });
     },
   };
 });

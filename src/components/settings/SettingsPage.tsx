@@ -10,11 +10,14 @@ import {
   FileDown,
   Check,
   Info,
+  RefreshCw,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { useProfileStore } from "../../stores/profileStore";
+import { useUpdateStore } from "../../stores/updateStore";
 import { APP_NAME, APP_VERSION } from "../../config/app";
 import type { AppCategory } from "../../types/apps";
 
@@ -47,6 +50,7 @@ interface SettingsPageProps {
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const { settings, setSetting, resetSettings } = useSettingsStore();
   const { fetchProfiles } = useProfileStore();
+  const { status: updateStatus, newVersion, checkForUpdates, downloadAndInstall } = useUpdateStore();
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -145,6 +149,54 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               checked={settings.checkForUpdates}
               onChange={(v) => setSetting("checkForUpdates", v)}
             />
+          </SettingRow>
+        </div>
+      </section>
+
+      {/* Section: App Updates */}
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <Download className="w-4 h-4" />
+          App Updates
+        </h2>
+        <div className="bg-bg-card border border-border rounded-lg divide-y divide-border">
+          <SettingRow label="Current version" description={`FreshRig v${APP_VERSION}`}>
+            <span className="text-sm text-text-secondary font-mono">v{APP_VERSION}</span>
+          </SettingRow>
+          <SettingRow
+            label="Check for updates"
+            description={
+              updateStatus === "checking"
+                ? "Checking..."
+                : updateStatus === "up-to-date"
+                  ? "You're up to date"
+                  : updateStatus === "available"
+                    ? `Update available: v${newVersion}`
+                    : updateStatus === "error"
+                      ? "Failed to check for updates"
+                      : "Click to check now"
+            }
+          >
+            <div className="flex items-center gap-2">
+              {updateStatus === "available" && (
+                <button
+                  onClick={downloadAndInstall}
+                  className="px-3 py-1.5 rounded-md text-xs font-semibold bg-accent text-bg-primary hover:bg-accent-hover transition-colors"
+                >
+                  Update Now
+                </button>
+              )}
+              <button
+                onClick={() => checkForUpdates(false)}
+                disabled={updateStatus === "checking"}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs text-text-secondary hover:text-text-primary hover:bg-bg-tertiary border border-border transition-colors"
+              >
+                <RefreshCw
+                  className={`w-3.5 h-3.5 ${updateStatus === "checking" ? "animate-spin" : ""}`}
+                />
+                {updateStatus === "checking" ? "Checking..." : "Check Now"}
+              </button>
+            </div>
           </SettingRow>
         </div>
       </section>

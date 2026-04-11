@@ -94,6 +94,11 @@ pub fn run() {
             commands::profiles::compress_profile,
             commands::profiles::decompress_profile,
             commands::profiles::get_current_hardware_snapshot,
+            commands::winget_search::search_winget_packages,
+            commands::winget_search::get_winget_package_info,
+            commands::installed_apps::get_installed_apps,
+            commands::installed_apps::check_apps_installed,
+            commands::presets::get_presets,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
