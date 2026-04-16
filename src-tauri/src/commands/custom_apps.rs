@@ -125,7 +125,11 @@ pub async fn download_and_install_custom_app(
     // Verify hash if provided
     if let Some(expected_hash) = &app.expected_hash {
         if !expected_hash.is_empty() {
-            let hash = format!("{:x}", hasher.finalize());
+            let hash = hasher
+                .finalize()
+                .iter()
+                .map(|b| format!("{:02x}", b))
+                .collect::<String>();
             if hash != expected_hash.to_lowercase() {
                 let _ = tokio::fs::remove_file(&dest_path).await;
                 return Err(format!(

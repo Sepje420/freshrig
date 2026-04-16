@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 pub enum TweakTier {
     Safe,
     Moderate,
-    Risky,
+    Expert,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -38,6 +38,10 @@ pub struct DebloatTweak {
     pub is_applied: bool,
     pub is_reversible: bool,
     pub warning: Option<String>,
+    #[serde(default)]
+    pub min_windows_build: Option<u32>,
+    #[serde(default)]
+    pub incompatible: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

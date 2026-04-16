@@ -12,6 +12,7 @@ pub struct TweakDefinition {
     pub registry_entries: Vec<RegistryEntry>,
     pub appx_name: Option<&'static str>,
     pub service_name: Option<&'static str>,
+    pub min_windows_build: Option<u32>,
 }
 
 pub struct RegistryEntry {
@@ -50,6 +51,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             )],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_start_suggestions",
@@ -82,6 +84,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             ],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_bing_search",
@@ -100,6 +103,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             )],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_tips_notifications",
@@ -118,6 +122,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             )],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_suggested_apps",
@@ -150,6 +155,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             ],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "show_file_extensions",
@@ -168,6 +174,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             )],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "show_hidden_files",
@@ -186,6 +193,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             )],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "classic_context_menu",
@@ -199,6 +207,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![], // handled specially via CLSID key creation
             appx_name: None,
             service_name: None,
+            min_windows_build: Some(22000),
         },
         // === MODERATE TIER ===
         TweakDefinition {
@@ -213,6 +222,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.BingWeather"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_bing_news",
@@ -226,6 +236,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.BingNews"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_solitaire",
@@ -239,6 +250,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.MicrosoftSolitaireCollection"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_clipchamp",
@@ -252,6 +264,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Clipchamp.Clipchamp"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_copilot",
@@ -265,6 +278,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.Copilot"),
             service_name: None,
+            min_windows_build: Some(22000),
         },
         TweakDefinition {
             id: "remove_teams_consumer",
@@ -278,6 +292,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("MicrosoftTeams"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_feedback_hub",
@@ -291,6 +306,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.WindowsFeedbackHub"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_phone_link",
@@ -304,6 +320,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.YourPhone"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "remove_cortana",
@@ -317,6 +334,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: Some("Microsoft.549981C3F5F10"),
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_telemetry",
@@ -335,6 +353,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             )],
             appx_name: None,
             service_name: Some("DiagTrack"),
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_activity_history",
@@ -361,6 +380,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             ],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_location_tracking",
@@ -374,13 +394,14 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![], // handled via string registry value
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
-        // === RISKY TIER ===
+        // === EXPERT TIER ===
         TweakDefinition {
             id: "remove_onedrive",
             name: "Remove OneDrive",
             description: "Completely uninstall Microsoft OneDrive",
-            tier: TweakTier::Risky,
+            tier: TweakTier::Expert,
             category: TweakCategory::Bloatware,
             tweak_type: TweakType::AppxRemove,
             is_reversible: false,
@@ -390,12 +411,13 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_web_search_taskbar",
             name: "Disable Web Search in Taskbar",
             description: "Disable web results in taskbar search completely",
-            tier: TweakTier::Risky,
+            tier: TweakTier::Expert,
             category: TweakCategory::Privacy,
             tweak_type: TweakType::RegistrySet,
             is_reversible: true,
@@ -416,12 +438,13 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             ],
             appx_name: None,
             service_name: None,
+            min_windows_build: None,
         },
         TweakDefinition {
             id: "disable_error_reporting",
             name: "Disable Windows Error Reporting",
             description: "Disable the Windows Error Reporting service",
-            tier: TweakTier::Risky,
+            tier: TweakTier::Expert,
             category: TweakCategory::Privacy,
             tweak_type: TweakType::ServiceDisable,
             is_reversible: true,
@@ -431,6 +454,7 @@ pub fn get_all_tweaks() -> Vec<TweakDefinition> {
             registry_entries: vec![],
             appx_name: None,
             service_name: Some("WerSvc"),
+            min_windows_build: None,
         },
     ]
 }

@@ -14,6 +14,8 @@ interface DebloatState {
   restorePointCreated: boolean;
   results: DebloatResult[];
   loading: boolean;
+  lastApplyResults: DebloatResult[] | null;
+  lastApplyTimestamp: string | null;
   fetchTweaks: () => Promise<void>;
   toggleTweak: (id: string) => void;
   selectAllInTier: (tier: TweakTier) => void;
@@ -23,6 +25,7 @@ interface DebloatState {
   applySelected: (dryRun: boolean) => Promise<DebloatResult[]>;
   setActiveTier: (tier: TweakTier | "all") => void;
   setActiveCategory: (cat: TweakCategory | "all") => void;
+  clearLastResults: () => void;
 }
 
 let debloatListenerInitialized = false;
@@ -48,6 +51,8 @@ export const useDebloatStore = create<DebloatState>((set, get) => {
     restorePointCreated: false,
     results: [],
     loading: false,
+    lastApplyResults: null,
+    lastApplyTimestamp: null,
 
     fetchTweaks: async () => {
       set({ loading: true });
@@ -114,6 +119,10 @@ export const useDebloatStore = create<DebloatState>((set, get) => {
         if (!dryRun) {
           // Refresh tweaks to get updated is_applied states
           get().fetchTweaks();
+          set({
+            lastApplyResults: results,
+            lastApplyTimestamp: new Date().toLocaleString(),
+          });
         }
         set({ isApplying: false });
         return results;
@@ -129,6 +138,10 @@ export const useDebloatStore = create<DebloatState>((set, get) => {
 
     setActiveCategory: (cat: TweakCategory | "all") => {
       set({ activeCategory: cat });
+    },
+
+    clearLastResults: () => {
+      set({ lastApplyResults: null, lastApplyTimestamp: null });
     },
   };
 });

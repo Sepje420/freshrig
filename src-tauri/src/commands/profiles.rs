@@ -8,7 +8,7 @@ use flate2::read::DeflateDecoder;
 use flate2::write::DeflateEncoder;
 use flate2::Compression;
 use tauri_plugin_dialog::DialogExt;
-use wmi::{COMLibrary, WMIConnection};
+use wmi::WMIConnection;
 
 use crate::models::apps::AppEntry;
 use crate::models::profiles::*;
@@ -285,8 +285,7 @@ pub async fn decompress_profile(encoded: String) -> Result<RigProfile, String> {
 #[tauri::command]
 pub async fn get_current_hardware_snapshot() -> Result<SourceHardware, String> {
     tokio::task::spawn_blocking(|| {
-        let com = COMLibrary::new().map_err(|e| format!("COM error: {}", e))?;
-        let wmi = WMIConnection::new(com).map_err(|e| format!("WMI error: {}", e))?;
+        let wmi = WMIConnection::new().map_err(|e| format!("WMI error: {}", e))?;
 
         let cpu: Option<String> = wmi
             .raw_query::<HashMap<String, wmi::Variant>>("SELECT Name FROM Win32_Processor")

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use wmi::{COMLibrary, WMIConnection};
+use wmi::WMIConnection;
 
 use crate::models::drivers::*;
 
@@ -139,8 +139,7 @@ fn audio_driver_info(name: &str, manufacturer: &str) -> (&'static str, &'static 
 #[tauri::command]
 pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, String> {
     tokio::task::spawn_blocking(|| {
-        let com = COMLibrary::new().map_err(|e| format!("Failed to initialize COM: {}", e))?;
-        let wmi = WMIConnection::new(com).map_err(|e| format!("Failed to connect to WMI: {}", e))?;
+        let wmi = WMIConnection::new().map_err(|e| format!("Failed to connect to WMI: {}", e))?;
 
         let mut recommendations = Vec::new();
 

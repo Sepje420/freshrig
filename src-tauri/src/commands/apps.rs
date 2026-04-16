@@ -10,6 +10,30 @@ pub async fn get_app_catalog() -> Result<Vec<AppEntry>, String> {
 }
 
 #[tauri::command]
+pub async fn get_free_disk_space_gb() -> Result<f64, String> {
+    let output = Command::new("powershell")
+        .args(["-NoProfile", "-Command", "(Get-PSDrive C).Free / 1GB"])
+        .output()
+        .map_err(|e| format!("Failed to check disk space: {}", e))?;
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    stdout
+        .trim()
+        .parse::<f64>()
+        .map_err(|e| format!("Failed to parse disk space: {}", e))
+}
+
+#[tauri::command]
+pub async fn check_network_connectivity() -> Result<bool, String> {
+    let output = Command::new("cmd")
+        .args(["/C", "ping -n 1 -w 3000 1.1.1.1"])
+        .output();
+    match output {
+        Ok(result) => Ok(result.status.success()),
+        Err(_) => Ok(false),
+    }
+}
+
+#[tauri::command]
 pub async fn check_winget_available() -> Result<bool, String> {
     let result = Command::new("cmd")
         .args(["/C", "chcp 65001 >nul && winget --version"])

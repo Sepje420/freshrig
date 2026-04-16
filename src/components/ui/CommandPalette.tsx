@@ -63,14 +63,21 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
   const [presets, setPresets] = useState<PresetProfile[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const { catalog } = useAppStore();
 
+  // Store previously focused element and focus input on mount; restore on unmount
   useEffect(() => {
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
     inputRef.current?.focus();
     invoke<PresetProfile[]>("get_presets")
       .then(setPresets)
       .catch(() => {});
+    return () => {
+      previousFocusRef.current?.focus();
+    };
   }, []);
 
   const commands: Command[] = [
@@ -211,6 +218,26 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
         if (flatFiltered[activeIndex]) {
           executeCommand(flatFiltered[activeIndex]);
         }
+      } else if (e.key === "Tab") {
+        const container = overlayRef.current;
+        if (!container) return;
+        const focusable = container.querySelectorAll<HTMLElement>(
+          'input, button, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     };
     window.addEventListener("keydown", handler);
@@ -224,7 +251,14 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
   }, [activeIndex]);
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-start justify-center pt-[20vh] bg-black/60" onClick={onClose}>
+    <div
+      ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Command palette"
+      className="fixed inset-0 z-[90] flex items-start justify-center pt-[20vh] bg-black/60"
+      onClick={onClose}
+    >
       <div
         className="w-full max-w-lg bg-bg-elevated border border-border rounded-xl shadow-elevated overflow-hidden animate-fade-in"
         onClick={(e) => e.stopPropagation()}

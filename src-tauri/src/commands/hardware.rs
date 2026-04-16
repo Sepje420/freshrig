@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use winreg::enums::HKEY_LOCAL_MACHINE;
 use winreg::RegKey;
-use wmi::{COMLibrary, WMIConnection};
+use wmi::WMIConnection;
 
 use crate::models::hardware::*;
 
@@ -88,13 +88,43 @@ fn detect_media_type(model: &str, interface: &str) -> String {
     }
 }
 
+fn default_hardware_summary() -> HardwareSummary {
+    HardwareSummary {
+        system: SystemInfo {
+            hostname: "Unknown".to_string(),
+            os_version: "Detection timed out".to_string(),
+            os_build: "Unknown".to_string(),
+            architecture: "Unknown".to_string(),
+            total_ram_gb: 0.0,
+            uptime_seconds: 0,
+        },
+        cpu: CpuInfo {
+            name: "Detection timed out".to_string(),
+            manufacturer: "Unknown".to_string(),
+            cores: 0,
+            threads: 0,
+            max_clock_mhz: 0,
+        },
+        gpus: vec![],
+        disks: vec![],
+        network_adapters: vec![],
+        audio_devices: vec![],
+        motherboard: MotherboardInfo {
+            manufacturer: "Unknown".to_string(),
+            product: "Unknown".to_string(),
+            serial_number: "Unknown".to_string(),
+            bios_version: "Unknown".to_string(),
+        },
+    }
+}
+
 #[tauri::command]
 pub async fn get_hardware_summary() -> Result<HardwareSummary, String> {
-    // WMI operations must happen on a thread with COM initialized
-    tokio::task::spawn_blocking(|| {
-        let com = COMLibrary::new().map_err(|e| format!("Failed to initialize COM: {}", e))?;
-        let wmi =
-            WMIConnection::new(com).map_err(|e| format!("Failed to connect to WMI: {}", e))?;
+    let result = tokio::time::timeout(
+        std::time::Duration::from_secs(15),
+        tokio::task::spawn_blocking(|| {
+            let wmi = WMIConnection::new()
+                .map_err(|e| format!("Failed to connect to WMI: {}", e))?;
 
         // --- System Info ---
         let system_results: Vec<HashMap<String, wmi::Variant>> = wmi
@@ -350,65 +380,98 @@ pub async fn get_hardware_summary() -> Result<HardwareSummary, String> {
                 .unwrap_or_else(|| "Unknown".to_string()),
         };
 
-        Ok(HardwareSummary {
-            system,
-            cpu,
-            gpus,
-            disks,
-            network_adapters,
-            audio_devices,
-            motherboard,
-        })
-    })
-    .await
-    .map_err(|e| format!("Task join error: {}", e))?
+            Ok::<HardwareSummary, String>(HardwareSummary {
+                system,
+                cpu,
+                gpus,
+                disks,
+                network_adapters,
+                audio_devices,
+                motherboard,
+            })
+        }),
+    )
+    .await;
+
+    match result {
+        Ok(Ok(Ok(summary))) => Ok(summary),
+        Ok(Ok(Err(e))) => {
+            eprintln!("WMI hardware query failed: {}", e);
+            Ok(default_hardware_summary())
+        }
+        Ok(Err(e)) => {
+            eprintln!("WMI hardware task join error: {}", e);
+            Ok(default_hardware_summary())
+        }
+        Err(_) => {
+            eprintln!("WMI hardware detection timed out after 15s");
+            Ok(default_hardware_summary())
+        }
+    }
 }
 
 #[tauri::command]
 pub async fn get_driver_issues() -> Result<Vec<DriverIssue>, String> {
-    tokio::task::spawn_blocking(|| {
-        let com = COMLibrary::new().map_err(|e| format!("Failed to initialize COM: {}", e))?;
-        let wmi =
-            WMIConnection::new(com).map_err(|e| format!("Failed to connect to WMI: {}", e))?;
+    let result = tokio::time::timeout(
+        std::time::Duration::from_secs(15),
+        tokio::task::spawn_blocking(|| {
+            let wmi = WMIConnection::new()
+                .map_err(|e| format!("Failed to connect to WMI: {}", e))?;
 
-        let results: Vec<HashMap<String, wmi::Variant>> = wmi
-            .raw_query("SELECT Name, DeviceID, HardwareID, ConfigManagerErrorCode FROM Win32_PnPEntity WHERE ConfigManagerErrorCode <> 0")
-            .map_err(|e| format!("Failed to query Win32_PnPEntity: {}", e))?;
+            let results: Vec<HashMap<String, wmi::Variant>> = wmi
+                .raw_query("SELECT Name, DeviceID, HardwareID, ConfigManagerErrorCode FROM Win32_PnPEntity WHERE ConfigManagerErrorCode <> 0")
+                .map_err(|e| format!("Failed to query Win32_PnPEntity: {}", e))?;
 
-        let issues: Vec<DriverIssue> = results
-            .iter()
-            .map(|r| {
-                let error_code: u16 = match r.get("ConfigManagerErrorCode") {
-                    Some(wmi::Variant::UI4(n)) => *n as u16,
-                    Some(wmi::Variant::I4(n)) => *n as u16,
-                    _ => 0,
-                };
+            let issues: Vec<DriverIssue> = results
+                .iter()
+                .map(|r| {
+                    let error_code: u16 = match r.get("ConfigManagerErrorCode") {
+                        Some(wmi::Variant::UI4(n)) => *n as u16,
+                        Some(wmi::Variant::I4(n)) => *n as u16,
+                        _ => 0,
+                    };
 
-                let hardware_id: Vec<String> = match r.get("HardwareID") {
-                    Some(wmi::Variant::Array(arr)) => arr
-                        .iter()
-                        .filter_map(|v| match v {
-                            wmi::Variant::String(s) => Some(s.clone()),
-                            _ => None,
-                        })
-                        .collect(),
-                    _ => vec![],
-                };
+                    let hardware_id: Vec<String> = match r.get("HardwareID") {
+                        Some(wmi::Variant::Array(arr)) => arr
+                            .iter()
+                            .filter_map(|v| match v {
+                                wmi::Variant::String(s) => Some(s.clone()),
+                                _ => None,
+                            })
+                            .collect(),
+                        _ => vec![],
+                    };
 
-                DriverIssue {
-                    device_name: extract_string(r, "Name"),
-                    device_id: extract_string(r, "DeviceID"),
-                    hardware_id,
-                    error_code,
-                    error_description: map_error_code(error_code),
-                }
-            })
-            .collect();
+                    DriverIssue {
+                        device_name: extract_string(r, "Name"),
+                        device_id: extract_string(r, "DeviceID"),
+                        hardware_id,
+                        error_code,
+                        error_description: map_error_code(error_code),
+                    }
+                })
+                .collect();
 
-        Ok(issues)
-    })
-    .await
-    .map_err(|e| format!("Task join error: {}", e))?
+            Ok::<Vec<DriverIssue>, String>(issues)
+        }),
+    )
+    .await;
+
+    match result {
+        Ok(Ok(Ok(issues))) => Ok(issues),
+        Ok(Ok(Err(e))) => {
+            eprintln!("WMI driver issues query failed: {}", e);
+            Ok(vec![])
+        }
+        Ok(Err(e)) => {
+            eprintln!("WMI driver issues task join error: {}", e);
+            Ok(vec![])
+        }
+        Err(_) => {
+            eprintln!("WMI driver issues detection timed out after 15s");
+            Ok(vec![])
+        }
+    }
 }
 
 // --- Helper functions ---
@@ -430,6 +493,19 @@ fn extract_u32(map: &HashMap<String, wmi::Variant>, key: &str) -> Option<u32> {
         Some(wmi::Variant::String(s)) => s.parse().ok(),
         _ => None,
     }
+}
+
+#[tauri::command]
+pub fn get_windows_build() -> u32 {
+    let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
+    hklm.open_subkey(r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+        .ok()
+        .and_then(|key| {
+            let val: Result<String, _> = key.get_value("CurrentBuildNumber");
+            val.ok()
+        })
+        .and_then(|s| s.parse::<u32>().ok())
+        .unwrap_or(0)
 }
 
 fn parse_wmi_uptime(last_boot: &str) -> u64 {

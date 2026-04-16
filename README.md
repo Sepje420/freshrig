@@ -63,6 +63,10 @@ npm run tauri dev
 - **Installer**: NSIS (via Tauri)
 - **Package Manager**: winget (for app installations)
 
+## 🔒 Security
+
+Found a security issue? See [SECURITY.md](SECURITY.md).
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.

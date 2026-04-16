@@ -9,6 +9,8 @@ pub struct AppEntry {
     pub category: AppCategory,
     pub icon_name: String,
     pub is_popular: bool,
+    #[serde(default)]
+    pub estimated_size_mb: Option<u32>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

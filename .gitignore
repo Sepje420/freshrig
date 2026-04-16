@@ -39,3 +39,10 @@ Desktop.ini
 
 # Tauri plugin store
 *.dat
+
+# App runtime logs
+crash.log
+debloat-log.txt
+
+# SBOM artifacts
+sbom-*.json

@@ -14,10 +14,13 @@ import {
   Link,
   ShieldCheck,
   ShieldAlert,
+  HardDrive,
+  WifiOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { listen } from "@tauri-apps/api/event";
 import { useAppStore } from "../../stores/appStore";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { AppCard } from "./AppCard";
 import { CategoryFilter } from "./CategoryFilter";
 import { InstallProgressPanel } from "./InstallProgressPanel";
@@ -32,6 +35,11 @@ export function AppsPage() {
   const [showSaveProfile, setShowSaveProfile] = useState(false);
   const [showAddCustom, setShowAddCustom] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState<DownloadProgress | null>(null);
+  const [showLowDiskWarning, setShowLowDiskWarning] = useState(false);
+  const [diskSpaceAvailable, setDiskSpaceAvailable] = useState<number | null>(null);
+  const [showInstallConfirm, setShowInstallConfirm] = useState(false);
+
+  const confirmBeforeInstalling = useSettingsStore((s) => s.settings.confirmBeforeInstalling);
 
   const {
     catalog,
@@ -63,13 +71,18 @@ export function AppsPage() {
     addCustomApp,
     removeCustomApp,
     installCustomApp,
+    checkDiskSpace,
+    checkNetwork,
+    networkAvailable,
+    deselectCategory,
   } = useAppStore();
 
   useEffect(() => {
     fetchCatalog();
     checkWinget();
+    checkNetwork();
     fetchCustomApps();
-  }, [fetchCatalog, checkWinget, fetchCustomApps]);
+  }, [fetchCatalog, checkWinget, checkNetwork, fetchCustomApps]);
 
   // Listen for custom download progress
   useEffect(() => {
@@ -94,6 +107,44 @@ export function AppsPage() {
 
   const installedCount = installedAppIds.size;
   const showWingetResults = searchQuery.trim().length >= 2;
+
+  const allInCategorySelected = useMemo(() => {
+    if (filteredApps.length === 0) return false;
+    return filteredApps.every((app) => selectedIds.has(app.id));
+  }, [filteredApps, selectedIds]);
+
+  const estimatedSize = useMemo(() => {
+    let totalMb = 0;
+    let hasUnknown = false;
+    for (const id of selectedIds) {
+      const app = catalog.find((a) => a.id === id);
+      if (app?.estimatedSizeMb) {
+        totalMb += app.estimatedSizeMb;
+      } else {
+        hasUnknown = true;
+      }
+    }
+    return { totalMb, hasUnknown };
+  }, [selectedIds, catalog]);
+
+  const handleInstallClick = async () => {
+    const gb = await checkDiskSpace();
+    if (gb !== null && gb < 5) {
+      setDiskSpaceAvailable(gb);
+      setShowLowDiskWarning(true);
+      return;
+    }
+    const online = await checkNetwork();
+    if (!online) {
+      toast.error("No internet connection. App installation requires a network connection.");
+      return;
+    }
+    if (confirmBeforeInstalling) {
+      setShowInstallConfirm(true);
+      return;
+    }
+    installSelected();
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -123,6 +174,16 @@ export function AppsPage() {
             Winget is not detected. Please install{" "}
             <span className="font-semibold">App Installer</span> from the Microsoft Store to enable
             app installation.
+          </p>
+        </div>
+      )}
+
+      {/* Network offline warning */}
+      {networkAvailable === false && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-error/10 border border-error/20 animate-fade-in">
+          <WifiOff className="w-5 h-5 text-error shrink-0" />
+          <p className="text-sm text-error">
+            No internet connection detected. App installation requires an internet connection.
           </p>
         </div>
       )}
@@ -201,22 +262,18 @@ export function AppsPage() {
                 >
                   Clear
                 </button>
-                <button
-                  onClick={() => selectAll(activeCategory)}
-                  className="px-2.5 py-1.5 rounded-md text-xs text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-                >
-                  Select All
-                </button>
               </>
             )}
-            {selectedIds.size === 0 && (
-              <button
-                onClick={() => selectAll(activeCategory)}
-                className="px-2.5 py-1.5 rounded-md text-xs text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors"
-              >
-                Select All
-              </button>
-            )}
+            <button
+              onClick={() =>
+                allInCategorySelected
+                  ? deselectCategory(activeCategory)
+                  : selectAll(activeCategory)
+              }
+              className="px-2.5 py-1.5 rounded-md text-xs text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+            >
+              {allInCategorySelected ? "Deselect All" : "Select All"}
+            </button>
 
             <button
               onClick={() => setShowSaveProfile(true)}
@@ -231,8 +288,16 @@ export function AppsPage() {
               Save as Profile
             </button>
 
+            {selectedIds.size > 0 && estimatedSize.totalMb > 0 && (
+              <span className="text-[11px] text-text-muted">
+                ~{estimatedSize.totalMb >= 1000
+                  ? `${(estimatedSize.totalMb / 1000).toFixed(1)} GB`
+                  : `${estimatedSize.totalMb} MB`}
+                {estimatedSize.hasUnknown ? " (some apps excluded)" : ""} estimated
+              </span>
+            )}
             <button
-              onClick={installSelected}
+              onClick={handleInstallClick}
               disabled={selectedIds.size === 0 || isInstalling || wingetAvailable === false}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 selectedIds.size > 0 && !isInstalling && wingetAvailable !== false
@@ -252,7 +317,7 @@ export function AppsPage() {
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3" aria-busy="true" aria-label="Loading app catalog">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="h-20 rounded-lg bg-bg-card border border-border animate-pulse" />
           ))}
@@ -399,6 +464,96 @@ export function AppsPage() {
           onClose={() => setShowSaveProfile(false)}
           onSaved={() => setShowSaveProfile(false)}
         />
+      )}
+
+      {/* Low disk space warning dialog */}
+      {showLowDiskWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowLowDiskWarning(false)}>
+          <div className="bg-bg-elevated border border-border rounded-xl shadow-elevated w-full max-w-sm mx-4 animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-warning/20">
+                  <HardDrive className="w-5 h-5 text-warning" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-text-primary">Low Disk Space</h3>
+                  <p className="text-xs text-text-muted mt-0.5">
+                    Only {diskSpaceAvailable?.toFixed(1)} GB free on C: drive
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-text-secondary">
+                Your disk space is running low. Installing apps may fail or leave your system with very little free space.
+              </p>
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={() => setShowLowDiskWarning(false)}
+                  className="px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    setShowLowDiskWarning(false);
+                    const online = await checkNetwork();
+                    if (!online) {
+                      toast.error("No internet connection. App installation requires a network connection.");
+                      return;
+                    }
+                    if (confirmBeforeInstalling) {
+                      setShowInstallConfirm(true);
+                    } else {
+                      installSelected();
+                    }
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold bg-warning text-bg-primary hover:bg-warning/90 transition-colors"
+                >
+                  Install Anyway
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* UAC install confirmation dialog */}
+      {showInstallConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowInstallConfirm(false)}>
+          <div className="bg-bg-elevated border border-border rounded-xl shadow-elevated w-full max-w-sm mx-4 animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-accent-muted">
+                  <ShieldAlert className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    Ready to install {selectedIds.size} app{selectedIds.size !== 1 ? "s" : ""}?
+                  </h3>
+                </div>
+              </div>
+              <p className="text-sm text-text-secondary">
+                Some apps may trigger a Windows UAC prompt requesting administrator access during installation.
+              </p>
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={() => setShowInstallConfirm(false)}
+                  className="px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowInstallConfirm(false);
+                    installSelected();
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold bg-accent text-bg-primary hover:bg-accent-hover transition-colors"
+                >
+                  Install
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Add Custom App dialog */}

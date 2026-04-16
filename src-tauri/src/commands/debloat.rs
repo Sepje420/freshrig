@@ -27,10 +27,14 @@ fn is_protected(name: &str) -> bool {
 pub async fn get_debloat_tweaks() -> Result<Vec<DebloatTweak>, String> {
     tokio::task::spawn_blocking(|| {
         let definitions = get_all_tweaks();
+        let current_build = crate::commands::hardware::get_windows_build();
         let mut tweaks = Vec::new();
 
         for def in &definitions {
             let is_applied = check_tweak_applied(def);
+            let incompatible = def
+                .min_windows_build
+                .is_some_and(|min| current_build > 0 && current_build < min);
 
             tweaks.push(DebloatTweak {
                 id: def.id.to_string(),
@@ -42,6 +46,8 @@ pub async fn get_debloat_tweaks() -> Result<Vec<DebloatTweak>, String> {
                 is_applied,
                 is_reversible: def.is_reversible,
                 warning: def.warning.map(|s| s.to_string()),
+                min_windows_build: def.min_windows_build,
+                incompatible,
             });
         }
 

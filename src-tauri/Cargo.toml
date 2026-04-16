@@ -1,6 +1,6 @@
 [package]
 name = "freshrig"
-version = "0.3.0"
+version = "0.4.0"
 description = "The first tool you run after a fresh Windows install"
 authors = ["FreshRig"]
 edition = "2021"
@@ -25,6 +25,7 @@ tokio = { version = "1", features = ["full"] }
 winreg = "0.56"
 flate2 = "1"
 base64 = "0.22"
+regex = "1"
 tauri-plugin-dialog = "2"
 tauri-plugin-store = "2"
 tauri-plugin-updater = "2"

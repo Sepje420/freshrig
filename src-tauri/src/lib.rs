@@ -9,11 +9,30 @@ use tauri::{
     AppHandle, Manager,
 };
 
+/// Scrub sensitive data from crash log messages before writing to disk.
+fn scrub_sensitive_data(input: &str) -> String {
+    use regex::Regex;
+    let mut result = input.to_string();
+    // Scrub Windows user paths: C:\Users\<username>\ → C:\Users\<USER>\
+    if let Ok(re) = Regex::new(r"(?i)C:\\Users\\[^\\]+\\") {
+        result = re.replace_all(&result, r"C:\Users\<USER>\").to_string();
+    }
+    // Scrub MAC addresses (XX:XX:XX:XX:XX:XX or XX-XX-XX-XX-XX-XX)
+    if let Ok(re) = Regex::new(r"([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}") {
+        result = re.replace_all(&result, "<MAC_REDACTED>").to_string();
+    }
+    // Scrub serial-like hex strings (20+ hex chars to avoid matching backtrace addresses)
+    if let Ok(re) = Regex::new(r"\b[0-9A-Fa-f]{20,}\b") {
+        result = re.replace_all(&result, "<SERIAL_REDACTED>").to_string();
+    }
+    result
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // Panic hook — write crash log
+    // Panic hook — write crash log (scrubbed of sensitive data)
     std::panic::set_hook(Box::new(|info| {
-        let msg = format!("PANIC: {}", info);
+        let msg = scrub_sensitive_data(&format!("PANIC: {}", info));
         eprintln!("{}", msg);
         let log_path = portable::get_data_dir().join("crash.log");
         let _ = std::fs::write(&log_path, &msg);
@@ -77,8 +96,11 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::hardware::get_hardware_summary,
             commands::hardware::get_driver_issues,
+            commands::hardware::get_windows_build,
             commands::drivers::get_driver_recommendations,
             commands::apps::get_app_catalog,
+            commands::apps::get_free_disk_space_gb,
+            commands::apps::check_network_connectivity,
             commands::apps::check_winget_available,
             commands::apps::install_apps,
             commands::profiles::save_profile,

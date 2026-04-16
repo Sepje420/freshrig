@@ -51,16 +51,29 @@ function getMessage(score: number): string {
   return "Attention needed";
 }
 
+function getStatusLabel(score: number): string {
+  if (score >= 90) return "Excellent";
+  if (score >= 70) return "Good";
+  return "Needs attention";
+}
+
 export function HealthScore({ summary, driverIssues }: HealthScoreProps) {
   const score = calculateScore(summary, driverIssues);
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (score / 100) * circumference;
   const strokeColor = getStrokeColor(score);
+  const statusLabel = getStatusLabel(score);
 
   return (
     <div className="flex flex-col items-center justify-center py-4 animate-fade-in">
       <div className="relative w-32 h-32">
-        <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+        <svg
+          className="w-full h-full -rotate-90"
+          viewBox="0 0 120 120"
+          role="img"
+          aria-label={`System health score: ${score} out of 100. ${statusLabel}`}
+        >
+          <title>System Health Score: {score}/100</title>
           {/* Background circle */}
           <circle
             cx="60"
@@ -87,7 +100,7 @@ export function HealthScore({ summary, driverIssues }: HealthScoreProps) {
         </svg>
         {/* Score text */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</span>
+          <span aria-hidden="true" className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</span>
         </div>
       </div>
       <p className={`mt-3 text-sm font-medium ${getScoreColor(score)}`}>{getMessage(score)}</p>

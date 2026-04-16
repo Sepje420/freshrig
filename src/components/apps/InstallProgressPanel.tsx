@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Check, X, Loader2, Clock, SkipForward, BookMarked, List, PartyPopper } from "lucide-react";
+import { Check, X, Loader2, Clock, SkipForward, BookMarked, List, PartyPopper, RefreshCw } from "lucide-react";
 import confetti from "canvas-confetti";
 import type { InstallProgress } from "../../types/apps";
+import { useAppStore } from "../../stores/appStore";
 import { SaveProfileDialog } from "../profiles/SaveProfileDialog";
 
 interface InstallProgressPanelProps {
@@ -42,6 +43,8 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
   const [showSaveProfile, setShowSaveProfile] = useState(false);
   const [animatedSaved, setAnimatedSaved] = useState(0);
   const confettiFired = useRef(false);
+  const [announcement, setAnnouncement] = useState("");
+  const prevDoneRef = useRef(0);
 
   // Track elapsed time
   useEffect(() => {
@@ -58,13 +61,16 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
 
       if (completed > 0 && failed === 0 && !confettiFired.current) {
         confettiFired.current = true;
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ["#00d4aa", "#22c55e", "#3b82f6"],
-          disableForReducedMotion: true,
-        });
+        const confettiTimer = setTimeout(() => {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ["#00d4aa", "#22c55e", "#3b82f6"],
+            disableForReducedMotion: true,
+          });
+        }, 400);
+        return () => clearTimeout(confettiTimer);
       }
     }
   }, [allDone, total, completed, failed, showSummary, startTime]);
@@ -84,6 +90,25 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
     requestAnimationFrame(animate);
   }, [showSummary, completed, elapsed]);
 
+  // Announce status changes for screen readers
+  useEffect(() => {
+    if (done > prevDoneRef.current && done <= total) {
+      const latest = entries.find(
+        (p) => p.status === "Completed" || p.status === "Failed" || p.status === "Skipped"
+      );
+      if (allDone) {
+        setAnnouncement(
+          `Installation complete. ${completed} apps installed, ${failed} failed.`
+        );
+      } else if (latest) {
+        setAnnouncement(`${latest.appName}: ${latest.status}. ${done} of ${total} done.`);
+      }
+      prevDoneRef.current = done;
+      const timer = setTimeout(() => setAnnouncement(""), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [done, total, allDone, completed, failed, entries]);
+
   const formatTime = (ms: number) => {
     const secs = Math.floor(ms / 1000);
     const m = Math.floor(secs / 60);
@@ -91,11 +116,23 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
+  const liveRegion = (
+    <span
+      aria-live="assertive"
+      aria-atomic="true"
+      className="sr-only"
+      style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap" }}
+    >
+      {announcement}
+    </span>
+  );
+
   // Summary view
   if (showSummary) {
     return (
       <div className="fixed bottom-0 left-[280px] right-0 bg-bg-elevated border-t border-border shadow-elevated z-40 animate-fade-in">
-        <div className="px-6 py-6 space-y-4">
+        {liveRegion}
+        <div role="status" aria-live="polite" className="px-6 py-6 space-y-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-success/20 animate-check-pop">
               <Check className="w-6 h-6 text-success" />
@@ -117,7 +154,10 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
               </span>
             )}
             <span className="text-text-muted">Time: {formatTime(elapsed)}</span>
-            <span className="text-accent font-semibold">
+            <span
+              className="text-accent font-semibold"
+              title="Estimated based on 3 min per manual install minus actual elapsed time"
+            >
               ~{animatedSaved} min saved vs manual
             </span>
           </div>
@@ -138,6 +178,18 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
               <BookMarked className="w-3.5 h-3.5" />
               Save as Profile
             </button>
+            {failed > 0 && (
+              <button
+                onClick={() => {
+                  useAppStore.getState().retryFailed();
+                  setShowSummary(false);
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs text-error hover:bg-error/10 border border-error/30 transition-colors"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Retry Failed ({failed})
+              </button>
+            )}
             <button
               onClick={onDone}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-accent text-bg-primary hover:bg-accent-hover transition-colors ml-auto"
@@ -161,7 +213,8 @@ export function InstallProgressPanel({ progress, onDone }: InstallProgressPanelP
   // Progress view
   return (
     <div className="fixed bottom-0 left-[280px] right-0 bg-bg-elevated border-t border-border shadow-elevated z-40 animate-fade-in">
-      <div className="px-6 py-4 space-y-3 max-h-[320px] overflow-y-auto">
+      {liveRegion}
+      <div role="status" aria-live="polite" className="px-6 py-4 space-y-3 max-h-[320px] overflow-y-auto">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-text-primary">
             {allDone

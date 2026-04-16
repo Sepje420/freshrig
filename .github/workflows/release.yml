@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
 
@@ -18,9 +21,9 @@ jobs:
       contents: write
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
@@ -45,3 +48,19 @@ jobs:
           releaseBody: 'See the assets below to download FreshRig.'
           releaseDraft: true
           prerelease: false
+
+      - name: Generate SBOMs
+        run: |
+          cargo install cargo-cyclonedx
+          cargo cyclonedx --manifest-path src-tauri/Cargo.toml --format json --output-file sbom-rust.cdx.json
+          npx @cyclonedx/cyclonedx-npm --output-file sbom-npm.cdx.json
+
+      - name: Upload SBOMs to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            sbom-rust.cdx.json
+            sbom-npm.cdx.json
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

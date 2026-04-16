@@ -437,7 +437,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                 </div>
                 <ul className="text-xs text-text-secondary space-y-1.5 ml-7">
                   <li>Unlimited profiles & cloud sync</li>
-                  <li>Full debloating (Moderate + Risky tiers)</li>
+                  <li>Full debloating (Moderate + Expert tiers)</li>
                   <li>Custom app entries</li>
                   <li>Community profile hub</li>
                   <li>Export to PowerShell script</li>

@@ -2,32 +2,34 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in FreshRig, please report it responsibly.
-
 **Do NOT create a public GitHub issue for security vulnerabilities.**
 
-Instead, use GitHub's [Security Advisory feature](https://github.com/sepje420/freshrig/security/advisories/new) to report the vulnerability privately.
+### Preferred: GitHub Security Advisory
+Use GitHub's [Security Advisory feature](https://github.com/sepje420/freshrig/security/advisories/new).
 
-### What to include
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if any)
+### Alternative: Email
+Send details to **seppewillemsens@icloud.com** (dedicated security@freshrig.app coming soon).
 
-### Response timeline
-- **Acknowledgment**: Within 48 hours
-- **Assessment**: Within 1 week
-- **Fix**: Depends on severity, typically within 2 weeks for critical issues
+### What to Include
+- Description, reproduction steps, impact assessment, suggested fix, your contact info.
 
-## Scope
+### Response Timeline
+| Stage | Timeframe |
+|-------|-----------|
+| Acknowledgment | Within 48 hours |
+| Initial assessment | Within 1 week |
+| Fix for critical | Within 2 weeks |
+| Fix for non-critical | Within 30 days |
 
-This policy applies to:
-- The FreshRig desktop application
-- The official GitHub repository (sepje420/freshrig)
+## Software Bill of Materials
+CycloneDX SBOMs attached to each GitHub Release as `sbom-rust.cdx.json` and `sbom-npm.cdx.json`.
 
 ## Supported Versions
+| Version | Security Updates |
+|---------|-----------------|
+| Latest release | Active support |
+| Previous minor | Critical fixes only |
+| Older | No support |
 
-| Version | Supported |
-|---------|-----------|
-| Latest  | ✅        |
-| Older   | ❌        |
+## Scope
+This policy covers the FreshRig desktop application, the GitHub repository, and the landing page.

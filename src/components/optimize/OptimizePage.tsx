@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, AlertTriangle, ShieldAlert, Eye, Crown } from "lucide-react";
+import { Sparkles, AlertTriangle, ShieldAlert, Eye, Crown, Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useDebloatStore } from "../../stores/debloatStore";
 import { useLicenseStore } from "../../stores/licenseStore";
 import { TweakCard } from "./TweakCard";
@@ -7,11 +7,11 @@ import { ApplyConfirmDialog } from "./ApplyConfirmDialog";
 import { SkeletonRow } from "../ui/Skeleton";
 import type { TweakTier, TweakCategory, DebloatResult } from "../../types/debloat";
 
-const TIER_FILTERS: { value: TweakTier | "all"; label: string; color: string }[] = [
-  { value: "all", label: "All", color: "" },
-  { value: "safe", label: "Safe", color: "text-success" },
-  { value: "moderate", label: "Moderate", color: "text-warning" },
-  { value: "risky", label: "Risky", color: "text-error" },
+const TIER_FILTERS: { value: TweakTier | "all"; label: string; color: string; tooltip: string }[] = [
+  { value: "all", label: "All", color: "", tooltip: "" },
+  { value: "safe", label: "Safe", color: "text-success", tooltip: "Low-risk, easily reversible changes" },
+  { value: "moderate", label: "Moderate", color: "text-warning", tooltip: "May affect some Windows features" },
+  { value: "expert", label: "Expert", color: "text-error", tooltip: "Aggressive changes that may break functionality" },
 ];
 
 const CATEGORY_FILTERS: { value: TweakCategory | "all"; label: string }[] = [
@@ -39,9 +39,13 @@ export function OptimizePage() {
     applySelected,
     setActiveTier,
     setActiveCategory,
+    lastApplyResults,
+    lastApplyTimestamp,
+    clearLastResults,
   } = useDebloatStore();
 
   const [showConfirm, setShowConfirm] = useState(false);
+  const [resultsExpanded, setResultsExpanded] = useState(false);
   const [dryRunResults, setDryRunResults] = useState<DebloatResult[] | null>(null);
 
   useEffect(() => {
@@ -58,7 +62,7 @@ export function OptimizePage() {
   }, [tweaks, activeTier, activeCategory]);
 
   const tierCounts = useMemo(() => {
-    const counts = { safe: 0, moderate: 0, risky: 0 };
+    const counts = { safe: 0, moderate: 0, expert: 0 };
     for (const t of tweaks) {
       if (t.tier in counts) counts[t.tier as keyof typeof counts]++;
     }
@@ -116,6 +120,70 @@ export function OptimizePage() {
         </div>
       )}
 
+      {/* Last optimization results */}
+      {lastApplyResults && lastApplyTimestamp && (() => {
+        const successCount = lastApplyResults.filter((r) => r.success).length;
+        const failCount = lastApplyResults.filter((r) => !r.success).length;
+        const allSuccess = failCount === 0;
+        const ExpandIcon = resultsExpanded ? ChevronUp : ChevronDown;
+        return (
+          <div
+            className={`rounded-lg border animate-fade-in ${
+              allSuccess ? "border-success/20 bg-success/5" : "border-warning/20 bg-warning/5"
+            }`}
+            style={{ borderLeftWidth: "3px", borderLeftColor: allSuccess ? "#22c55e" : "#f59e0b" }}
+          >
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-2 text-sm">
+                {allSuccess ? (
+                  <Check className="w-4 h-4 text-success shrink-0" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
+                )}
+                <span className="text-text-secondary">
+                  Last optimization: <span className="text-text-muted">{lastApplyTimestamp}</span>
+                  {" — "}
+                  <span className="text-success font-medium">{successCount} applied</span>
+                  {failCount > 0 && (
+                    <>, <span className="text-error font-medium">{failCount} failed</span></>
+                  )}
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setResultsExpanded((v) => !v)}
+                  className="p-1 rounded hover:bg-bg-tertiary text-text-muted hover:text-text-primary transition-colors"
+                >
+                  <ExpandIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={clearLastResults}
+                  className="p-1 rounded hover:bg-bg-tertiary text-text-muted hover:text-text-primary transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            {resultsExpanded && (
+              <div className="px-4 pb-3 space-y-1 border-t border-border/50 pt-2">
+                {lastApplyResults.map((r) => (
+                  <div key={r.tweakId} className="flex items-center gap-2 text-xs">
+                    {r.success ? (
+                      <Check className="w-3 h-3 text-success shrink-0" />
+                    ) : (
+                      <X className="w-3 h-3 text-error shrink-0" />
+                    )}
+                    <span className={r.success ? "text-text-secondary" : "text-error"}>
+                      {r.message}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Tier filter tabs */}
       <div className="flex items-center gap-1 bg-bg-card border border-border rounded-lg p-1">
         {TIER_FILTERS.map((filter) => {
@@ -128,6 +196,7 @@ export function OptimizePage() {
             <button
               key={filter.value}
               onClick={() => setActiveTier(filter.value)}
+              title={filter.tooltip || undefined}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                 isActive
                   ? "bg-accent-muted text-accent"
@@ -135,7 +204,7 @@ export function OptimizePage() {
               }`}
             >
               <span className={!isActive ? filter.color : ""}>{filter.label}</span>
-              {!isPro && (filter.value === "moderate" || filter.value === "risky") && (
+              {!isPro && (filter.value === "moderate" || filter.value === "expert") && (
                 <Crown className="w-3 h-3 text-amber-500" />
               )}
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-bg-tertiary text-text-muted">
@@ -168,7 +237,7 @@ export function OptimizePage() {
 
       {/* Loading */}
       {loading && (
-        <div className="bg-bg-card border border-border rounded-lg divide-y divide-border">
+        <div className="bg-bg-card border border-border rounded-lg divide-y divide-border" aria-busy="true" aria-label="Loading optimizations">
           {Array.from({ length: 8 }).map((_, i) => (
             <SkeletonRow key={i} />
           ))}

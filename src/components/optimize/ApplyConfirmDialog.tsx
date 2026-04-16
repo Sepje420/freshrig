@@ -12,13 +12,13 @@ interface ApplyConfirmDialogProps {
 const tierLabels: Record<TweakTier, string> = {
   safe: "Safe",
   moderate: "Moderate",
-  risky: "Risky",
+  expert: "Expert",
 };
 
 const tierColors: Record<TweakTier, string> = {
   safe: "text-success",
   moderate: "text-warning",
-  risky: "text-error",
+  expert: "text-error",
 };
 
 export function ApplyConfirmDialog({
@@ -31,11 +31,11 @@ export function ApplyConfirmDialog({
   const [confirmed, setConfirmed] = useState(false);
   const [restoreError, setRestoreError] = useState<string | null>(null);
 
-  const hasRisky = selectedTweaks.some((t) => t.tier === "risky");
+  const hasExpert = selectedTweaks.some((t) => t.tier === "expert");
   const grouped = {
     safe: selectedTweaks.filter((t) => t.tier === "safe"),
     moderate: selectedTweaks.filter((t) => t.tier === "moderate"),
-    risky: selectedTweaks.filter((t) => t.tier === "risky"),
+    expert: selectedTweaks.filter((t) => t.tier === "expert"),
   };
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export function ApplyConfirmDialog({
                 The following changes will be applied to your system:
               </p>
 
-              {(["safe", "moderate", "risky"] as TweakTier[]).map((tier) => {
+              {(["safe", "moderate", "expert"] as TweakTier[]).map((tier) => {
                 const items = grouped[tier];
                 if (items.length === 0) return null;
                 return (
@@ -132,7 +132,7 @@ export function ApplyConfirmDialog({
                 );
               })}
 
-              {hasRisky && (
+              {hasExpert && (
                 <label className="flex items-start gap-2 pt-2 border-t border-border">
                   <input
                     type="checkbox"
@@ -229,9 +229,9 @@ export function ApplyConfirmDialog({
               </button>
               <button
                 onClick={handleApply}
-                disabled={hasRisky && !confirmed}
+                disabled={hasExpert && !confirmed}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  hasRisky && !confirmed
+                  hasExpert && !confirmed
                     ? "bg-bg-tertiary text-text-muted cursor-not-allowed"
                     : "bg-accent text-bg-primary hover:bg-accent-hover"
                 }`}

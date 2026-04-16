@@ -18,6 +18,7 @@ export interface AppEntry {
   category: AppCategory;
   iconName: string;
   isPopular: boolean;
+  estimatedSizeMb?: number;
 }
 
 export interface InstallProgress {

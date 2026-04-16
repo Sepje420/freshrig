@@ -30,6 +30,8 @@ interface AppState {
   // Custom apps
   customApps: CustomAppEntry[];
   customAppInstalling: string | null;
+  diskSpaceGb: number | null;
+  networkAvailable: boolean | null;
   // Actions
   fetchCatalog: () => Promise<void>;
   checkWinget: () => Promise<void>;
@@ -46,6 +48,10 @@ interface AppState {
   addCustomApp: (app: CustomAppEntry) => Promise<void>;
   removeCustomApp: (id: string) => Promise<void>;
   installCustomApp: (app: CustomAppEntry) => Promise<void>;
+  retryFailed: () => void;
+  checkDiskSpace: () => Promise<number | null>;
+  checkNetwork: () => Promise<boolean>;
+  deselectCategory: (category: AppCategory | "all") => void;
 }
 
 let listenerInitialized = false;
@@ -87,6 +93,8 @@ export const useAppStore = create<AppState>((set, get) => {
     hideInstalled: false,
     customApps: [],
     customAppInstalling: null,
+    diskSpaceGb: null,
+    networkAvailable: null,
 
     fetchCatalog: async () => {
       set({ loading: true });
@@ -122,10 +130,14 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     selectAll: (category: AppCategory | "all") => {
-      const { catalog } = get();
+      const { catalog, selectedIds } = get();
       const filtered =
         category === "all" ? catalog : catalog.filter((a) => a.category === category);
-      set({ selectedIds: new Set(filtered.map((a) => a.id)) });
+      const newSet = new Set(selectedIds);
+      for (const app of filtered) {
+        newSet.add(app.id);
+      }
+      set({ selectedIds: newSet });
     },
 
     clearSelection: () => {
@@ -241,6 +253,59 @@ export const useAppStore = create<AppState>((set, get) => {
       } finally {
         set({ customAppInstalling: null });
       }
+    },
+
+    deselectCategory: (category: AppCategory | "all") => {
+      const { catalog, selectedIds } = get();
+      const filtered =
+        category === "all" ? catalog : catalog.filter((a) => a.category === category);
+      const idsToRemove = new Set(filtered.map((a) => a.id));
+      const newSet = new Set([...selectedIds].filter((id) => !idsToRemove.has(id)));
+      set({ selectedIds: newSet });
+    },
+
+    checkDiskSpace: async () => {
+      try {
+        const gb = await invoke<number>("get_free_disk_space_gb");
+        set({ diskSpaceGb: gb });
+        return gb;
+      } catch {
+        return null;
+      }
+    },
+
+    checkNetwork: async () => {
+      try {
+        const ok = await invoke<boolean>("check_network_connectivity");
+        set({ networkAvailable: ok });
+        return ok;
+      } catch {
+        set({ networkAvailable: false });
+        return false;
+      }
+    },
+
+    retryFailed: () => {
+      const { installProgress, catalog } = get();
+      const failedIds: string[] = [];
+      const newProgress = new Map(installProgress);
+
+      for (const [id, entry] of installProgress) {
+        if (entry.status === "Failed") {
+          failedIds.push(id);
+          newProgress.set(id, { ...entry, status: "Pending", message: "Retrying..." });
+        }
+      }
+
+      if (failedIds.length === 0) return;
+
+      set({ installProgress: newProgress, isInstalling: true });
+
+      const appIds = failedIds.filter((id) => catalog.some((a) => a.id === id));
+      invoke("install_apps", { appIds }).catch((err) => {
+        console.error("Retry failed:", err);
+        set({ isInstalling: false });
+      });
     },
   };
 });

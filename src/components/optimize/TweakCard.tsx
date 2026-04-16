@@ -1,4 +1,4 @@
-import { Check, AlertTriangle } from "lucide-react";
+import { Check, AlertTriangle, Ban } from "lucide-react";
 import type { DebloatTweak, TweakTier, TweakCategory } from "../../types/debloat";
 
 interface TweakCardProps {
@@ -10,13 +10,13 @@ interface TweakCardProps {
 const tierColors: Record<TweakTier, string> = {
   safe: "bg-success/20 text-success",
   moderate: "bg-warning/20 text-warning",
-  risky: "bg-error/20 text-error",
+  expert: "bg-error/20 text-error",
 };
 
 const tierDotColors: Record<TweakTier, string> = {
   safe: "bg-success",
   moderate: "bg-warning",
-  risky: "bg-error",
+  expert: "bg-error",
 };
 
 const categoryColors: Record<TweakCategory, string> = {
@@ -36,11 +36,11 @@ const categoryLabels: Record<TweakCategory, string> = {
 const tierLabels: Record<TweakTier, string> = {
   safe: "Safe",
   moderate: "Moderate",
-  risky: "Risky",
+  expert: "Expert",
 };
 
 export function TweakCard({ tweak, selected, onToggle }: TweakCardProps) {
-  const disabled = tweak.isApplied;
+  const disabled = tweak.isApplied || tweak.incompatible;
 
   return (
     <button
@@ -55,7 +55,11 @@ export function TweakCard({ tweak, selected, onToggle }: TweakCardProps) {
       <div className="p-4 flex items-start gap-3">
         {/* Checkbox */}
         <div className="shrink-0 mt-0.5">
-          {disabled ? (
+          {tweak.incompatible ? (
+            <div className="w-5 h-5 rounded bg-bg-tertiary flex items-center justify-center">
+              <Ban className="w-3.5 h-3.5 text-text-muted" />
+            </div>
+          ) : tweak.isApplied ? (
             <div className="w-5 h-5 rounded bg-success/20 flex items-center justify-center">
               <Check className="w-3.5 h-3.5 text-success" />
             </div>
@@ -92,6 +96,11 @@ export function TweakCard({ tweak, selected, onToggle }: TweakCardProps) {
             {tweak.isApplied && (
               <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-success/15 text-success shrink-0">
                 Applied
+              </span>
+            )}
+            {tweak.incompatible && (
+              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-bg-tertiary text-text-muted shrink-0">
+                Windows 11 only
               </span>
             )}
           </div>

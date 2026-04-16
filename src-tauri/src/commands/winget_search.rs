@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::process::Command;
+use std::sync::OnceLock;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,6 +23,142 @@ pub struct WingetPackageDetails {
     pub license: Option<String>,
 }
 
+static WINGET_JSON_SUPPORT: OnceLock<bool> = OnceLock::new();
+
+fn detect_winget_json_support() -> bool {
+    let output = Command::new("cmd")
+        .args(["/C", "chcp 65001 >nul && winget --info"])
+        .output();
+
+    match output {
+        Ok(out) => {
+            let stdout = String::from_utf8_lossy(&out.stdout);
+            // Look for version line like "Windows Package Manager v1.9.25200"
+            for line in stdout.lines() {
+                let line = line.trim();
+                if line.contains("Windows Package Manager") {
+                    // Extract version: find "v" followed by digits
+                    if let Some(v_pos) = line.rfind('v') {
+                        let ver_str = &line[v_pos + 1..];
+                        let parts: Vec<&str> = ver_str.split('.').collect();
+                        if parts.len() >= 2 {
+                            let major: u32 = parts[0].parse().unwrap_or(0);
+                            let minor: u32 = parts[1].parse().unwrap_or(0);
+                            return major > 1 || (major == 1 && minor >= 4);
+                        }
+                    }
+                }
+            }
+            false
+        }
+        Err(_) => false,
+    }
+}
+
+fn supports_json() -> bool {
+    *WINGET_JSON_SUPPORT.get_or_init(detect_winget_json_support)
+}
+
+fn parse_winget_json_search(json_str: &str) -> Option<Vec<WingetSearchResult>> {
+    let parsed: serde_json::Value = serde_json::from_str(json_str).ok()?;
+    let sources = parsed.get("Sources")?.as_array()?;
+    let mut results = Vec::new();
+
+    for source in sources {
+        let packages = source.get("Packages")?.as_array()?;
+        for pkg in packages {
+            let id = pkg
+                .get("PackageIdentifier")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string();
+            let name = pkg
+                .get("PackageName")
+                .and_then(|v| v.as_str())
+                .unwrap_or(&id)
+                .to_string();
+            let version = pkg
+                .get("PackageVersion")
+                .or_else(|| pkg.get("Version"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("Unknown")
+                .to_string();
+
+            if !id.is_empty() {
+                results.push(WingetSearchResult {
+                    name,
+                    id,
+                    version,
+                    source: "winget".to_string(),
+                });
+            }
+        }
+    }
+
+    if results.is_empty() {
+        None
+    } else {
+        Some(results)
+    }
+}
+
+fn parse_winget_show_json(json_str: &str) -> Option<WingetPackageDetails> {
+    let parsed: serde_json::Value = serde_json::from_str(json_str).ok()?;
+
+    // winget show --output json wraps in Sources[0].Packages[0]
+    let pkg = parsed
+        .get("Sources")
+        .and_then(|s| s.as_array())
+        .and_then(|a| a.first())
+        .and_then(|s| s.get("Packages"))
+        .and_then(|p| p.as_array())
+        .and_then(|a| a.first())
+        .unwrap_or(&parsed);
+
+    let id = pkg
+        .get("PackageIdentifier")
+        .and_then(|v| v.as_str())
+        .unwrap_or("")
+        .to_string();
+
+    if id.is_empty() {
+        return None;
+    }
+
+    Some(WingetPackageDetails {
+        id: id.clone(),
+        name: pkg
+            .get("PackageName")
+            .and_then(|v| v.as_str())
+            .unwrap_or(&id)
+            .to_string(),
+        version: pkg
+            .get("PackageVersion")
+            .or_else(|| pkg.get("Version"))
+            .and_then(|v| v.as_str())
+            .unwrap_or("Unknown")
+            .to_string(),
+        publisher: pkg
+            .get("Publisher")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
+        description: pkg
+            .get("Description")
+            .or_else(|| pkg.get("ShortDescription"))
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
+        homepage: pkg
+            .get("Homepage")
+            .or_else(|| pkg.get("PackageUrl"))
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
+        license: pkg
+            .get("License")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
+    })
+}
+
 #[tauri::command]
 pub async fn search_winget_packages(query: String) -> Result<Vec<WingetSearchResult>, String> {
     if query.trim().len() < 2 {
@@ -29,6 +166,28 @@ pub async fn search_winget_packages(query: String) -> Result<Vec<WingetSearchRes
     }
 
     let sanitized = query.replace('"', "");
+
+    // Try JSON output first if supported
+    if supports_json() {
+        let json_output = Command::new("cmd")
+            .args([
+                "/C",
+                &format!(
+                    "chcp 65001 >nul && winget search \"{}\" --source winget --accept-source-agreements --disable-interactivity --count 20 --output json",
+                    sanitized
+                ),
+            ])
+            .output();
+
+        if let Ok(out) = json_output {
+            let stdout = String::from_utf8_lossy(&out.stdout);
+            if let Some(results) = parse_winget_json_search(&stdout) {
+                return Ok(results);
+            }
+        }
+    }
+
+    // Fall back to table parsing
     let output = Command::new("cmd")
         .args([
             "/C",
@@ -41,10 +200,10 @@ pub async fn search_winget_packages(query: String) -> Result<Vec<WingetSearchRes
         .map_err(|e| format!("Failed to run winget: {}", e))?;
 
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    parse_winget_search_output(&stdout)
+    parse_winget_table_output(&stdout)
 }
 
-fn parse_winget_search_output(output: &str) -> Result<Vec<WingetSearchResult>, String> {
+fn parse_winget_table_output(output: &str) -> Result<Vec<WingetSearchResult>, String> {
     let lines: Vec<&str> = output.lines().collect();
 
     // Find the header line (starts with "Name")
@@ -102,6 +261,28 @@ fn parse_winget_search_output(output: &str) -> Result<Vec<WingetSearchResult>, S
 #[tauri::command]
 pub async fn get_winget_package_info(package_id: String) -> Result<WingetPackageDetails, String> {
     let sanitized = package_id.replace('"', "");
+
+    // Try JSON output first if supported
+    if supports_json() {
+        let json_output = Command::new("cmd")
+            .args([
+                "/C",
+                &format!(
+                    "chcp 65001 >nul && winget show --id {} -e --accept-source-agreements --disable-interactivity --output json",
+                    sanitized
+                ),
+            ])
+            .output();
+
+        if let Ok(out) = json_output {
+            let stdout = String::from_utf8_lossy(&out.stdout);
+            if let Some(details) = parse_winget_show_json(&stdout) {
+                return Ok(details);
+            }
+        }
+    }
+
+    // Fall back to text parsing
     let output = Command::new("cmd")
         .args([
             "/C",

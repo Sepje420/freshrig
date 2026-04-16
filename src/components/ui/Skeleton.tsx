@@ -10,7 +10,7 @@ export function SkeletonLine({
 
 export function SkeletonCard() {
   return (
-    <div className="bg-bg-card rounded-lg border border-border p-4 space-y-3">
+    <div className="bg-bg-card rounded-lg border border-border p-4 space-y-3" aria-busy="true" role="progressbar" aria-label="Loading...">
       <div className="flex items-center justify-between">
         <SkeletonLine width="40%" height="1.25rem" />
         <SkeletonLine width="0.75rem" height="0.75rem" />
@@ -23,7 +23,7 @@ export function SkeletonCard() {
 
 export function SkeletonRow() {
   return (
-    <div className="flex items-center gap-3 p-3">
+    <div className="flex items-center gap-3 p-3" aria-busy="true" role="progressbar" aria-label="Loading...">
       <SkeletonLine width="1.5rem" height="1.5rem" />
       <div className="flex-1 space-y-2">
         <SkeletonLine width="60%" />

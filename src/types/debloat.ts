@@ -1,4 +1,4 @@
-export type TweakTier = "safe" | "moderate" | "risky";
+export type TweakTier = "safe" | "moderate" | "expert";
 export type TweakCategory = "privacy" | "bloatware" | "performance" | "appearance";
 export type TweakType = "registrySet" | "appxRemove" | "serviceDisable" | "scheduledTask";
 
@@ -12,6 +12,8 @@ export interface DebloatTweak {
   isApplied: boolean;
   isReversible: boolean;
   warning: string | null;
+  minWindowsBuild: number | null;
+  incompatible: boolean;
 }
 
 export interface DebloatResult {

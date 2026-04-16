@@ -6,7 +6,6 @@ import {
   Package,
   Sparkles,
   ArrowRight,
-  X,
   Loader2,
   BookMarked,
   Zap,
@@ -119,19 +118,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <div className="bg-bg-elevated border border-border rounded-xl shadow-elevated w-full max-w-xl mx-4 overflow-hidden">
-        {/* Skip */}
-        <div className="flex justify-end px-4 pt-3">
-          <button
-            onClick={onComplete}
-            className="flex items-center gap-1 text-xs text-text-muted hover:text-text-primary transition-colors"
-          >
-            Skip
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
         {/* Step dots */}
-        <div className="flex justify-center gap-2 px-6 pb-4">
+        <div className="flex justify-center gap-2 px-6 pt-5 pb-4">
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
@@ -299,7 +287,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
         {/* Footer */}
         <div className="px-8 py-4 border-t border-border flex items-center justify-between">
-          <div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onComplete}
+              className="text-sm text-text-muted hover:text-text-primary transition-colors"
+            >
+              Skip setup
+            </button>
             {step > 0 && (
               <button
                 onClick={goBack}
