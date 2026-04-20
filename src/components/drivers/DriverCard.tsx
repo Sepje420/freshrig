@@ -1,5 +1,7 @@
-import { ExternalLink, Download } from "lucide-react";
+import { ExternalLink, Download, Loader2, Check } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
+import { toast } from "sonner";
+import { useDriverStore } from "../../stores/driverStore";
 import type { DriverRecommendation, DriverCategory, DriverStatus } from "../../types/drivers";
 
 interface DriverCardProps {
@@ -40,8 +42,23 @@ function getVendorColor(vendor: string): string {
 export function DriverCard({ recommendation: rec }: DriverCardProps) {
   const vendorColor = getVendorColor(rec.vendor);
   const statusCfg = statusConfig[rec.status];
+  const { installingDriverId, installedDriverIds, installDriver } = useDriverStore();
 
-  const handleDownload = async () => {
+  const isInstalling = !!rec.wingetId && installingDriverId === rec.wingetId;
+  const isInstalled = !!rec.wingetId && installedDriverIds.has(rec.wingetId);
+  const canWingetInstall = rec.installAction === "Winget" && !!rec.wingetId;
+
+  const handleWingetInstall = async () => {
+    if (!rec.wingetId) return;
+    const result = await installDriver(rec.wingetId);
+    if (result.success) {
+      toast.success(`${rec.vendor} driver tool installed`);
+    } else {
+      toast.error(result.message || "Driver install failed");
+    }
+  };
+
+  const handleOpenDownload = async () => {
     if (rec.downloadUrl) {
       await openUrl(rec.downloadUrl);
     }
@@ -59,13 +76,19 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
         {/* Header row */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${categoryColors[rec.category]}`}>
                 {categoryLabels[rec.category]}
               </span>
               <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${statusCfg.color}`}>
                 {statusCfg.label}
               </span>
+              {isInstalled && (
+                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-success/20 text-success flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  Installed
+                </span>
+              )}
             </div>
             <h3 className="text-sm font-semibold text-text-primary truncate" title={rec.deviceName}>
               {rec.deviceName}
@@ -99,14 +122,40 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
 
         {/* Actions */}
         <div className="flex gap-2 pt-1">
-          {rec.downloadUrl && (
+          {canWingetInstall ? (
             <button
-              onClick={handleDownload}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-bg-primary text-xs font-medium hover:bg-accent-hover transition-colors"
+              onClick={handleWingetInstall}
+              disabled={isInstalling || isInstalled}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-bg-primary text-xs font-medium hover:bg-accent-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              title={rec.wingetId ? `winget install ${rec.wingetId}` : undefined}
             >
-              <Download className="w-3.5 h-3.5" />
-              Download Driver
+              {isInstalling ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Installing...
+                </>
+              ) : isInstalled ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  Installed
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  Install
+                </>
+              )}
             </button>
+          ) : (
+            rec.downloadUrl && (
+              <button
+                onClick={handleOpenDownload}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-text-secondary text-xs font-medium hover:bg-bg-tertiary hover:text-text-primary transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Download
+              </button>
+            )
           )}
           {rec.downloadPage && rec.downloadPage !== rec.downloadUrl && (
             <button
@@ -114,7 +163,7 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-text-secondary text-xs font-medium hover:bg-bg-tertiary hover:text-text-primary transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              Support Page
+              Support
             </button>
           )}
         </div>

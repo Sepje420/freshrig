@@ -516,7 +516,7 @@ export function AppsPage() {
         </div>
       )}
 
-      {/* UAC install confirmation dialog */}
+      {/* Install confirmation dialog */}
       {showInstallConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowInstallConfirm(false)}>
           <div className="bg-bg-elevated border border-border rounded-xl shadow-elevated w-full max-w-sm mx-4 animate-fade-in" onClick={(e) => e.stopPropagation()}>
@@ -532,7 +532,7 @@ export function AppsPage() {
                 </div>
               </div>
               <p className="text-sm text-text-secondary">
-                Some apps may trigger a Windows UAC prompt requesting administrator access during installation.
+                Installs run silently in the background. You can keep using FreshRig while they finish.
               </p>
               <div className="flex items-center justify-end gap-2">
                 <button

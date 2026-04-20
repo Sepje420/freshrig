@@ -98,6 +98,7 @@ pub fn run() {
             commands::hardware::get_driver_issues,
             commands::hardware::get_windows_build,
             commands::drivers::get_driver_recommendations,
+            commands::drivers::install_driver,
             commands::apps::get_app_catalog,
             commands::apps::get_free_disk_space_gb,
             commands::apps::check_network_connectivity,

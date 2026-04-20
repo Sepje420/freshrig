@@ -51,9 +51,7 @@ export function ApplyConfirmDialog({
     setRestoreError(null);
     const ok = await createRestorePoint();
     if (!ok) {
-      setRestoreError(
-        "Could not create restore point. Run FreshRig as administrator and try again."
-      );
+      setRestoreError("Could not create restore point. Try again.");
       return;
     }
     setStep("applying");

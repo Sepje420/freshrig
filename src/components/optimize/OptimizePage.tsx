@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, AlertTriangle, ShieldAlert, Eye, Crown, Check, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, AlertTriangle, Eye, Crown, Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useDebloatStore } from "../../stores/debloatStore";
 import { useLicenseStore } from "../../stores/licenseStore";
 import { TweakCard } from "./TweakCard";
@@ -30,12 +30,10 @@ export function OptimizePage() {
     activeTier,
     activeCategory,
     isApplying,
-    isAdmin,
     loading,
     fetchTweaks,
     toggleTweak,
     clearSelection,
-    checkAdmin,
     applySelected,
     setActiveTier,
     setActiveCategory,
@@ -50,8 +48,7 @@ export function OptimizePage() {
 
   useEffect(() => {
     fetchTweaks();
-    checkAdmin();
-  }, [fetchTweaks, checkAdmin]);
+  }, [fetchTweaks]);
 
   const filteredTweaks = useMemo(() => {
     return tweaks.filter((t) => {
@@ -105,20 +102,6 @@ export function OptimizePage() {
           changes are applied.
         </p>
       </div>
-
-      {/* Admin warning */}
-      {!isAdmin && (
-        <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-error/10 border border-error/20 animate-fade-in">
-          <ShieldAlert className="w-5 h-5 text-error shrink-0" />
-          <div>
-            <p className="text-sm text-error font-medium">Administrator privileges required</p>
-            <p className="text-xs text-error/80 mt-0.5">
-              Some optimizations require admin rights. Right-click FreshRig and select "Run as
-              administrator" for full access.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Last optimization results */}
       {lastApplyResults && lastApplyTimestamp && (() => {

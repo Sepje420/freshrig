@@ -532,17 +532,9 @@ fn apply_single_tweak(def: &crate::data::debloat_tweaks::TweakDefinition) -> Deb
 
 #[tauri::command]
 pub async fn check_admin_elevation() -> Result<bool, String> {
-    // Try to open a protected registry key to check admin status
-    tokio::task::spawn_blocking(|| {
-        let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-        hklm.open_subkey_with_flags(
-            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System",
-            KEY_WRITE,
-        )
-        .is_ok()
-    })
-    .await
-    .map_err(|e| format!("Task failed: {}", e))
+    // App always runs elevated via embedded Windows manifest (windows-app-manifest.xml).
+    // Kept as a stub for IPC compatibility with any frontend caller.
+    Ok(true)
 }
 
 #[tauri::command]

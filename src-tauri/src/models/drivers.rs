@@ -11,6 +11,14 @@ pub struct DriverRecommendation {
     pub download_url: String,
     pub download_page: String,
     pub status: DriverStatus,
+    #[serde(default)]
+    pub winget_id: Option<String>,
+    #[serde(default = "default_install_action")]
+    pub install_action: DriverInstallAction,
+}
+
+fn default_install_action() -> DriverInstallAction {
+    DriverInstallAction::OpenUrl
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -28,4 +36,10 @@ pub enum DriverStatus {
     UpdateAvailable,
     Missing,
     Unknown,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum DriverInstallAction {
+    Winget,
+    OpenUrl,
 }

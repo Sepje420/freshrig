@@ -9,8 +9,6 @@ interface DebloatState {
   activeTier: TweakTier | "all";
   activeCategory: TweakCategory | "all";
   isApplying: boolean;
-  isAdmin: boolean;
-  isCheckingAdmin: boolean;
   restorePointCreated: boolean;
   results: DebloatResult[];
   loading: boolean;
@@ -20,7 +18,6 @@ interface DebloatState {
   toggleTweak: (id: string) => void;
   selectAllInTier: (tier: TweakTier) => void;
   clearSelection: () => void;
-  checkAdmin: () => Promise<void>;
   createRestorePoint: () => Promise<boolean>;
   applySelected: (dryRun: boolean) => Promise<DebloatResult[]>;
   setActiveTier: (tier: TweakTier | "all") => void;
@@ -46,8 +43,6 @@ export const useDebloatStore = create<DebloatState>((set, get) => {
     activeTier: "all",
     activeCategory: "all",
     isApplying: false,
-    isAdmin: false,
-    isCheckingAdmin: false,
     restorePointCreated: false,
     results: [],
     loading: false,
@@ -84,16 +79,6 @@ export const useDebloatStore = create<DebloatState>((set, get) => {
 
     clearSelection: () => {
       set({ selectedIds: new Set() });
-    },
-
-    checkAdmin: async () => {
-      set({ isCheckingAdmin: true });
-      try {
-        const isAdmin = await invoke<boolean>("check_admin_elevation");
-        set({ isAdmin, isCheckingAdmin: false });
-      } catch {
-        set({ isAdmin: false, isCheckingAdmin: false });
-      }
     },
 
     createRestorePoint: async () => {

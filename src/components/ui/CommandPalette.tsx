@@ -149,7 +149,7 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
       action: () => {
         invoke("create_restore_point")
           .then(() => toast.success("Restore point created"))
-          .catch(() => toast.error("Failed — run as administrator"));
+          .catch(() => toast.error("Failed to create restore point"));
       },
     },
     {

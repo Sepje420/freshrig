@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Cpu } from "lucide-react";
+import { Cpu, Info } from "lucide-react";
 import { useDriverStore } from "../../stores/driverStore";
 import { DriverCard } from "./DriverCard";
 
@@ -24,6 +24,18 @@ export function DriversPage() {
           </div>
         </div>
       </div>
+
+      {/* Info banner */}
+      {!loading && !error && recommendations.length > 0 && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-info/10 border border-info/20">
+          <Info className="w-5 h-5 text-info shrink-0 mt-0.5" />
+          <p className="text-xs text-text-secondary leading-relaxed">
+            Drivers marked <span className="font-semibold text-text-primary">Install</span> use winget to install the
+            vendor's driver management tool (e.g., GeForce Experience, Intel DSA), which then handles driver
+            downloads and updates automatically. Other drivers open the vendor's support page in your browser.
+          </p>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (
