@@ -455,12 +455,12 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   />
                   <button
                     onClick={() => {
-                      if (licenseInput.startsWith("FR-")) {
-                        setLicense(licenseInput, "pro");
+                      const ok = setLicense(licenseInput.trim(), "pro");
+                      if (ok) {
                         toast.success("Pro license activated!");
                         setLicenseInput("");
                       } else {
-                        toast.error("Invalid license key. Keys start with FR-");
+                        toast.error("Invalid license key. Expected format: FR-XXXXX-XXXXX");
                       }
                     }}
                     disabled={!licenseInput.trim()}

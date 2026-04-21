@@ -1,4 +1,12 @@
 export const CHANGELOG: Record<string, string> = {
+  "0.5.0": `### What's New in v0.5.0
+
+- **Always elevated** — FreshRig now runs as administrator automatically, no more restart prompts
+- **Silent driver install** — Install GPU and hardware driver tools directly from the Drivers page via winget
+- **Build traceability** — Each build carries a unique fingerprint for support
+- **Stronger license validation** — Improved Pro key format validation
+- **Copyright headers** — Source files now carry proper attribution
+`,
   "0.4.0": `### What's New in v0.4.0
 
 - **Stability** — WMI hardware detection now has timeouts and graceful fallbacks; never hangs on broken systems

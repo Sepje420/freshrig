@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Seppe Willemsens (sepje420). MIT License.
 mod commands;
 mod data;
 mod models;

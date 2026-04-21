@@ -17,7 +17,7 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - `src/config/` — App constants (`app.ts`)
 
 ## Key patterns & Requirements
-- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **0.4.0**.
+- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **0.5.0**.
 - **Tauri IPC:** Frontend calls `invoke('command_name')`, backend uses `#[tauri::command]` in `src-tauri/src/lib.rs`.
 - **Rust ↔ TS:** Rust uses snake_case, TypeScript uses camelCase — Tauri auto-converts field names.
 - **Hardware data:** All hardware info comes from WMI queries via the `wmi` crate (v0.18+, `WMIConnection::new()` takes 0 args). WMI queries have 5-second timeouts to avoid hangs.

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { APP_NAME, APP_TAGLINE, APP_VERSION } from "../../config/app";
+import { APP_NAME, APP_TAGLINE, APP_VERSION, BUILD_FINGERPRINT } from "../../config/app";
 import { useSettingsStore } from "../../stores/settingsStore";
 
 const LINKS = [
@@ -28,6 +28,7 @@ export function AboutPage() {
 
   const systemInfo = [
     { label: "App Version", value: APP_VERSION },
+    { label: "Build", value: BUILD_FINGERPRINT },
     { label: "Mode", value: isPortable ? "Portable" : "Installed" },
     { label: "Framework", value: "Tauri v2" },
     { label: "OS", value: navigator.platform },

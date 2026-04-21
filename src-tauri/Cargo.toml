@@ -1,6 +1,6 @@
 [package]
 name = "freshrig"
-version = "0.4.0"
+version = "0.5.0"
 description = "The first tool you run after a fresh Windows install"
 authors = ["FreshRig"]
 edition = "2021"
