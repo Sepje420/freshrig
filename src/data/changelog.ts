@@ -1,4 +1,10 @@
 export const CHANGELOG: Record<string, string> = {
+  "0.5.1": `### What's New in v0.5.1
+
+- **Build fingerprint fix** — Fingerprint now baked at compile time for accurate build tracing
+- **Dev experience** — UAC elevation only triggers on release builds, not during development
+- **Repo consistency** — Standardized GitHub URL casing across all documentation
+`,
   "0.5.0": `### What's New in v0.5.0
 
 - **Always elevated** — FreshRig now runs as administrator automatically, no more restart prompts

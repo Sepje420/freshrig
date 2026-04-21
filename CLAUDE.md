@@ -17,7 +17,7 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - `src/config/` — App constants (`app.ts`)
 
 ## Key patterns & Requirements
-- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **0.5.0**.
+- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **0.5.1**.
 - **Tauri IPC:** Frontend calls `invoke('command_name')`, backend uses `#[tauri::command]` in `src-tauri/src/lib.rs`.
 - **Rust ↔ TS:** Rust uses snake_case, TypeScript uses camelCase — Tauri auto-converts field names.
 - **Hardware data:** All hardware info comes from WMI queries via the `wmi` crate (v0.18+, `WMIConnection::new()` takes 0 args). WMI queries have 5-second timeouts to avoid hangs.
@@ -27,7 +27,9 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - **Storage:** Settings via `tauri-plugin-store` (`settings.json`). Profiles in `%APPDATA%/com.freshrig.app/profiles/` (or portable data dir).
 - **Debloat Tiers:** Safe → Moderate → Expert (type: `TweakTier = "safe" | "moderate" | "expert"`).
 - **Pre-flight checks:** Disk space (`get_free_disk_space_gb`) and network connectivity (`check_network_connectivity`) are checked before batch installs.
-- **Always elevated:** App embeds a Windows manifest (`src-tauri/windows-app-manifest.xml`) with `requireAdministrator` via `tauri_build::WindowsAttributes::app_manifest()` in `build.rs`. UAC prompt fires at every launch (dev and prod). The Common-Controls v6 dependency in the manifest is mandatory — without it Tauri's dialog APIs crash. Do NOT use `embed-resource` — it causes CVT1100 duplicate-resource linker errors with Tauri v2.
+- **Always elevated:** App embeds a Windows manifest (`src-tauri/windows-app-manifest.xml`) with `requireAdministrator` via `tauri_build::WindowsAttributes::app_manifest()` in `build.rs`. The manifest is embedded ONLY for release builds (`PROFILE=release`), so `npm run tauri dev` does NOT trigger UAC — only `npm run tauri build` output does. The Common-Controls v6 dependency in the manifest is mandatory — without it Tauri's dialog APIs crash. Do NOT use `embed-resource` — it causes CVT1100 duplicate-resource linker errors with Tauri v2.
+- **Pro License Testing:** Test keys must match format `FR-XXXXX-XXXXX` where X is uppercase A-Z or 0-9. Example test key: `FR-TEST1-KEY01`. The old lowercase "FR-xxxxx" format no longer validates.
+- **Build fingerprint:** `BUILD_FINGERPRINT` in `src/config/app.ts` uses a `__BUILD_TIMESTAMP__` constant injected by Vite (`define` in `vite.config.ts`) — it's baked in at build time, so all users on the same build report the same fingerprint. Declared in `src/vite-env.d.ts`.
 - **Crash logs:** Panic handler scrubs usernames, MAC addresses, and serial numbers via regex before writing to `crash.log`.
 - **SBOM:** CI generates CycloneDX SBOMs for both Rust and npm dependencies.
 

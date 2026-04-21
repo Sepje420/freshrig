@@ -5,7 +5,7 @@
 **Do NOT create a public GitHub issue for security vulnerabilities.**
 
 ### Preferred: GitHub Security Advisory
-Use GitHub's [Security Advisory feature](https://github.com/sepje420/freshrig/security/advisories/new).
+Use GitHub's [Security Advisory feature](https://github.com/Sepje420/freshrig/security/advisories/new).
 
 ### Alternative: Email
 Send details to **seppewillemsens@icloud.com** (dedicated security@freshrig.app coming soon).

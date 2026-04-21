@@ -4,14 +4,14 @@
   <p>Hardware detection • Driver recommendations • App batch install • Shareable profiles</p>
 
   <p>
-    <a href="https://github.com/sepje420/freshrig/releases/latest"><img src="https://img.shields.io/github/v/release/sepje420/freshrig?style=flat-square&color=00d4aa" alt="Latest Release"></a>
-    <a href="https://github.com/sepje420/freshrig/releases"><img src="https://img.shields.io/github/downloads/sepje420/freshrig/total?style=flat-square&color=00d4aa" alt="Downloads"></a>
-    <a href="https://github.com/sepje420/freshrig/stargazers"><img src="https://img.shields.io/github/stars/sepje420/freshrig?style=flat-square&color=00d4aa" alt="Stars"></a>
-    <a href="https://github.com/sepje420/freshrig/blob/main/LICENSE"><img src="https://img.shields.io/github/license/sepje420/freshrig?style=flat-square" alt="License"></a>
+    <a href="https://github.com/Sepje420/freshrig/releases/latest"><img src="https://img.shields.io/github/v/release/Sepje420/freshrig?style=flat-square&color=00d4aa" alt="Latest Release"></a>
+    <a href="https://github.com/Sepje420/freshrig/releases"><img src="https://img.shields.io/github/downloads/Sepje420/freshrig/total?style=flat-square&color=00d4aa" alt="Downloads"></a>
+    <a href="https://github.com/Sepje420/freshrig/stargazers"><img src="https://img.shields.io/github/stars/Sepje420/freshrig?style=flat-square&color=00d4aa" alt="Stars"></a>
+    <a href="https://github.com/Sepje420/freshrig/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Sepje420/freshrig?style=flat-square" alt="License"></a>
   </p>
 
   <p>
-    <a href="https://github.com/sepje420/freshrig/releases/latest/download/FreshRig_0.1.0_x64-setup.exe">
+    <a href="https://github.com/Sepje420/freshrig/releases/latest/download/FreshRig_0.1.0_x64-setup.exe">
       <img src="https://img.shields.io/badge/Download%20for%20Windows-00d4aa?style=for-the-badge&logo=windows&logoColor=white" alt="Download">
     </a>
   </p>
@@ -43,14 +43,14 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 ## 🚀 Quick Start
 
 ### Download
-Get the latest installer from [GitHub Releases](https://github.com/sepje420/freshrig/releases/latest).
+Get the latest installer from [GitHub Releases](https://github.com/Sepje420/freshrig/releases/latest).
 
 > ⚠️ **Windows SmartScreen may show a warning** since the app is new and unsigned. Click "More info" → "Run anyway". This is normal for new open-source apps.
 
 ### Build from source
 ```bash
 # Prerequisites: Node.js, Rust, Microsoft C++ Build Tools
-git clone https://github.com/sepje420/freshrig.git
+git clone https://github.com/Sepje420/freshrig.git
 cd freshrig
 npm install
 npm run tauri dev
