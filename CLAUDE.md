@@ -33,6 +33,9 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - **Crash logs:** Panic handler scrubs usernames, MAC addresses, and serial numbers via regex before writing to `crash.log`.
 - **SBOM:** CI generates CycloneDX SBOMs for both Rust and npm dependencies.
 
+## Known upstream issues
+- **Suppressed cargo audit findings:** Two transitive Tauri deps surface RustSec advisories that we cannot patch at our layer. `glib 0.18.5` (RUSTSEC-2024-0429 / GHSA-wrw7-89jp-8q8g) is Linux-only via gtk-rs 0.18 and excluded from Windows builds. `rand 0.7.3` (RUSTSEC-2026-0097 / GHSA-cq8v-f236-94qc) is build-time HTML codegen via `kuchikiki`. Both ignored in `src-tauri/.cargo/audit.toml`. Re-evaluate when Tauri bumps to gtk-rs 0.20+ or replaces kuchikiki.
+
 ## Commands & Workflow
 - `npm run tauri dev` — start development
 - `npm run tauri build` — creates production NSIS installer in `src-tauri/target/release/bundle/nsis/`
