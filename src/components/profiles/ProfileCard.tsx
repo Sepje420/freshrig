@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Package, Trash2, Share2, Download } from "lucide-react";
 import { ShareMenu } from "./ShareMenu";
+import { Card } from "../ui/Card";
 import type { ProfileSummary } from "../../types/profiles";
 
 interface ProfileCardProps {
@@ -33,8 +34,8 @@ export function ProfileCard({ profile, index, onLoad, onDelete, onShareProfile }
   const [showShare, setShowShare] = useState(false);
 
   return (
-    <div
-      className="group relative bg-bg-card rounded-lg border border-border shadow-card hover:border-accent/30 hover:shadow-elevated transition-all duration-200 animate-fade-in"
+    <Card
+      className="group relative animate-fade-in hover:border-[var(--accent-ring)]"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       <div className="p-5 space-y-3">
@@ -112,6 +113,6 @@ export function ProfileCard({ profile, index, onLoad, onDelete, onShareProfile }
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

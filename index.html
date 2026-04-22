@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FreshRig</title>
+    <script>
+      // Applies the saved accent before React mounts — prevents flash of default accent.
+      try {
+        var s = JSON.parse(localStorage.getItem("freshrig-settings") || "{}");
+        if (s.state && s.state.accentColor) {
+          document.documentElement.dataset.accent = s.state.accentColor;
+        }
+      } catch (e) {
+        /* ignore */
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

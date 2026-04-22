@@ -1,39 +1,104 @@
 @import "tailwindcss";
 
-@theme {
-  /* ========================================
-     FreshRig Design Tokens
-     Dark-mode first, Windows 11 Fluent-inspired
-     ======================================== */
+/* ========================================
+   FreshRig Design Tokens
+   Dark-mode first, multi-accent theme system
+   ======================================== */
 
-  /* Background layers */
-  --color-bg-primary: #0a0a0f;
-  --color-bg-secondary: #12121a;
-  --color-bg-tertiary: #1a1a25;
-  --color-bg-card: #16161f;
-  --color-bg-card-hover: #1e1e2a;
-  --color-bg-elevated: #1f1f2b;
+:root {
+  /* Neutrals — cool near-black, never pure #000 */
+  --bg-base: #09090b;
+  --bg-sidebar: #0c0d0f;
+  --bg-card: #111214;
+  --bg-card-hover: #18191c;
+  --bg-elevated: #1e1f23;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.14);
+  --text-primary: #e8eaed;
+  --text-secondary: #8b8d93;
+  --text-muted: #5c5e64;
 
-  /* Accent — electric cyan/teal */
-  --color-accent: #00d4aa;
-  --color-accent-hover: #00e8bc;
-  --color-accent-muted: #00d4aa33;
-  --color-accent-glow: #00d4aa22;
+  /* Status (accent-independent) */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* Accent — default teal */
+  --accent: #00d4aa;
+  --accent-hover: #00e8bb;
+  --accent-subtle: rgba(0, 212, 170, 0.12);
+  --accent-ring: rgba(0, 212, 170, 0.4);
+}
+
+/* 6 accent presets — toggled via document.documentElement.dataset.accent */
+[data-accent="teal"] {
+  --accent: #00d4aa;
+  --accent-hover: #00e8bb;
+  --accent-subtle: rgba(0, 212, 170, 0.12);
+  --accent-ring: rgba(0, 212, 170, 0.4);
+}
+[data-accent="blue"] {
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-subtle: rgba(59, 130, 246, 0.12);
+  --accent-ring: rgba(59, 130, 246, 0.4);
+}
+[data-accent="purple"] {
+  --accent: #a855f7;
+  --accent-hover: #c084fc;
+  --accent-subtle: rgba(168, 85, 247, 0.12);
+  --accent-ring: rgba(168, 85, 247, 0.4);
+}
+[data-accent="orange"] {
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --accent-subtle: rgba(249, 115, 22, 0.12);
+  --accent-ring: rgba(249, 115, 22, 0.4);
+}
+[data-accent="rose"] {
+  --accent: #f43f5e;
+  --accent-hover: #fb7185;
+  --accent-subtle: rgba(244, 63, 94, 0.12);
+  --accent-ring: rgba(244, 63, 94, 0.4);
+}
+[data-accent="green"] {
+  --accent: #22c55e;
+  --accent-hover: #4ade80;
+  --accent-subtle: rgba(34, 197, 94, 0.12);
+  --accent-ring: rgba(34, 197, 94, 0.4);
+}
+
+@theme inline {
+  /* New canonical tokens */
+  --color-bg-base: var(--bg-base);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-ring: var(--accent-ring);
 
   /* Status */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
 
-  /* Text */
-  --color-text-primary: #e8e8ed;
-  --color-text-secondary: #9898a8;
-  --color-text-muted: #5a5a6e;
-
-  /* Borders */
-  --color-border: #2a2a38;
-  --color-border-hover: #3a3a4a;
+  /* Backward-compat aliases for the v0.5 palette
+     (kept so existing className usages keep working while we migrate) */
+  --color-bg-primary: var(--bg-base);
+  --color-bg-secondary: var(--bg-card);
+  --color-bg-tertiary: var(--bg-card-hover);
+  --color-accent-muted: var(--accent-subtle);
+  --color-accent-glow: var(--accent-subtle);
 
   /* Typography */
   --font-sans: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
@@ -52,8 +117,8 @@
 
 html,
 body {
-  background-color: #0a0a0f;
-  color: #e8e8ed;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -61,6 +126,13 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+/* Smooth transition when swapping accents */
+:root {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
 /* Fade-in animation for cards */

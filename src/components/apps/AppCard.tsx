@@ -59,11 +59,11 @@ export function AppCard({ app, selected, progress, onToggle, isInstalled }: AppC
     <button
       onClick={hasStatus ? undefined : onToggle}
       disabled={hasStatus}
-      className={`relative w-full text-left rounded-lg border transition-all duration-200 ${
+      className={`relative w-full text-left rounded-xl border transition-colors duration-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
         selected && !hasStatus
-          ? "bg-accent-muted border-accent/50 shadow-elevated"
-          : "bg-bg-card border-border hover:bg-bg-card-hover hover:border-border-hover shadow-card"
-      } ${hasStatus ? "cursor-default" : "cursor-pointer"}`}
+          ? "bg-[var(--accent-subtle)] border-[var(--accent-ring)]"
+          : "bg-[var(--bg-card)] border-[var(--border)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-hover)]"
+      } ${hasStatus ? "cursor-default" : "cursor-pointer active:scale-[0.99] transition-transform duration-100"}`}
     >
       {/* Installed badge */}
       {isInstalled && !hasStatus && (

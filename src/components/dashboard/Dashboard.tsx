@@ -51,7 +51,7 @@ export function Dashboard() {
       {/* System Overview + Health Score */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-6">
         <SystemOverviewCard summary={summary} />
-        <div className="bg-bg-card rounded-lg border border-border shadow-card flex items-center justify-center">
+        <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex items-center justify-center">
           <HealthScore summary={summary} driverIssues={driverIssues} />
         </div>
       </div>
@@ -122,12 +122,12 @@ function LoadingSkeleton() {
     <div className="space-y-6">
       <Header />
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-6">
-        <div className="h-40 rounded-xl bg-bg-card border border-border animate-pulse" />
-        <div className="h-40 rounded-lg bg-bg-card border border-border animate-pulse" />
+        <div className="h-40 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] animate-pulse" />
+        <div className="h-40 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] animate-pulse" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-48 rounded-lg bg-bg-card border border-border animate-pulse" />
+          <div key={i} className="h-48 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] animate-pulse" />
         ))}
       </div>
     </div>

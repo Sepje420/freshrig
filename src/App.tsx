@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { MotionConfig, AnimatePresence, motion } from "framer-motion";
 import { AppLayout } from "./components/layout/AppLayout";
 import { UpdateBanner } from "./components/layout/UpdateBanner";
 import { WhatsNewModal } from "./components/layout/WhatsNewModal";
@@ -12,6 +13,7 @@ import { DriversPage } from "./components/drivers/DriversPage";
 import { AppsPage } from "./components/apps/AppsPage";
 import { ProfilesPage } from "./components/profiles/ProfilesPage";
 import { OptimizePage } from "./components/optimize/OptimizePage";
+import { StartupPage } from "./components/startup/StartupPage";
 import { SettingsPage } from "./components/settings/SettingsPage";
 import { AboutPage } from "./components/about/AboutPage";
 import { OnboardingWizard } from "./components/onboarding/OnboardingWizard";
@@ -37,6 +39,7 @@ function App() {
   useHotkeys("ctrl+3", () => navigate("apps"), { preventDefault: true });
   useHotkeys("ctrl+4", () => navigate("profiles"), { preventDefault: true });
   useHotkeys("ctrl+5", () => navigate("optimize"), { preventDefault: true });
+  useHotkeys("ctrl+6", () => navigate("startup"), { preventDefault: true });
   useHotkeys("ctrl+comma", () => navigate("settings"), { preventDefault: true });
   useHotkeys("ctrl+k", () => setShowCommandPalette((v) => !v), { preventDefault: true });
   useHotkeys("ctrl+shift+/", () => setShowShortcuts((v) => !v), { preventDefault: true });
@@ -95,29 +98,53 @@ function App() {
   }, [setSetting]);
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
-      <UpdateBanner />
-      <AppLayout currentView={currentView} onNavigate={navigate} onShowShortcuts={() => setShowShortcuts(true)}>
-        <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
-          {currentView === "dashboard" && <Dashboard />}
-          {currentView === "drivers" && <DriversPage />}
-          {currentView === "apps" && <AppsPage />}
-          {currentView === "profiles" && <ProfilesPage />}
-          {currentView === "optimize" && <OptimizePage />}
-          {currentView === "settings" && <SettingsPage onNavigate={navigate} />}
-          {currentView === "about" && <AboutPage />}
-        </ErrorBoundary>
-      </AppLayout>
-      {loaded && !settings.hasCompletedOnboarding && (
-        <OnboardingWizard onComplete={handleCompleteOnboarding} />
-      )}
-      {showCommandPalette && (
-        <CommandPalette onClose={() => setShowCommandPalette(false)} onNavigate={(v) => { navigate(v); setShowCommandPalette(false); }} />
-      )}
-      {showShortcuts && <ShortcutHelp onClose={() => setShowShortcuts(false)} />}
-      {showWhatsNew && <WhatsNewModal onClose={handleCloseWhatsNew} />}
-      <Toaster theme="dark" position="bottom-right" richColors />
-    </ErrorBoundary>
+    <MotionConfig transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.8 }}>
+      <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
+        <UpdateBanner />
+        <AppLayout currentView={currentView} onNavigate={navigate} onShowShortcuts={() => setShowShortcuts(true)}>
+          <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={currentView}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                {currentView === "dashboard" && <Dashboard />}
+                {currentView === "drivers" && <DriversPage />}
+                {currentView === "apps" && <AppsPage />}
+                {currentView === "profiles" && <ProfilesPage />}
+                {currentView === "optimize" && <OptimizePage />}
+                {currentView === "startup" && <StartupPage />}
+                {currentView === "settings" && <SettingsPage onNavigate={navigate} />}
+                {currentView === "about" && <AboutPage />}
+              </motion.div>
+            </AnimatePresence>
+          </ErrorBoundary>
+        </AppLayout>
+        {loaded && !settings.hasCompletedOnboarding && (
+          <OnboardingWizard onComplete={handleCompleteOnboarding} />
+        )}
+        {showCommandPalette && (
+          <CommandPalette onClose={() => setShowCommandPalette(false)} onNavigate={(v) => { navigate(v); setShowCommandPalette(false); }} />
+        )}
+        {showShortcuts && <ShortcutHelp onClose={() => setShowShortcuts(false)} />}
+        {showWhatsNew && <WhatsNewModal onClose={handleCloseWhatsNew} />}
+        <Toaster
+          theme="dark"
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: "var(--bg-elevated)",
+              border: "1px solid var(--border)",
+              color: "var(--text-primary)",
+            },
+            className: "freshrig-toast",
+          }}
+        />
+      </ErrorBoundary>
+    </MotionConfig>
   );
 }
 

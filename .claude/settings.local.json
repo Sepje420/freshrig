@@ -20,7 +20,18 @@
       "Bash(git add:*)",
       "Bash(cargo fmt:*)",
       "Bash(git commit:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cargo audit *)",
+      "Bash(git push *)",
+      "Bash(cargo generate-lockfile *)",
+      "Bash(npm run *)",
+      "Bash(git tag *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(git show-ref *)",
+      "Bash(gh run *)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --workflow=release.yml --limit=3)"
     ]
   }
 }

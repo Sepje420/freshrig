@@ -3,6 +3,7 @@ import { ExternalLink, Download, Loader2, Check } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { toast } from "sonner";
 import { useDriverStore } from "../../stores/driverStore";
+import { Card } from "../ui/Card";
 import type { DriverRecommendation, DriverCategory, DriverStatus } from "../../types/drivers";
 
 interface DriverCardProps {
@@ -83,7 +84,7 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
   };
 
   return (
-    <div className="bg-bg-card rounded-lg border border-border shadow-card hover:bg-bg-card-hover hover:border-border-hover hover:shadow-elevated transition-all duration-200 animate-fade-in">
+    <Card interactive className="animate-fade-in">
       <div className="p-5 space-y-3">
         {/* Header row */}
         <div className="flex items-start justify-between gap-2">
@@ -189,6 +190,6 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
             )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

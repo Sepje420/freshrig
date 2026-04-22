@@ -130,6 +130,8 @@ pub fn run() {
             commands::custom_apps::save_custom_app,
             commands::custom_apps::delete_custom_app,
             commands::custom_apps::download_and_install_custom_app,
+            commands::startup::get_startup_entries,
+            commands::startup::toggle_startup_entry,
             portable::check_portable_mode,
         ])
         .run(tauri::generate_context!())

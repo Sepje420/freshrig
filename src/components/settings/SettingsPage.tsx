@@ -18,20 +18,20 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useSettingsStore, type AccentColor } from "../../stores/settingsStore";
 import { useProfileStore } from "../../stores/profileStore";
 import { useUpdateStore } from "../../stores/updateStore";
 import { useLicenseStore } from "../../stores/licenseStore";
 import { APP_NAME, APP_VERSION } from "../../config/app";
 import type { AppCategory } from "../../types/apps";
 
-const ACCENT_PRESETS = [
-  { color: "#00d4aa", label: "Teal" },
-  { color: "#3b82f6", label: "Blue" },
-  { color: "#8b5cf6", label: "Purple" },
-  { color: "#f97316", label: "Orange" },
-  { color: "#ec4899", label: "Pink" },
-  { color: "#ef4444", label: "Red" },
+const ACCENT_PRESETS: { value: AccentColor; label: string; swatch: string }[] = [
+  { value: "teal", label: "Teal", swatch: "#00d4aa" },
+  { value: "blue", label: "Blue", swatch: "#3b82f6" },
+  { value: "purple", label: "Purple", swatch: "#a855f7" },
+  { value: "orange", label: "Orange", swatch: "#f97316" },
+  { value: "rose", label: "Rose", swatch: "#f43f5e" },
+  { value: "green", label: "Green", swatch: "#22c55e" },
 ];
 
 const CATEGORIES: { value: AppCategory | "all"; label: string }[] = [
@@ -52,7 +52,7 @@ interface SettingsPageProps {
 }
 
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
-  const { settings, setSetting, resetSettings, isPortable } = useSettingsStore();
+  const { settings, setSetting, setAccentColor, resetSettings, isPortable } = useSettingsStore();
   const { fetchProfiles } = useProfileStore();
   const { status: updateStatus, newVersion, checkForUpdates, downloadAndInstall } = useUpdateStore();
   const { licenseKey, validatedAt, isPro, setLicense, clearLicense } = useLicenseStore();
@@ -266,27 +266,43 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           <Palette className="w-4 h-4" />
           Appearance
         </h2>
-        <div className="bg-bg-card border border-border rounded-lg p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-text-primary">Accent color</p>
-              <p className="text-xs text-text-muted mt-0.5">Customize the app's highlight color</p>
-            </div>
+        <div className="bg-bg-card border border-border rounded-lg p-4 space-y-4">
+          <div>
+            <p className="text-sm font-medium text-text-primary">Accent color</p>
+            <p className="text-xs text-text-muted mt-0.5">Customize the app's highlight color</p>
           </div>
-          <div className="flex items-center gap-3">
-            {ACCENT_PRESETS.map((preset) => (
-              <button
-                key={preset.color}
-                onClick={() => setSetting("accentColor", preset.color)}
-                className="relative w-8 h-8 rounded-full transition-transform hover:scale-110"
-                style={{ backgroundColor: preset.color }}
-                title={preset.label}
-              >
-                {settings.accentColor === preset.color && (
-                  <Check className="w-4 h-4 text-bg-primary absolute inset-0 m-auto" />
-                )}
-              </button>
-            ))}
+          <div className="flex items-start gap-5">
+            {ACCENT_PRESETS.map((preset) => {
+              const selected = settings.accentColor === preset.value;
+              return (
+                <button
+                  key={preset.value}
+                  onClick={() => setAccentColor(preset.value)}
+                  className="flex flex-col items-center gap-2 group"
+                  aria-pressed={selected}
+                  aria-label={`${preset.label} accent`}
+                  title={preset.label}
+                >
+                  <span
+                    className={`w-8 h-8 rounded-full transition-all duration-200 flex items-center justify-center ${
+                      selected
+                        ? "ring-2 ring-offset-2 ring-offset-bg-card ring-accent scale-105"
+                        : "group-hover:scale-110"
+                    }`}
+                    style={{ backgroundColor: preset.swatch }}
+                  >
+                    {selected && <Check className="w-4 h-4 text-white drop-shadow-sm" />}
+                  </span>
+                  <span
+                    className={`text-xs transition-colors ${
+                      selected ? "text-text-primary font-medium" : "text-text-muted"
+                    }`}
+                  >
+                    {preset.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>

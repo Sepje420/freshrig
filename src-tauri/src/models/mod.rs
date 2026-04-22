@@ -4,3 +4,4 @@ pub mod debloat;
 pub mod drivers;
 pub mod hardware;
 pub mod profiles;
+pub mod startup;

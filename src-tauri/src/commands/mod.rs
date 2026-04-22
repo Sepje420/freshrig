@@ -6,4 +6,5 @@ pub mod hardware;
 pub mod installed_apps;
 pub mod presets;
 pub mod profiles;
+pub mod startup;
 pub mod winget_search;

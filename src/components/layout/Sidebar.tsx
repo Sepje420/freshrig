@@ -4,10 +4,13 @@ import {
   Package,
   BookMarked,
   Sparkles,
+  Rocket,
   Settings,
   Monitor,
   Keyboard,
+  Info,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { APP_NAME, APP_VERSION } from "../../config/app";
 
 interface SidebarProps {
@@ -16,81 +19,60 @@ interface SidebarProps {
   onShowShortcuts?: () => void;
 }
 
-const navItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, enabled: true, shortcut: "Ctrl+1" },
-  { id: "drivers", label: "Drivers", icon: Cpu, enabled: true, shortcut: "Ctrl+2" },
-  { id: "apps", label: "Apps", icon: Package, enabled: true, shortcut: "Ctrl+3" },
-  { id: "profiles", label: "Profiles", icon: BookMarked, enabled: true, shortcut: "Ctrl+4" },
-  { id: "optimize", label: "Optimize", icon: Sparkles, enabled: true, shortcut: "Ctrl+5" },
-  { id: "settings", label: "Settings", icon: Settings, enabled: true, shortcut: "Ctrl+," },
+interface NavItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  shortcut?: string;
+}
+
+const primaryNav: NavItem[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, shortcut: "Ctrl+1" },
+  { id: "drivers", label: "Drivers", icon: Cpu, shortcut: "Ctrl+2" },
+  { id: "apps", label: "Apps", icon: Package, shortcut: "Ctrl+3" },
+  { id: "profiles", label: "Profiles", icon: BookMarked, shortcut: "Ctrl+4" },
+  { id: "optimize", label: "Optimize", icon: Sparkles, shortcut: "Ctrl+5" },
+  { id: "startup", label: "Startup", icon: Rocket, shortcut: "Ctrl+6" },
+];
+
+const secondaryNav: NavItem[] = [
+  { id: "settings", label: "Settings", icon: Settings, shortcut: "Ctrl+," },
+  { id: "about", label: "About", icon: Info },
 ];
 
 export function Sidebar({ currentView, onNavigate, onShowShortcuts }: SidebarProps) {
   return (
-    <aside className="flex flex-col w-[280px] shrink-0 h-full bg-bg-secondary border-r border-border overflow-y-auto">
+    <aside className="flex flex-col w-[260px] shrink-0 h-full bg-[var(--bg-sidebar)] border-r border-[var(--border)] overflow-y-auto">
       {/* Logo / App Name */}
-      <div className="flex items-center gap-3 px-6 py-6">
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-accent-muted">
-          <Monitor className="w-5 h-5 text-accent" />
+      <div className="flex items-center gap-3 px-5 py-5">
+        <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--accent-subtle)] ring-1 ring-[var(--accent-ring)]">
+          <Monitor className="w-4.5 h-4.5 text-[var(--accent)]" />
         </div>
         <div>
-          <h1 className="text-lg font-semibold text-text-primary">{APP_NAME}</h1>
-          <p className="text-xs text-text-muted">System Setup Tool</p>
+          <h1 className="text-[15px] font-semibold text-[var(--text-primary)] leading-tight">{APP_NAME}</h1>
+          <p className="text-[11px] text-[var(--text-muted)] mt-0.5">System Setup Tool</p>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 mt-2">
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            const isActive = currentView === item.id;
-            const Icon = item.icon;
-
-            return (
-              <li key={item.id} className="relative group">
-                <button
-                  onClick={() => item.enabled && onNavigate(item.id)}
-                  className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? "bg-accent-muted text-accent border-l-2 border-accent"
-                      : item.enabled
-                        ? "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
-                        : "text-text-muted cursor-not-allowed"
-                  }`}
-                >
-                  <Icon className="w-4.5 h-4.5" />
-                  <span>{item.label}</span>
-                  {!item.enabled && (
-                    <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-bg-tertiary text-text-muted">
-                      Soon
-                    </span>
-                  )}
-                  {item.enabled && item.shortcut && (
-                    <span className="ml-auto text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.shortcut}
-                    </span>
-                  )}
-                </button>
-
-                {/* Coming Soon tooltip */}
-                {!item.enabled && (
-                  <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-bg-elevated rounded text-xs text-text-secondary whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-elevated">
-                    Coming Soon
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+      {/* Primary navigation */}
+      <nav className="flex-1 px-3">
+        <NavSection label="Navigate" items={primaryNav} currentView={currentView} onNavigate={onNavigate} />
       </nav>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-border">
-        <p className="text-xs text-text-muted">v{APP_VERSION}</p>
+      {/* Secondary navigation */}
+      <div className="px-3 pt-3 pb-3 border-t border-[var(--border)]">
+        <NavSection label="More" items={secondaryNav} currentView={currentView} onNavigate={onNavigate} />
+      </div>
+
+      {/* Footer: version chip + shortcut helper */}
+      <div className="flex items-center justify-between px-5 py-3 border-t border-[var(--border)]">
+        <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-wider">
+          v{APP_VERSION}
+        </span>
         {onShowShortcuts && (
           <button
             onClick={onShowShortcuts}
-            className="flex items-center justify-center w-6 h-6 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+            className="flex items-center justify-center w-6 h-6 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/[0.04] transition-colors active:scale-[0.97] transition-transform duration-100"
             title="Keyboard Shortcuts"
           >
             <Keyboard className="w-3.5 h-3.5" />
@@ -98,5 +80,74 @@ export function Sidebar({ currentView, onNavigate, onShowShortcuts }: SidebarPro
         )}
       </div>
     </aside>
+  );
+}
+
+function NavSection({
+  label,
+  items,
+  currentView,
+  onNavigate,
+}: {
+  label: string;
+  items: NavItem[];
+  currentView: string;
+  onNavigate: (view: string) => void;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[var(--text-muted)] px-3 pt-2 pb-1.5">
+        {label}
+      </p>
+      <ul className="space-y-0.5">
+        {items.map((item) => (
+          <NavButton
+            key={item.id}
+            item={item}
+            active={currentView === item.id}
+            onSelect={() => onNavigate(item.id)}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function NavButton({
+  item,
+  active,
+  onSelect,
+}: {
+  item: NavItem;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  const Icon = item.icon;
+  return (
+    <li className="relative group">
+      {/* 3px left accent bar shown on active */}
+      {active && (
+        <span
+          aria-hidden="true"
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-[var(--accent)]"
+        />
+      )}
+      <button
+        onClick={onSelect}
+        className={`flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-colors ${
+          active
+            ? "bg-[var(--accent-subtle)] text-[var(--text-primary)] font-medium"
+            : "text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]"
+        }`}
+      >
+        <Icon className={`w-4 h-4 ${active ? "text-[var(--accent)]" : ""}`} />
+        <span>{item.label}</span>
+        {item.shortcut && (
+          <span className="ml-auto text-[10px] font-mono text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity">
+            {item.shortcut}
+          </span>
+        )}
+      </button>
+    </li>
   );
 }

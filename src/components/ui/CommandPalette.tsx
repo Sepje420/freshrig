@@ -6,6 +6,7 @@ import {
   Package,
   BookMarked,
   Sparkles,
+  Rocket,
   Settings,
   RefreshCw,
   ShieldAlert,
@@ -121,6 +122,14 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
       icon: Sparkles,
       shortcut: "Ctrl+5",
       action: () => onNavigate("optimize"),
+    },
+    {
+      id: "nav-startup",
+      label: "Go to Startup",
+      category: "Pages",
+      icon: Rocket,
+      shortcut: "Ctrl+6",
+      action: () => onNavigate("startup"),
     },
     {
       id: "nav-settings",

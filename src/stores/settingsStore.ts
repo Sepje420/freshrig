@@ -3,6 +3,22 @@ import { load, Store } from "@tauri-apps/plugin-store";
 import { invoke } from "@tauri-apps/api/core";
 import type { AppCategory } from "../types/apps";
 
+export type AccentColor = "teal" | "blue" | "purple" | "orange" | "rose" | "green";
+export const ACCENT_COLORS: AccentColor[] = [
+  "teal",
+  "blue",
+  "purple",
+  "orange",
+  "rose",
+  "green",
+];
+
+const FOUC_STORAGE_KEY = "freshrig-settings";
+
+function isAccentColor(value: unknown): value is AccentColor {
+  return typeof value === "string" && (ACCENT_COLORS as string[]).includes(value);
+}
+
 export interface AppSettings {
   // General
   defaultInstallBehavior: "silent" | "interactive";
@@ -13,7 +29,7 @@ export interface AppSettings {
   showRuntimes: boolean;
   confirmBeforeInstalling: boolean;
   // Appearance
-  accentColor: string;
+  accentColor: AccentColor;
   // System Tray
   minimizeToTray: boolean;
   startMinimized: boolean;
@@ -30,7 +46,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   defaultCategory: "all",
   showRuntimes: true,
   confirmBeforeInstalling: true,
-  accentColor: "#00d4aa",
+  accentColor: "teal",
   minimizeToTray: true,
   startMinimized: false,
   lastSeenVersion: "0.3.0",
@@ -44,23 +60,21 @@ interface SettingsState {
   isPortable: boolean;
   loadSettings: () => Promise<void>;
   setSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => Promise<void>;
+  setAccentColor: (color: AccentColor) => Promise<void>;
   resetSettings: () => Promise<void>;
 }
 
-function applyAccentColor(color: string) {
-  const root = document.documentElement;
-  root.style.setProperty("--color-accent", color);
-  root.style.setProperty("--color-accent-hover", lightenColor(color, 15));
-  root.style.setProperty("--color-accent-muted", color + "33");
-  root.style.setProperty("--color-accent-glow", color + "22");
-}
-
-function lightenColor(hex: string, percent: number): string {
-  const num = parseInt(hex.replace("#", ""), 16);
-  const r = Math.min(255, ((num >> 16) & 0xff) + Math.round(255 * (percent / 100)));
-  const g = Math.min(255, ((num >> 8) & 0xff) + Math.round(255 * (percent / 100)));
-  const b = Math.min(255, (num & 0xff) + Math.round(255 * (percent / 100)));
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+function applyAccent(color: AccentColor) {
+  if (typeof document !== "undefined") {
+    document.documentElement.dataset.accent = color;
+  }
+  try {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(FOUC_STORAGE_KEY, JSON.stringify({ state: { accentColor: color } }));
+    }
+  } catch {
+    /* localStorage unavailable in some sandbox contexts — ignore */
+  }
 }
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
@@ -71,6 +85,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   loadSettings: async () => {
     if (!(window as unknown as Record<string, unknown>).__TAURI_INTERNALS__) {
+      applyAccent(DEFAULT_SETTINGS.accentColor);
       set({ loaded: true });
       return;
     }
@@ -84,24 +99,40 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
           (saved as Record<string, unknown>)[key] = val;
         }
       }
+      if (saved.accentColor !== undefined && !isAccentColor(saved.accentColor)) {
+        delete saved.accentColor;
+      }
       const merged = { ...DEFAULT_SETTINGS, ...saved };
-      applyAccentColor(merged.accentColor);
+      applyAccent(merged.accentColor);
       set({ settings: merged, loaded: true, store, isPortable: portable });
     } catch {
+      applyAccent(DEFAULT_SETTINGS.accentColor);
       set({ loaded: true });
     }
   },
 
   setSetting: async (key, value) => {
-    const { store } = get();
+    const { store, setAccentColor } = get();
+    if (key === "accentColor") {
+      await setAccentColor(value as AccentColor);
+      return;
+    }
     set((state) => ({
       settings: { ...state.settings, [key]: value },
     }));
-    if (key === "accentColor") {
-      applyAccentColor(value as string);
-    }
     if (store) {
       await store.set(key, value);
+    }
+  },
+
+  setAccentColor: async (color) => {
+    const { store } = get();
+    applyAccent(color);
+    set((state) => ({
+      settings: { ...state.settings, accentColor: color },
+    }));
+    if (store) {
+      await store.set("accentColor", color);
     }
   },
 
@@ -110,7 +141,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     if (store) {
       await store.clear();
     }
-    applyAccentColor(DEFAULT_SETTINGS.accentColor);
+    applyAccent(DEFAULT_SETTINGS.accentColor);
     set({ settings: { ...DEFAULT_SETTINGS } });
   },
 }));

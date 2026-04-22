@@ -46,11 +46,11 @@ export function TweakCard({ tweak, selected, onToggle }: TweakCardProps) {
     <button
       onClick={disabled ? undefined : onToggle}
       disabled={disabled}
-      className={`relative w-full text-left rounded-lg border transition-all duration-200 ${
+      className={`relative w-full text-left rounded-xl border transition-colors duration-150 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
         selected && !disabled
-          ? "bg-accent-muted border-accent/50 shadow-elevated"
-          : "bg-bg-card border-border hover:bg-bg-card-hover hover:border-border-hover shadow-card"
-      } ${disabled ? "opacity-60 cursor-default" : "cursor-pointer"}`}
+          ? "bg-[var(--accent-subtle)] border-[var(--accent-ring)]"
+          : "bg-[var(--bg-card)] border-[var(--border)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-hover)]"
+      } ${disabled ? "opacity-60 cursor-default" : "cursor-pointer active:scale-[0.99] transition-transform duration-100"}`}
     >
       <div className="p-4 flex items-start gap-3">
         {/* Checkbox */}

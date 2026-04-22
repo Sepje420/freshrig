@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { Card } from "../ui/Card";
 
 interface HardwareCardProps {
   title: string;
@@ -15,18 +16,18 @@ const statusColors = {
 
 export function HardwareCard({ title, icon: Icon, status, children }: HardwareCardProps) {
   return (
-    <div className="relative bg-bg-card rounded-lg border border-border shadow-card hover:bg-bg-card-hover hover:border-border-hover hover:shadow-elevated transition-all duration-200 animate-fade-in">
+    <Card interactive className="relative animate-fade-in">
       {/* Status dot */}
       <div className={`absolute top-4 right-4 w-2.5 h-2.5 rounded-full ${statusColors[status]}`} />
 
       {/* Header */}
       <div className="flex items-center gap-2.5 px-5 pt-5 pb-3">
-        <Icon className="w-4.5 h-4.5 text-accent" />
-        <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
+        <Icon className="w-4.5 h-4.5 text-[var(--accent)]" />
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>
       </div>
 
       {/* Content */}
       <div className="px-5 pb-5">{children}</div>
-    </div>
+    </Card>
   );
 }

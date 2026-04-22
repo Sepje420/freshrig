@@ -34,15 +34,9 @@ function calculateScore(summary: HardwareSummary, driverIssues: DriverIssue[]): 
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-success";
-  if (score >= 50) return "text-warning";
-  return "text-error";
-}
-
-function getStrokeColor(score: number): string {
-  if (score >= 80) return "#22c55e";
-  if (score >= 50) return "#f59e0b";
-  return "#ef4444";
+  if (score >= 80) return "text-[var(--success)]";
+  if (score >= 50) return "text-[var(--warning)]";
+  return "text-[var(--error)]";
 }
 
 function getMessage(score: number): string {
@@ -61,7 +55,6 @@ export function HealthScore({ summary, driverIssues }: HealthScoreProps) {
   const score = calculateScore(summary, driverIssues);
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (score / 100) * circumference;
-  const strokeColor = getStrokeColor(score);
   const statusLabel = getStatusLabel(score);
 
   return (
@@ -80,9 +73,8 @@ export function HealthScore({ summary, driverIssues }: HealthScoreProps) {
             cy="60"
             r="54"
             fill="none"
-            stroke="currentColor"
+            stroke="var(--border)"
             strokeWidth="8"
-            className="text-border"
           />
           {/* Progress circle */}
           <circle
@@ -90,7 +82,7 @@ export function HealthScore({ summary, driverIssues }: HealthScoreProps) {
             cy="60"
             r="54"
             fill="none"
-            stroke={strokeColor}
+            stroke="var(--accent)"
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -100,11 +92,11 @@ export function HealthScore({ summary, driverIssues }: HealthScoreProps) {
         </svg>
         {/* Score text */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span aria-hidden="true" className={`text-3xl font-bold ${getScoreColor(score)}`}>{score}</span>
+          <span aria-hidden="true" className={`text-3xl font-semibold tabular-nums ${getScoreColor(score)}`}>{score}</span>
         </div>
       </div>
       <p className={`mt-3 text-sm font-medium ${getScoreColor(score)}`}>{getMessage(score)}</p>
-      <p className="text-xs text-text-muted mt-1">System Readiness</p>
+      <p className="text-[10px] text-[var(--text-muted)] mt-1 uppercase tracking-wide">System Readiness</p>
     </div>
   );
 }
