@@ -1,3 +1,9 @@
+# This file only suppresses `cargo audit` CLI output. GitHub Dependabot uses
+# its own GHSA database and does NOT read this config. The same advisories
+# below must also be dismissed individually in the repo's Dependabot UI
+# (Security → Dependabot alerts → Dismiss → "Vulnerable code is not actually
+# used") with a comment referencing this file.
+
 [advisories]
 ignore = [
     # GHSA-wrw7-89jp-8q8g — glib 0.18.5 unsoundness (Moderate, CVSS 6.9).
@@ -7,9 +13,14 @@ ignore = [
     "RUSTSEC-2024-0429",
 
     # GHSA-cq8v-f236-94qc — rand 0.7.3 unsoundness (Low).
-    # Pinned by phf_generator 0.8.0 (^0.7) via kuchikiki → selectors → phf_codegen.
-    # Build-time-only transitive used in HTML asset codegen; the vulnerable
-    # conditions (custom logger + thread_rng + TryRng during reseed) do not apply.
-    # Will clear when Tauri replaces kuchikiki with a maintained HTML parser.
+    # Pinned by phf_generator 0.8.0 (^0.7) via kuchikiki 0.8.8-speedreader
+    # → tauri-utils 2.8.3 (html-manipulation feature). Build-time-only
+    # transitive used in Tauri's HTML asset codegen; never compiled into
+    # the shipped Windows binary. The vulnerable conditions require all of:
+    # custom `log` logger + `thread_rng`/`TryRng` calls on ThreadRng +
+    # reseed during logger invocation — phf_generator does none of these.
+    # First patched version is rand 0.8.6; no fix exists in the 0.7.x line.
+    # Will clear when Tauri replaces kuchikiki with a maintained HTML parser
+    # (tracked upstream: tauri-apps/tauri — no target date).
     "RUSTSEC-2026-0097",
 ]
