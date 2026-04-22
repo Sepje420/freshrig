@@ -1,9 +1,11 @@
 export const CHANGELOG: Record<string, string> = {
   "0.7.0": `### What's New in v0.7.0
 
-- **Startup Manager** — New page (Ctrl+6) to view and toggle Windows startup programs across registry Run keys and the Startup folder; respects StartupApproved so changes stick across reboots and show up in Task Manager
-- **Premium UI overhaul** — Unified Card and Button primitives, refined Dashboard with accent stripe and tabular-nums data readouts, monochrome health ring, polished app/driver/profile/tweak cards with inset highlights and active-press feedback
-- **Theme system** — Consolidated design tokens in styles.css for consistent accent, border, and elevation treatment across every card and surface
+- **Theme system** — 6 accent color presets (Teal, Blue, Purple, Orange, Rose, Green) with instant switching in Settings
+- **Premium dark UI** — Redesigned cards, sidebar, buttons, and page transitions with spring-physics animations
+- **Startup Manager** — New page to view and control Windows startup programs with one-click enable/disable
+- **Smoother animations** — Page transitions, hover effects, and number animations throughout the app
+- **Better toasts** — Custom-styled notifications matching the dark theme
 `,
   "0.6.0": `### What's New in v0.6.0
 

@@ -30,9 +30,11 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 - 🔍 **Hardware Dashboard** — Auto-detects your CPU, GPU, motherboard, storage, network, and audio via WMI
 - 🎯 **Driver Recommendations** — Detects your hardware vendors (NVIDIA, AMD, Intel, Realtek); Intel DSA installs silently via winget, NVIDIA and AMD open their official driver tools in your browser
 - 📦 **App Batch Install** — 60+ popular apps organized by category, installed silently via winget with real-time progress
+- 🚀 **Startup Manager** — View and control Windows startup programs from registry Run keys and the Startup folder, with one-click enable/disable
 - 💾 **Shareable Profiles** — Save your app selection as a `.freshrig.json` profile, share via code or file, import on any PC
 - 🏥 **Health Score** — Instant readiness assessment of your system with driver issue detection
-- 🎨 **Dark Mode UI** — Premium dark theme with customizable accent colors, built with Tailwind CSS
+- 🎨 **Theme Support** — 6 accent color presets (Teal, Blue, Purple, Orange, Rose, Green) with instant switching in Settings
+- 🌙 **Premium Dark UI** — Spring-physics animations, refined cards, and polished page transitions built with Tailwind CSS
 - 🎉 **Celebration Mode** — Confetti and time-saved counter when your setup completes
 
 ## 📸 Screenshots
