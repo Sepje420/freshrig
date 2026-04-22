@@ -12,7 +12,7 @@ Thank you for your interest in contributing to FreshRig! This guide will help yo
 
 ### Getting Started
 ```bash
-git clone https://github.com/Sepje420/freshrig.git
+git clone https://github.com/ZIPREX420/freshrig.git
 cd freshrig
 npm install
 npm run tauri dev
@@ -60,8 +60,8 @@ We use Conventional Commits:
 
 ## Reporting Bugs
 
-Use the [Bug Report template](https://github.com/Sepje420/freshrig/issues/new?template=bug_report.yml) on GitHub Issues.
+Use the [Bug Report template](https://github.com/ZIPREX420/freshrig/issues/new?template=bug_report.yml) on GitHub Issues.
 
 ## Feature Requests
 
-Use the [Feature Request template](https://github.com/Sepje420/freshrig/issues/new?template=feature_request.yml) on GitHub Issues.
+Use the [Feature Request template](https://github.com/ZIPREX420/freshrig/issues/new?template=feature_request.yml) on GitHub Issues.

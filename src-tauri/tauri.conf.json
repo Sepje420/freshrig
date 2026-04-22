@@ -51,7 +51,7 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDcxQUEyMTkxN0YwM0Q0Q0YKUldUUDFBTi9rU0dxY2NKL2VpZlQzWHR6STd6eURyenQ0Vi9FWjdrRkY0ZXh0SVNyRmJqMXdkaDAK",
-      "endpoints": ["https://github.com/Sepje420/freshrig/releases/latest/download/latest.json"],
+      "endpoints": ["https://github.com/ZIPREX420/freshrig/releases/latest/download/latest.json"],
       "windows": {
         "installMode": "passive"
       }

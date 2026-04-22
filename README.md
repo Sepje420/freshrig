@@ -4,14 +4,14 @@
   <p>Hardware detection • Driver recommendations • App batch install • Shareable profiles</p>
 
   <p>
-    <a href="https://github.com/Sepje420/freshrig/releases/latest"><img src="https://img.shields.io/github/v/release/Sepje420/freshrig?style=flat-square&color=00d4aa" alt="Latest Release"></a>
-    <a href="https://github.com/Sepje420/freshrig/releases"><img src="https://img.shields.io/github/downloads/Sepje420/freshrig/total?style=flat-square&color=00d4aa" alt="Downloads"></a>
-    <a href="https://github.com/Sepje420/freshrig/stargazers"><img src="https://img.shields.io/github/stars/Sepje420/freshrig?style=flat-square&color=00d4aa" alt="Stars"></a>
-    <a href="https://github.com/Sepje420/freshrig/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Sepje420/freshrig?style=flat-square" alt="License"></a>
+    <a href="https://github.com/ZIPREX420/freshrig/releases/latest"><img src="https://img.shields.io/github/v/release/ZIPREX420/freshrig?style=flat-square&color=00d4aa" alt="Latest Release"></a>
+    <a href="https://github.com/ZIPREX420/freshrig/releases"><img src="https://img.shields.io/github/downloads/ZIPREX420/freshrig/total?style=flat-square&color=00d4aa" alt="Downloads"></a>
+    <a href="https://github.com/ZIPREX420/freshrig/stargazers"><img src="https://img.shields.io/github/stars/ZIPREX420/freshrig?style=flat-square&color=00d4aa" alt="Stars"></a>
+    <a href="https://github.com/ZIPREX420/freshrig/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ZIPREX420/freshrig?style=flat-square" alt="License"></a>
   </p>
 
   <p>
-    <a href="https://github.com/Sepje420/freshrig/releases/latest">
+    <a href="https://github.com/ZIPREX420/freshrig/releases/latest">
       <img src="https://img.shields.io/badge/Download%20for%20Windows-00d4aa?style=for-the-badge&logo=windows&logoColor=white" alt="Download">
     </a>
   </p>
@@ -39,19 +39,19 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 
 ## 📸 Screenshots
 
-See the [landing page](https://Sepje420.github.io/freshrig/) for screenshots and details.
+See the [landing page](https://ZIPREX420.github.io/freshrig/) for screenshots and details.
 
 ## 🚀 Quick Start
 
 ### Download
-Get the latest installer from [GitHub Releases](https://github.com/Sepje420/freshrig/releases/latest).
+Get the latest installer from [GitHub Releases](https://github.com/ZIPREX420/freshrig/releases/latest).
 
 > ⚠️ **Windows SmartScreen may show a warning** since the app is new and unsigned. Click "More info" → "Run anyway". This is normal for new open-source apps.
 
 ### Build from source
 ```bash
 # Prerequisites: Node.js, Rust, Microsoft C++ Build Tools
-git clone https://github.com/Sepje420/freshrig.git
+git clone https://github.com/ZIPREX420/freshrig.git
 cd freshrig
 npm install
 npm run tauri dev
@@ -78,4 +78,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## 🇧🇪 Made in Belgium
 
-Built with ❤️ by [sepje420](https://github.com/sepje420)
+Built with ❤️ by [ZIPREX420](https://github.com/ZIPREX420)

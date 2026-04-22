@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Seppe Willemsens (sepje420). MIT License.
+// Copyright (c) 2026 Seppe Willemsens (ZIPREX420). MIT License.
 import { useState, useEffect, useCallback } from "react";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";

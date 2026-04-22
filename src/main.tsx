@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Seppe Willemsens (sepje420). MIT License.
+// Copyright (c) 2026 Seppe Willemsens (ZIPREX420). MIT License.
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";

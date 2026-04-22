@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Seppe Willemsens (sepje420). MIT License.
+// Copyright (c) 2026 Seppe Willemsens (ZIPREX420). MIT License.
 use std::collections::HashMap;
 use wmi::WMIConnection;
 
