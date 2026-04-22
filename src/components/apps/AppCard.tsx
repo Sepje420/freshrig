@@ -44,7 +44,7 @@ const categoryColors: Record<AppCategory, string> = {
   Productivity: "bg-cyan-500/20 text-cyan-400",
   Utilities: "bg-orange-500/20 text-orange-400",
   Security: "bg-red-500/20 text-red-400",
-  Runtime: "bg-gray-500/20 text-gray-400",
+  Runtime: "bg-white/[0.06] text-[var(--text-secondary)]",
 };
 
 export function AppCard({ app, selected, progress, onToggle, isInstalled }: AppCardProps) {

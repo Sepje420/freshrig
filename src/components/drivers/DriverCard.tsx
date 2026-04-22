@@ -38,7 +38,7 @@ function getVendorColor(vendor: string): string {
   if (lower.includes("nvidia")) return "#76b900";
   if (lower.includes("amd")) return "#ed1c24";
   if (lower.includes("intel")) return "#0071c5";
-  return "#00d4aa";
+  return "var(--accent)";
 }
 
 export function DriverCard({ recommendation: rec }: DriverCardProps) {
