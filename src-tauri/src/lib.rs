@@ -3,6 +3,7 @@ mod commands;
 mod data;
 mod models;
 pub mod portable;
+mod util;
 
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},

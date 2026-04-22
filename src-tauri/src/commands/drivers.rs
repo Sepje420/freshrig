@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Seppe Willemsens (sepje420). MIT License.
 use std::collections::HashMap;
 use wmi::WMIConnection;
 
 use crate::models::drivers::*;
+use crate::util::silent_cmd;
 
 fn extract_string(map: &HashMap<String, wmi::Variant>, key: &str) -> Option<String> {
     match map.get(key) {
@@ -26,42 +28,21 @@ fn extract_vendor_id(pnp_id: &str) -> Option<String> {
     None
 }
 
-fn gpu_download_info(vendor_id: &str) -> (&'static str, &'static str, &'static str) {
-    // Returns (vendor_name, download_url, download_page)
+/// Returns (vendor_name, support_page_url) for a GPU PCI vendor id.
+/// The "support page" is what the secondary "Open download page" button uses
+/// when winget install fails (e.g. hash mismatch).
+fn gpu_support_info(vendor_id: &str) -> (&'static str, &'static str) {
     match vendor_id {
         "10DE" => (
             "NVIDIA",
-            "https://www.nvidia.com/download/index.aspx",
-            "https://www.nvidia.com/download/index.aspx",
+            "https://www.nvidia.com/en-us/software/nvidia-app/",
         ),
-        "1002" => (
-            "AMD",
-            "https://www.amd.com/en/support",
-            "https://www.amd.com/en/support",
-        ),
+        "1002" => ("AMD", "https://www.amd.com/en/support"),
         "8086" => (
             "Intel",
             "https://www.intel.com/content/www/us/en/download-center/home.html",
-            "https://www.intel.com/content/www/us/en/download-center/home.html",
         ),
-        _ => ("Unknown", "", ""),
-    }
-}
-
-fn gpu_winget_id(vendor_id: &str) -> Option<&'static str> {
-    match vendor_id {
-        "10DE" => Some("NVIDIA.GeForceExperience"),
-        "8086" => Some("Intel.IntelDriverAndSupportAssistant"),
-        _ => None, // AMD Adrenalin not reliably available in winget
-    }
-}
-
-fn network_winget_id(manufacturer: &str) -> Option<&'static str> {
-    let mfr_lower = manufacturer.to_lowercase();
-    if mfr_lower.contains("intel") || mfr_lower.contains("killer") || mfr_lower.contains("rivet") {
-        Some("Intel.IntelDriverAndSupportAssistant")
-    } else {
-        None // Realtek, etc. — fallback to support page
+        _ => ("Unknown", ""),
     }
 }
 
@@ -145,8 +126,8 @@ fn audio_driver_info(name: &str, manufacturer: &str) -> (&'static str, &'static 
     } else if name_lower.contains("nvidia") || mfr_lower.contains("nvidia") {
         (
             "NVIDIA",
-            "https://www.nvidia.com/download/index.aspx",
-            "https://www.nvidia.com/download/index.aspx",
+            "https://www.nvidia.com/en-us/software/nvidia-app/",
+            "https://www.nvidia.com/en-us/software/nvidia-app/",
         )
     } else {
         ("Unknown", "", "")
@@ -178,12 +159,33 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
             });
 
             let vendor_id = extract_vendor_id(&pnp_id).unwrap_or_default();
-            let (vendor_name, download_url, download_page) = gpu_download_info(&vendor_id);
-            let winget_id = gpu_winget_id(&vendor_id).map(|s| s.to_string());
-            let install_action = if winget_id.is_some() {
-                DriverInstallAction::Winget
-            } else {
-                DriverInstallAction::OpenUrl
+            let (vendor_name, support_page) = gpu_support_info(&vendor_id);
+
+            // NVIDIA App has no winget package, so DirectDownload.
+            // Intel uses DSA (winget). AMD has no reliable winget package.
+            let (install_action, install_label) = match vendor_id.as_str() {
+                "10DE" => (
+                    DriverInstallAction::DirectDownload(
+                        "https://www.nvidia.com/en-us/software/nvidia-app/".to_string(),
+                    ),
+                    "Get NVIDIA App".to_string(),
+                ),
+                "1002" => (
+                    DriverInstallAction::DirectDownload(
+                        "https://www.amd.com/en/support".to_string(),
+                    ),
+                    "Get AMD Drivers".to_string(),
+                ),
+                "8086" => (
+                    DriverInstallAction::Winget(
+                        "Intel.IntelDriverAndSupportAssistant".to_string(),
+                    ),
+                    "Install Intel DSA".to_string(),
+                ),
+                _ => (
+                    DriverInstallAction::DirectDownload(support_page.to_string()),
+                    "Download".to_string(),
+                ),
             };
 
             let status = if driver_version.is_none() {
@@ -198,11 +200,11 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
                 vendor: vendor_name.to_string(),
                 current_version: driver_version,
                 current_date: driver_date,
-                download_url: download_url.to_string(),
-                download_page: download_page.to_string(),
+                download_url: support_page.to_string(),
+                download_page: support_page.to_string(),
                 status,
-                winget_id,
                 install_action,
+                install_label,
             });
         }
 
@@ -222,11 +224,11 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
                 vendor: manufacturer,
                 current_version: None,
                 current_date: None,
-                download_url,
+                download_url: download_url.clone(),
                 download_page,
                 status: DriverStatus::Unknown,
-                winget_id: None,
-                install_action: DriverInstallAction::OpenUrl,
+                install_action: DriverInstallAction::DirectDownload(download_url),
+                install_label: "Download".to_string(),
             });
         }
 
@@ -265,11 +267,24 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
                 DriverStatus::Unknown
             };
 
-            let winget_id = network_winget_id(&manufacturer).map(|s| s.to_string());
-            let install_action = if winget_id.is_some() {
-                DriverInstallAction::Winget
+            // Intel-family network cards (incl. Killer/Rivet which are Intel-owned) use DSA.
+            // Everything else (Realtek, etc.) opens the vendor download page.
+            let mfr_lower = manufacturer.to_lowercase();
+            let (install_action, install_label) = if mfr_lower.contains("intel")
+                || mfr_lower.contains("killer")
+                || mfr_lower.contains("rivet")
+            {
+                (
+                    DriverInstallAction::Winget(
+                        "Intel.IntelDriverAndSupportAssistant".to_string(),
+                    ),
+                    "Install Intel DSA".to_string(),
+                )
             } else {
-                DriverInstallAction::OpenUrl
+                (
+                    DriverInstallAction::DirectDownload(download_url.to_string()),
+                    "Download".to_string(),
+                )
             };
 
             recommendations.push(DriverRecommendation {
@@ -281,8 +296,8 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
                 download_url: download_url.to_string(),
                 download_page: download_page.to_string(),
                 status,
-                winget_id,
                 install_action,
+                install_label,
             });
         }
 
@@ -331,8 +346,8 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
                 download_url: download_url.to_string(),
                 download_page: download_page.to_string(),
                 status,
-                winget_id: None,
-                install_action: DriverInstallAction::OpenUrl,
+                install_action: DriverInstallAction::DirectDownload(download_url.to_string()),
+                install_label: "Download".to_string(),
             });
         }
 
@@ -345,11 +360,11 @@ pub async fn get_driver_recommendations() -> Result<Vec<DriverRecommendation>, S
 #[tauri::command]
 pub async fn install_driver(winget_id: String) -> Result<String, String> {
     tokio::task::spawn_blocking(move || {
-        let output = std::process::Command::new("cmd")
+        let output = silent_cmd("cmd")
             .args([
                 "/C",
                 &format!(
-                    "chcp 65001 >nul && winget install --id {} --silent --accept-package-agreements --accept-source-agreements",
+                    "chcp 65001 >nul && winget install --id {} --exact --source winget --silent --accept-package-agreements --accept-source-agreements --disable-interactivity",
                     winget_id
                 ),
             ])
@@ -358,16 +373,28 @@ pub async fn install_driver(winget_id: String) -> Result<String, String> {
 
         let stdout = String::from_utf8_lossy(&output.stdout).to_string();
         let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+        let combined = format!("{}\n{}", stdout, stderr);
 
         if output.status.success()
             || stdout.contains("Successfully installed")
             || stdout.contains("already installed")
+            || stdout.contains("No newer package versions")
         {
-            Ok(format!("Driver tool installed: {}", winget_id))
+            Ok(format!("{} installed successfully", winget_id))
+        } else if combined.contains("0x8A150011") || combined.contains("hash") {
+            Err("Installer hash mismatch — the vendor updated their installer. Please use the Download button instead.".to_string())
+        } else if combined.contains("0x8A150019") || combined.contains("administrator") {
+            Err("This package requires administrator privileges. FreshRig should already be elevated — try restarting the app.".to_string())
         } else {
-            Err(format!("Install failed: {}\n{}", stdout, stderr))
+            // Extract the most useful error line
+            let error_line = combined
+                .lines()
+                .rev()
+                .find(|l| !l.trim().is_empty() && !l.contains("chcp") && !l.contains("Active code page"))
+                .unwrap_or("Unknown error");
+            Err(format!("Install failed: {}", error_line))
         }
     })
     .await
-    .map_err(|e| format!("Task join error: {}", e))?
+    .map_err(|e| format!("Task error: {}", e))?
 }

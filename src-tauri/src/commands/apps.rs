@@ -1,8 +1,8 @@
-use std::process::Command;
 use tauri::Emitter;
 
 use crate::data::app_catalog;
 use crate::models::apps::*;
+use crate::util::silent_cmd;
 
 #[tauri::command]
 pub async fn get_app_catalog() -> Result<Vec<AppEntry>, String> {
@@ -11,7 +11,7 @@ pub async fn get_app_catalog() -> Result<Vec<AppEntry>, String> {
 
 #[tauri::command]
 pub async fn get_free_disk_space_gb() -> Result<f64, String> {
-    let output = Command::new("powershell")
+    let output = silent_cmd("powershell")
         .args(["-NoProfile", "-Command", "(Get-PSDrive C).Free / 1GB"])
         .output()
         .map_err(|e| format!("Failed to check disk space: {}", e))?;
@@ -24,7 +24,7 @@ pub async fn get_free_disk_space_gb() -> Result<f64, String> {
 
 #[tauri::command]
 pub async fn check_network_connectivity() -> Result<bool, String> {
-    let output = Command::new("cmd")
+    let output = silent_cmd("cmd")
         .args(["/C", "ping -n 1 -w 3000 1.1.1.1"])
         .output();
     match output {
@@ -35,7 +35,7 @@ pub async fn check_network_connectivity() -> Result<bool, String> {
 
 #[tauri::command]
 pub async fn check_winget_available() -> Result<bool, String> {
-    let result = Command::new("cmd")
+    let result = silent_cmd("cmd")
         .args(["/C", "chcp 65001 >nul && winget --version"])
         .output();
 
@@ -70,7 +70,7 @@ pub async fn install_apps(
             },
         );
 
-        let output = Command::new("cmd")
+        let output = silent_cmd("cmd")
             .args([
                 "/C",
                 &format!(

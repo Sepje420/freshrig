@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use std::process::Command;
 use std::sync::OnceLock;
+
+use crate::util::silent_cmd;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -26,7 +27,7 @@ pub struct WingetPackageDetails {
 static WINGET_JSON_SUPPORT: OnceLock<bool> = OnceLock::new();
 
 fn detect_winget_json_support() -> bool {
-    let output = Command::new("cmd")
+    let output = silent_cmd("cmd")
         .args(["/C", "chcp 65001 >nul && winget --info"])
         .output();
 
@@ -169,7 +170,7 @@ pub async fn search_winget_packages(query: String) -> Result<Vec<WingetSearchRes
 
     // Try JSON output first if supported
     if supports_json() {
-        let json_output = Command::new("cmd")
+        let json_output = silent_cmd("cmd")
             .args([
                 "/C",
                 &format!(
@@ -188,7 +189,7 @@ pub async fn search_winget_packages(query: String) -> Result<Vec<WingetSearchRes
     }
 
     // Fall back to table parsing
-    let output = Command::new("cmd")
+    let output = silent_cmd("cmd")
         .args([
             "/C",
             &format!(
@@ -264,7 +265,7 @@ pub async fn get_winget_package_info(package_id: String) -> Result<WingetPackage
 
     // Try JSON output first if supported
     if supports_json() {
-        let json_output = Command::new("cmd")
+        let json_output = silent_cmd("cmd")
             .args([
                 "/C",
                 &format!(
@@ -283,7 +284,7 @@ pub async fn get_winget_package_info(package_id: String) -> Result<WingetPackage
     }
 
     // Fall back to text parsing
-    let output = Command::new("cmd")
+    let output = silent_cmd("cmd")
         .args([
             "/C",
             &format!(

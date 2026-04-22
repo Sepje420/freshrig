@@ -6,7 +6,7 @@
   <title>FreshRig — The First Tool You Run After a Fresh Windows Install</title>
   <meta name="description" content="Free, open-source Windows app that combines hardware detection, driver recommendations, and batch app installation in one tool. Built with Rust and Tauri.">
   <meta property="og:title" content="FreshRig — Hardware Detection + Driver Finder + App Installer">
-  <meta property="og:description" content="The complete post-install toolkit for Windows. Detect hardware, find drivers, install 35+ apps silently.">
+  <meta property="og:description" content="The complete post-install toolkit for Windows. Detect hardware, find drivers, install 60+ apps silently.">
   <meta property="og:image" content="https://sepje420.github.io/freshrig/assets/og-image.svg">
   <meta property="og:url" content="https://sepje420.github.io/freshrig/">
   <meta property="og:type" content="website">
@@ -40,7 +40,7 @@
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
     "url": "https://sepje420.github.io/freshrig/",
     "downloadUrl": "https://github.com/Sepje420/freshrig/releases/latest",
-    "softwareVersion": "0.1.0",
+    "softwareVersion": "0.6.0",
     "author": { "@type": "Person", "name": "Sepje420" }
   }
   </script>
@@ -76,7 +76,7 @@
         <a href="#faq" class="hover:text-text-primary transition-colors">FAQ</a>
         <a href="https://github.com/Sepje420/freshrig" class="hover:text-text-primary transition-colors" target="_blank" rel="noopener">GitHub</a>
       </div>
-      <a href="https://github.com/Sepje420/freshrig/releases/latest/download/FreshRig_0.1.0_x64-setup.exe" class="download-btn hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-accent text-bg-primary text-sm font-semibold rounded-lg hover:bg-accent-hover transition-colors">
+      <a href="https://github.com/Sepje420/freshrig/releases/latest" class="download-btn hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-accent text-bg-primary text-sm font-semibold rounded-lg hover:bg-accent-hover transition-colors">
         Download for Windows
       </a>
     </div>
@@ -88,7 +88,7 @@
     <div class="relative max-w-4xl mx-auto px-6 text-center pt-24 pb-20">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border text-xs text-text-secondary mb-8">
         <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-        <span>v<span id="version-badge">0.1.0</span> — Free & Open Source</span>
+        <span>v<span id="version-badge">0.6.0</span> — Free & Open Source</span>
       </div>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6">
         The First Tool You Run After a<br>
@@ -98,7 +98,7 @@
         Hardware detection, driver recommendations, and app batch install — all in one place. No more juggling between Ninite, Snappy Driver Installer, and manual downloads.
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-        <a href="https://github.com/Sepje420/freshrig/releases/latest/download/FreshRig_0.1.0_x64-setup.exe" class="download-btn inline-flex items-center gap-3 px-8 py-4 bg-accent text-bg-primary font-bold rounded-xl text-lg hover:bg-accent-hover transition-all glow">
+        <a href="https://github.com/Sepje420/freshrig/releases/latest" class="download-btn inline-flex items-center gap-3 px-8 py-4 bg-accent text-bg-primary font-bold rounded-xl text-lg hover:bg-accent-hover transition-all glow">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
           Download for Windows
         </a>
@@ -147,7 +147,7 @@
           </div>
           <div class="flex items-start gap-3">
             <span class="text-accent text-lg mt-0.5">&#10004;</span>
-            <p class="text-text-primary">Install 35+ apps silently with one click via winget</p>
+            <p class="text-text-primary">Install 60+ apps silently with one click via winget</p>
           </div>
           <div class="flex items-start gap-3">
             <span class="text-accent text-lg mt-0.5">&#10004;</span>
@@ -174,12 +174,12 @@
         <div class="group bg-bg-secondary border border-border rounded-xl p-6 hover:border-accent/30 hover:-translate-y-1 transition-all duration-300">
           <div class="text-3xl mb-4">&#127919;</div>
           <h3 class="text-lg font-semibold mb-2">Smart Driver Finder</h3>
-          <p class="text-sm text-text-secondary leading-relaxed">Identifies your hardware vendors and links directly to official NVIDIA, AMD, Intel, and Realtek driver downloads.</p>
+          <p class="text-sm text-text-secondary leading-relaxed">Detects NVIDIA, AMD, Intel, and Realtek hardware. Intel DSA installs silently; NVIDIA and AMD open their official driver tools.</p>
         </div>
         <div class="group bg-bg-secondary border border-border rounded-xl p-6 hover:border-accent/30 hover:-translate-y-1 transition-all duration-300">
           <div class="text-3xl mb-4">&#128230;</div>
           <h3 class="text-lg font-semibold mb-2">Batch App Install</h3>
-          <p class="text-sm text-text-secondary leading-relaxed">Select from 35+ popular apps, hit install, and watch them all install silently via winget.</p>
+          <p class="text-sm text-text-secondary leading-relaxed">Select from 60+ popular apps, hit install, and watch them all install silently via winget.</p>
         </div>
         <div class="group bg-bg-secondary border border-border rounded-xl p-6 hover:border-accent/30 hover:-translate-y-1 transition-all duration-300">
           <div class="text-3xl mb-4">&#128190;</div>
@@ -292,7 +292,7 @@
         <div class="flex flex-col items-center gap-2 p-3 rounded-xl bg-bg-secondary border border-border"><div class="w-10 h-10 rounded-lg bg-bg-tertiary flex items-center justify-center text-lg">&#127909;</div><span class="text-xs text-text-secondary">OBS</span></div>
         <div class="flex flex-col items-center gap-2 p-3 rounded-xl bg-bg-secondary border border-border"><div class="w-10 h-10 rounded-lg bg-bg-tertiary flex items-center justify-center text-lg">&#128230;</div><span class="text-xs text-text-secondary">7-Zip</span></div>
       </div>
-      <p class="text-center text-text-muted text-sm">35+ apps across 9 categories — and growing</p>
+      <p class="text-center text-text-muted text-sm">60+ apps across 9 categories — and growing</p>
     </div>
   </section>
 
@@ -358,7 +358,7 @@
       <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to set up your PC<br><span class="text-accent">the smart way?</span></h2>
       <p class="text-text-secondary mb-8 text-lg">Join the users who've already saved hours on their fresh installs.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="https://github.com/Sepje420/freshrig/releases/latest/download/FreshRig_0.1.0_x64-setup.exe" class="download-btn inline-flex items-center gap-3 px-8 py-4 bg-accent text-bg-primary font-bold rounded-xl text-lg hover:bg-accent-hover transition-all glow">
+        <a href="https://github.com/Sepje420/freshrig/releases/latest" class="download-btn inline-flex items-center gap-3 px-8 py-4 bg-accent text-bg-primary font-bold rounded-xl text-lg hover:bg-accent-hover transition-all glow">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
           Download for Windows
         </a>

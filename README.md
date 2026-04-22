@@ -11,7 +11,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/Sepje420/freshrig/releases/latest/download/FreshRig_0.1.0_x64-setup.exe">
+    <a href="https://github.com/Sepje420/freshrig/releases/latest">
       <img src="https://img.shields.io/badge/Download%20for%20Windows-00d4aa?style=for-the-badge&logo=windows&logoColor=white" alt="Download">
     </a>
   </p>
@@ -28,8 +28,8 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 ## ✨ Features
 
 - 🔍 **Hardware Dashboard** — Auto-detects your CPU, GPU, motherboard, storage, network, and audio via WMI
-- 🎯 **Driver Recommendations** — Identifies your hardware vendors (NVIDIA, AMD, Intel, Realtek) and links directly to official driver downloads
-- 📦 **App Batch Install** — 35+ popular apps organized by category, installed silently via winget with real-time progress
+- 🎯 **Driver Recommendations** — Detects your hardware vendors (NVIDIA, AMD, Intel, Realtek); Intel DSA installs silently via winget, NVIDIA and AMD open their official driver tools in your browser
+- 📦 **App Batch Install** — 60+ popular apps organized by category, installed silently via winget with real-time progress
 - 💾 **Shareable Profiles** — Save your app selection as a `.freshrig.json` profile, share via code or file, import on any PC
 - 🏥 **Health Score** — Instant readiness assessment of your system with driver issue detection
 - 🎨 **Dark Mode UI** — Premium dark theme with customizable accent colors, built with Tailwind CSS
@@ -37,8 +37,7 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 
 ## 📸 Screenshots
 
-<!-- Add screenshots after taking them -->
-*Screenshots coming soon — run `npm run tauri dev` to see the app in action.*
+See the [landing page](https://Sepje420.github.io/freshrig/) for screenshots and details.
 
 ## 🚀 Quick Start
 

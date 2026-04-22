@@ -2,7 +2,9 @@ export type DriverCategory = "Gpu" | "Chipset" | "Network" | "Audio" | "Other";
 
 export type DriverStatus = "UpToDate" | "UpdateAvailable" | "Missing" | "Unknown";
 
-export type DriverInstallAction = "Winget" | "OpenUrl";
+export type DriverInstallAction =
+  | { type: "Winget"; value: string }
+  | { type: "DirectDownload"; value: string };
 
 export interface DriverRecommendation {
   deviceName: string;
@@ -13,6 +15,6 @@ export interface DriverRecommendation {
   downloadUrl: string;
   downloadPage: string;
   status: DriverStatus;
-  wingetId?: string | null;
   installAction: DriverInstallAction;
+  installLabel: string;
 }

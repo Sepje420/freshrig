@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ExternalLink, Download, Loader2, Check } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { toast } from "sonner";
@@ -43,30 +44,41 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
   const vendorColor = getVendorColor(rec.vendor);
   const statusCfg = statusConfig[rec.status];
   const { installingDriverId, installedDriverIds, installDriver } = useDriverStore();
+  const [hashFailureUrl, setHashFailureUrl] = useState<string | null>(null);
 
-  const isInstalling = !!rec.wingetId && installingDriverId === rec.wingetId;
-  const isInstalled = !!rec.wingetId && installedDriverIds.has(rec.wingetId);
-  const canWingetInstall = rec.installAction === "Winget" && !!rec.wingetId;
+  const wingetId = rec.installAction.type === "Winget" ? rec.installAction.value : null;
+  const isInstalling = !!wingetId && installingDriverId === wingetId;
+  const isInstalled = !!wingetId && installedDriverIds.has(wingetId);
 
   const handleWingetInstall = async () => {
-    if (!rec.wingetId) return;
-    const result = await installDriver(rec.wingetId);
+    if (!wingetId) return;
+    setHashFailureUrl(null);
+    const result = await installDriver(wingetId);
     if (result.success) {
       toast.success(`${rec.vendor} driver tool installed`);
     } else {
       toast.error(result.message || "Driver install failed");
+      if (/hash mismatch/i.test(result.message) && rec.downloadPage) {
+        setHashFailureUrl(rec.downloadPage);
+      }
     }
   };
 
-  const handleOpenDownload = async () => {
-    if (rec.downloadUrl) {
-      await openUrl(rec.downloadUrl);
+  const handleDirectDownload = async () => {
+    if (rec.installAction.type === "DirectDownload") {
+      await openUrl(rec.installAction.value);
     }
   };
 
   const handleSupport = async () => {
     if (rec.downloadPage) {
       await openUrl(rec.downloadPage);
+    }
+  };
+
+  const handleHashFallback = async () => {
+    if (hashFailureUrl) {
+      await openUrl(hashFailureUrl);
     }
   };
 
@@ -121,13 +133,13 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 pt-1">
-          {canWingetInstall ? (
+        <div className="flex gap-2 pt-1 flex-wrap">
+          {rec.installAction.type === "Winget" ? (
             <button
               onClick={handleWingetInstall}
               disabled={isInstalling || isInstalled}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-bg-primary text-xs font-medium hover:bg-accent-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-              title={rec.wingetId ? `winget install ${rec.wingetId}` : undefined}
+              title={`winget install ${rec.installAction.value}`}
             >
               {isInstalling ? (
                 <>
@@ -142,30 +154,39 @@ export function DriverCard({ recommendation: rec }: DriverCardProps) {
               ) : (
                 <>
                   <Download className="w-3.5 h-3.5" />
-                  Install
+                  {rec.installLabel}
                 </>
               )}
             </button>
           ) : (
-            rec.downloadUrl && (
-              <button
-                onClick={handleOpenDownload}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-text-secondary text-xs font-medium hover:bg-bg-tertiary hover:text-text-primary transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                Download
-              </button>
-            )
-          )}
-          {rec.downloadPage && rec.downloadPage !== rec.downloadUrl && (
             <button
-              onClick={handleSupport}
+              onClick={handleDirectDownload}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-text-secondary text-xs font-medium hover:bg-bg-tertiary hover:text-text-primary transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              Support
+              {rec.installLabel}
             </button>
           )}
+          {hashFailureUrl && (
+            <button
+              onClick={handleHashFallback}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-warning/30 bg-warning/10 text-warning text-xs font-medium hover:bg-warning/20 transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Open download page
+            </button>
+          )}
+          {rec.installAction.type === "Winget" &&
+            rec.downloadPage &&
+            rec.downloadPage !== hashFailureUrl && (
+              <button
+                onClick={handleSupport}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-text-secondary text-xs font-medium hover:bg-bg-tertiary hover:text-text-primary transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Support
+              </button>
+            )}
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ use tokio::io::AsyncWriteExt;
 
 use crate::models::custom_apps::*;
 use crate::portable;
+use crate::util::silent_cmd;
 
 fn custom_apps_path() -> PathBuf {
     portable::get_data_dir().join("custom-apps.json")
@@ -147,7 +148,7 @@ pub async fn download_and_install_custom_app(
         format!("\"{}\" {}", dest_path.display(), app.silent_args)
     };
 
-    let output = std::process::Command::new("cmd")
+    let output = silent_cmd("cmd")
         .args(["/C", &install_cmd])
         .output()
         .map_err(|e| format!("Install failed: {}", e))?;

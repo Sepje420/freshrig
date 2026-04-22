@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Seppe Willemsens (sepje420). MIT License.
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -11,14 +12,8 @@ pub struct DriverRecommendation {
     pub download_url: String,
     pub download_page: String,
     pub status: DriverStatus,
-    #[serde(default)]
-    pub winget_id: Option<String>,
-    #[serde(default = "default_install_action")]
     pub install_action: DriverInstallAction,
-}
-
-fn default_install_action() -> DriverInstallAction {
-    DriverInstallAction::OpenUrl
+    pub install_label: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -38,8 +33,13 @@ pub enum DriverStatus {
     Unknown,
 }
 
+/// Adjacently tagged so the JSON looks like `{"type":"Winget","value":"..."}`,
+/// matching the discriminated union the frontend consumes.
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(tag = "type", content = "value")]
 pub enum DriverInstallAction {
-    Winget,
-    OpenUrl,
+    /// Install via winget — value is the winget package id.
+    Winget(String),
+    /// Open a vendor download page in the browser — value is the URL.
+    DirectDownload(String),
 }

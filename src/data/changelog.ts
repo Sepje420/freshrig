@@ -1,4 +1,10 @@
 export const CHANGELOG: Record<string, string> = {
+  "0.6.0": `### What's New in v0.6.0
+
+- **No more CMD flashing** — All background commands now run invisibly, no more black terminal windows popping up
+- **Fixed driver installs** — NVIDIA now links directly to the NVIDIA App (GeForce Experience is deprecated); Intel DSA installs via winget with hash-mismatch fallback
+- **Better error messages** — Driver and app install failures now show specific, actionable error text instead of raw winget output
+`,
   "0.5.1": `### What's New in v0.5.1
 
 - **Build fingerprint fix** — Fingerprint now baked at compile time for accurate build tracing

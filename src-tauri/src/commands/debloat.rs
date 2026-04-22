@@ -1,11 +1,10 @@
-use std::process::Command;
-
 use tauri::Emitter;
 use winreg::enums::*;
 use winreg::RegKey;
 
 use crate::data::debloat_tweaks::get_all_tweaks;
 use crate::models::debloat::*;
+use crate::util::silent_cmd;
 
 /// Protected packages that must NEVER be removed
 const PROTECTED_PACKAGES: &[&str] = &[
@@ -99,7 +98,7 @@ fn check_tweak_applied(def: &crate::data::debloat_tweaks::TweakDefinition) -> bo
         }
         TweakType::AppxRemove => {
             if let Some(appx_name) = def.appx_name {
-                let output = Command::new("powershell")
+                let output = silent_cmd("powershell")
                     .args([
                         "-NoProfile",
                         "-Command",
@@ -123,7 +122,7 @@ fn check_tweak_applied(def: &crate::data::debloat_tweaks::TweakDefinition) -> bo
         }
         TweakType::ServiceDisable => {
             if let Some(svc) = def.service_name {
-                let output = Command::new("powershell")
+                let output = silent_cmd("powershell")
                     .args([
                         "-NoProfile",
                         "-Command",
@@ -159,7 +158,7 @@ pub async fn create_restore_point() -> Result<String, String> {
     let desc_clone = description.clone();
     tokio::task::spawn_blocking(move || {
         // Enable restore point creation (bypass 24h limit)
-        let _ = Command::new("powershell")
+        let _ = silent_cmd("powershell")
             .args([
                 "-NoProfile",
                 "-Command",
@@ -167,7 +166,7 @@ pub async fn create_restore_point() -> Result<String, String> {
             ])
             .output();
 
-        let output = Command::new("powershell")
+        let output = silent_cmd("powershell")
             .args([
                 "-NoProfile",
                 "-Command",
@@ -383,7 +382,7 @@ fn apply_single_tweak(def: &crate::data::debloat_tweaks::TweakDefinition) -> Deb
                 Some(name) => name,
                 None if def.id == "remove_onedrive" => {
                     // Special OneDrive removal
-                    let output = Command::new("cmd")
+                    let output = silent_cmd("cmd")
                         .args([
                             "/C",
                             "taskkill /f /im OneDrive.exe >nul 2>&1 & %SystemRoot%\\SysWOW64\\OneDriveSetup.exe /uninstall 2>nul || %SystemRoot%\\System32\\OneDriveSetup.exe /uninstall 2>nul",
@@ -426,7 +425,7 @@ fn apply_single_tweak(def: &crate::data::debloat_tweaks::TweakDefinition) -> Deb
                 };
             }
 
-            let output = Command::new("powershell")
+            let output = silent_cmd("powershell")
                 .args([
                     "-NoProfile",
                     "-Command",
@@ -478,7 +477,7 @@ fn apply_single_tweak(def: &crate::data::debloat_tweaks::TweakDefinition) -> Deb
                 }
             };
 
-            let output = Command::new("powershell")
+            let output = silent_cmd("powershell")
                 .args([
                     "-NoProfile",
                     "-Command",
@@ -540,7 +539,7 @@ pub async fn check_admin_elevation() -> Result<bool, String> {
 #[tauri::command]
 pub async fn get_installed_appx_packages() -> Result<Vec<String>, String> {
     tokio::task::spawn_blocking(|| {
-        let output = Command::new("powershell")
+        let output = silent_cmd("powershell")
             .args([
                 "-NoProfile",
                 "-Command",
