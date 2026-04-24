@@ -17,7 +17,7 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - `src/config/` — App constants (`app.ts`)
 
 ## Key patterns & Requirements
-- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **1.0.0** (Pro launch). `PRO_PURCHASE_URL`, `PRO_PRICE_LABEL`, `TRIAL_DAYS` also live in `app.ts`.
+- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **1.1.0** (Linux support). `PRO_PURCHASE_URL`, `PRO_PRICE_LABEL`, `TRIAL_DAYS` also live in `app.ts`.
 - **Tauri IPC:** Frontend calls `invoke('command_name')`, backend uses `#[tauri::command]` in `src-tauri/src/lib.rs`.
 - **Rust ↔ TS:** Rust uses snake_case, TypeScript uses camelCase — Tauri auto-converts field names.
 - **Hardware data:** All hardware info comes from WMI queries via the `wmi` crate (v0.18+, `WMIConnection::new()` takes 0 args). WMI queries have 5-second timeouts to avoid hangs.
@@ -52,6 +52,19 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 
 ## Known upstream issues
 - **Suppressed cargo audit findings:** Two transitive Tauri deps surface RustSec advisories that we cannot patch at our layer. `glib 0.18.5` (RUSTSEC-2024-0429 / GHSA-wrw7-89jp-8q8g) is Linux-only via gtk-rs 0.18 and excluded from Windows builds. `rand 0.7.3` (RUSTSEC-2026-0097 / GHSA-cq8v-f236-94qc) is build-time HTML codegen via `kuchikiki`. Both ignored in `src-tauri/.cargo/audit.toml`. Re-evaluate when Tauri bumps to gtk-rs 0.20+ or replaces kuchikiki.
+
+## Linux support
+- Platform abstraction: `src-tauri/src/platform/` with `mod.rs`, `types.rs`, `windows.rs`, `linux.rs`.
+- Linux deps (gated via `[target.'cfg(target_os = "linux")']` in `Cargo.toml`): `sysinfo`, `nix`, `procfs`, `os_info`, `cfg-if`.
+- Linux hardware: `/proc/cpuinfo`, `/proc/meminfo`, `/sys/class/dmi/id`, `/sys/class/net`, `/sys/class/power_supply`, `lspci`, `lsblk -JO`, `smartctl -j`.
+- Linux package managers: `apt-get`, `dnf`, `pacman`, `zypper`, `flatpak` — detected via `/etc/os-release` `ID_LIKE` (wrapped in `platform::current::get_distro_family()`).
+- Linux services: `systemctl list-units --output=json` + `is-enabled` probe; same `ServiceStartType` enum as Windows.
+- Linux startup: XDG autostart (`~/.config/autostart/*.desktop` + `/etc/xdg/autostart/`) and `systemctl --user` user units.
+- Linux privacy: Flatpak permission audit via `flatpak info --show-permissions`, plus apport/whoopsie/popcon/firewall/auto-update toggles.
+- Linux cleanup: `~/.cache/`, `/var/log/`, distro package cache, browser cache, trash, thumbnails — via `jwalk` + `trash`.
+- Linux elevation: `pkexec` (polkit), never `sudo`. Matches the GUI-session expectation of Tauri apps.
+- CI: matrix build on `ubuntu-22.04` + `windows-latest` (`.github/workflows/ci.yml`); release on tag push produces `.exe`, `.deb`, `.rpm`, `.AppImage` (`.github/workflows/release.yml`).
+- Linux command tree: `src-tauri/src/commands/linux/` — parallel subtree mirroring the Windows command modules. `tauri::generate_handler!` entries in `lib.rs` cfg-gate a Windows twin and a Linux twin under the same command name so the frontend's `invoke()` calls are OS-agnostic.
 
 ## Commands & Workflow
 - `npm run tauri dev` — start development

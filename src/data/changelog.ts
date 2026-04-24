@@ -1,4 +1,17 @@
 export const CHANGELOG: Record<string, string> = {
+  "1.1.0": `### FreshRig v1.1.0 — Linux Support 🐧
+
+- **Linux is here** — FreshRig now runs natively on Ubuntu, Fedora, Arch, Linux Mint, Pop!_OS, openSUSE, and more
+- **Cross-distro package management** — Install apps via apt, dnf, pacman, zypper, or Flatpak depending on your distro
+- **Linux hardware detection** — CPU, GPU, memory, disks, battery, and network via /proc, /sys, and lspci
+- **systemd services manager** — View and control system services with safe presets (Pro)
+- **XDG startup manager** — Manage autostart .desktop entries and systemd user services
+- **Flatpak permission audit** — See which Flatpak apps have risky permissions like filesystem access (Pro)
+- **Linux disk cleanup** — Clear package caches, old logs, browser caches, thumbnails, and trash (Pro)
+- **Linux network tools** — DNS presets via systemd-resolved, NetworkManager restart, WiFi passwords from saved connections (Pro)
+- **NVIDIA/AMD/Intel driver guidance** — Distro-specific driver recommendations with one-click package install
+- **Downloads available as .deb, .rpm, and .AppImage** — plus AUR package for Arch users
+`,
   "1.0.0": `### FreshRig v1.0.0 — Pro Launch 🎉
 
 **New Pro Features** (free 14-day trial, then $39 one-time):
