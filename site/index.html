@@ -37,10 +37,13 @@
     "name": "FreshRig",
     "operatingSystem": "Windows 10, Windows 11",
     "applicationCategory": "DesktopEnhancementApplication",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "offers": [
+      { "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Free" },
+      { "@type": "Offer", "price": "39", "priceCurrency": "USD", "name": "Pro (one-time)" }
+    ],
     "url": "https://ZIPREX420.github.io/freshrig/",
     "downloadUrl": "https://github.com/ZIPREX420/freshrig/releases/latest",
-    "softwareVersion": "0.7.0",
+    "softwareVersion": "1.0.0",
     "author": { "@type": "Person", "name": "ZIPREX420" }
   }
   </script>
@@ -72,7 +75,8 @@
       </a>
       <div class="hidden md:flex items-center gap-8 text-sm text-text-secondary">
         <a href="#features" class="hover:text-text-primary transition-colors">Features</a>
-        <a href="#how-it-works" class="hover:text-text-primary transition-colors">How It Works</a>
+        <a href="#pro" class="hover:text-amber-400 transition-colors">Pro</a>
+        <a href="#pricing" class="hover:text-text-primary transition-colors">Pricing</a>
         <a href="#faq" class="hover:text-text-primary transition-colors">FAQ</a>
         <a href="https://github.com/ZIPREX420/freshrig" class="hover:text-text-primary transition-colors" target="_blank" rel="noopener">GitHub</a>
       </div>
@@ -88,7 +92,7 @@
     <div class="relative max-w-4xl mx-auto px-6 text-center pt-24 pb-20">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border text-xs text-text-secondary mb-8">
         <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-        <span>v<span id="version-badge">0.7.0</span> — Free & Open Source</span>
+        <span>v<span id="version-badge">1.0.0</span> — Pro Launch · Free Core · Open Source</span>
       </div>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6">
         The First Tool You Run After a<br>
@@ -163,7 +167,7 @@
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-16 fade-in">
         <h2 class="text-3xl sm:text-4xl font-bold mb-4">Everything You Need,<br><span class="text-accent">Nothing You Don't</span></h2>
-        <p class="text-text-secondary text-lg max-w-xl mx-auto">Eight features that replace a dozen tools.</p>
+        <p class="text-text-secondary text-lg max-w-xl mx-auto">Fourteen features that replace a dozen tools.</p>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
         <div class="group bg-bg-secondary border border-border rounded-xl p-6 hover:border-accent/30 hover:-translate-y-1 transition-all duration-300">
@@ -210,6 +214,99 @@
     </div>
   </section>
 
+  <!-- Pro Features -->
+  <section id="pro" class="py-24 px-6 bg-gradient-to-b from-bg-primary via-bg-secondary/30 to-bg-primary">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 fade-in">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-xs text-amber-400 mb-6">
+          <span>&#9733; PRO</span>
+          <span>Free 14-day trial · No subscription</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Unlock the<br><span class="text-accent">Full Toolkit</span></h2>
+        <p class="text-text-secondary text-lg max-w-2xl mx-auto">Six premium features for when free isn't enough. One-time payment, lifetime updates, three activations.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
+        <div class="group relative bg-bg-secondary border border-amber-500/20 rounded-xl p-6 hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300">
+          <span class="absolute top-4 right-4 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">&#9733; PRO</span>
+          <div class="text-3xl mb-4">&#129531;</div>
+          <h3 class="text-lg font-semibold mb-2">Disk Cleanup</h3>
+          <p class="text-sm text-text-secondary leading-relaxed">Scan temp files, browser caches, crash dumps, and shader caches with per-category risk ratings and preview before cleaning.</p>
+        </div>
+        <div class="group relative bg-bg-secondary border border-amber-500/20 rounded-xl p-6 hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300">
+          <span class="absolute top-4 right-4 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">&#9733; PRO</span>
+          <div class="text-3xl mb-4">&#128274;</div>
+          <h3 class="text-lg font-semibold mb-2">Privacy Dashboard</h3>
+          <p class="text-sm text-text-secondary leading-relaxed">Audit camera, microphone, and location access per app. 20+ privacy toggles with drift detection when Windows re-enables tracking.</p>
+        </div>
+        <div class="group relative bg-bg-secondary border border-amber-500/20 rounded-xl p-6 hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300">
+          <span class="absolute top-4 right-4 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">&#9733; PRO</span>
+          <div class="text-3xl mb-4">&#127760;</div>
+          <h3 class="text-lg font-semibold mb-2">Network Tools</h3>
+          <p class="text-sm text-text-secondary leading-relaxed">One-click DNS flush, full network reset, DNS preset switching (Cloudflare, Google, Quad9), and saved WiFi password viewer.</p>
+        </div>
+        <div class="group relative bg-bg-secondary border border-amber-500/20 rounded-xl p-6 hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300">
+          <span class="absolute top-4 right-4 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">&#9733; PRO</span>
+          <div class="text-3xl mb-4">&#9881;</div>
+          <h3 class="text-lg font-semibold mb-2">Services Manager</h3>
+          <p class="text-sm text-text-secondary leading-relaxed">Gaming, Privacy, and Performance presets to safely disable unnecessary Windows services with never-disable guardrails.</p>
+        </div>
+        <div class="group relative bg-bg-secondary border border-amber-500/20 rounded-xl p-6 hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300">
+          <span class="absolute top-4 right-4 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">&#9733; PRO</span>
+          <div class="text-3xl mb-4">&#128433;</div>
+          <h3 class="text-lg font-semibold mb-2">Context Menu Editor</h3>
+          <p class="text-sm text-text-secondary leading-relaxed">Restore the Windows 11 classic right-click menu with one toggle. View and block shell extensions you don't want.</p>
+        </div>
+        <div class="group relative bg-bg-secondary border border-amber-500/20 rounded-xl p-6 hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300">
+          <span class="absolute top-4 right-4 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">&#9733; PRO</span>
+          <div class="text-3xl mb-4">&#128196;</div>
+          <h3 class="text-lg font-semibold mb-2">System Health Report</h3>
+          <p class="text-sm text-text-secondary leading-relaxed">Full diagnostic with SMART disk health, battery wear, security posture, driver status, and an overall A-F grade. Export as PDF.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="py-24 px-6">
+    <div class="max-w-3xl mx-auto fade-in">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Simple Pricing,<br><span class="text-accent">Lifetime Value</span></h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="bg-bg-secondary border border-border rounded-2xl p-8 flex flex-col">
+          <p class="text-xs uppercase tracking-wider text-text-muted font-semibold">Free</p>
+          <h3 class="text-3xl font-bold mt-2 mb-1">$0</h3>
+          <p class="text-sm text-text-secondary mb-6">Forever. No account needed.</p>
+          <ul class="space-y-2 text-sm text-text-secondary mb-8">
+            <li class="flex items-start gap-2"><span class="text-accent mt-0.5">&#10004;</span><span>Hardware Dashboard, Driver Finder, 60+ App Batch Install</span></li>
+            <li class="flex items-start gap-2"><span class="text-accent mt-0.5">&#10004;</span><span>Shareable Profiles, Windows Optimization, Startup Manager</span></li>
+            <li class="flex items-start gap-2"><span class="text-accent mt-0.5">&#10004;</span><span>6 Accent Themes, Command Palette, Auto-Updater</span></li>
+          </ul>
+          <a href="https://github.com/ZIPREX420/freshrig/releases/latest" class="download-btn mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 border border-border text-text-primary rounded-xl hover:border-accent/40 transition-colors font-semibold">
+            Download Free
+          </a>
+        </div>
+        <div class="relative bg-gradient-to-br from-amber-500/10 via-bg-secondary to-bg-secondary border border-amber-500/40 rounded-2xl p-8 flex flex-col">
+          <span class="absolute -top-3 left-8 text-[10px] font-bold text-black bg-amber-400 px-3 py-1 rounded-full">LAUNCH PRICE</span>
+          <p class="text-xs uppercase tracking-wider text-amber-400 font-semibold">Pro</p>
+          <h3 class="text-3xl font-bold mt-2 mb-1">$39 <span class="text-sm font-normal text-text-secondary">one-time</span></h3>
+          <p class="text-sm text-text-secondary mb-6">No subscription · 14-day free trial · 3 activations</p>
+          <ul class="space-y-2 text-sm text-text-secondary mb-8">
+            <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Disk Cleanup, Privacy Dashboard, Network Tools</span></li>
+            <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Services Manager, Context Menu Editor</span></li>
+            <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>System Health Report (PDF export)</span></li>
+            <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Scheduled Maintenance & White-Label Branding (coming soon)</span></li>
+            <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Lifetime updates, priority support</span></li>
+          </ul>
+          <a href="https://freshrig.lemonsqueezy.com/buy/freshrig-pro" class="mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-400 text-black rounded-xl hover:bg-amber-300 transition-colors font-bold">
+            Buy Pro &mdash; $39
+          </a>
+          <p class="text-center text-xs text-text-muted mt-3">Or start a 14-day free trial from inside the app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Comparison -->
   <section id="comparison" class="py-24 px-6 bg-bg-secondary/50">
     <div class="max-w-4xl mx-auto fade-in">
@@ -239,8 +336,15 @@
             <tr><td class="px-5 py-3 text-text-primary">Offline hardware scan</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
             <tr><td class="px-5 py-3 text-text-primary">Silent installs</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
             <tr><td class="px-5 py-3 text-text-primary">Open source</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-secondary text-center">varies</td></tr>
+            <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Disk cleanup <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
+            <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Privacy audit per-app <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
+            <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Network reset / DNS presets <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
+            <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Services manager <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
+            <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Context menu editor <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
+            <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">System health report (PDF) <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
           </tbody>
         </table>
+        <p class="text-center text-xs text-text-muted mt-4">Rows marked <span class="text-amber-400 font-bold">&#9733; PRO</span> require a one-time $39 license. 14-day free trial included.</p>
       </div>
     </div>
   </section>
@@ -338,7 +442,11 @@
       <div class="space-y-3 fade-in">
         <details class="bg-bg-secondary border border-border rounded-xl">
           <summary class="px-6 py-4 text-text-primary font-medium">Is FreshRig free?</summary>
-          <div class="px-6 pb-5 text-sm text-text-secondary leading-relaxed">Yes, FreshRig is free and open source under the MIT license. A Pro tier with additional features is planned for the future.</div>
+          <div class="px-6 pb-5 text-sm text-text-secondary leading-relaxed">The core app is free forever and open source under the MIT license — that includes hardware detection, drivers, app install, profiles, Windows optimization, and startup management. A <strong>Pro tier ($39 one-time, no subscription)</strong> unlocks six advanced features: Disk Cleanup, Privacy Dashboard, Network Tools, Services Manager, Context Menu Editor, and the System Health Report. Every install gets a 14-day free trial of Pro.</div>
+        </details>
+        <details class="bg-bg-secondary border border-border rounded-xl">
+          <summary class="px-6 py-4 text-text-primary font-medium">What does Pro cost and how many PCs can I use it on?</summary>
+          <div class="px-6 pb-5 text-sm text-text-secondary leading-relaxed">Pro is <strong>$39 one-time</strong> — no subscription, no renewal. One license activates on up to <strong>3 PCs</strong>, which covers reinstalls and backup machines. Updates are free for life. Payment goes through LemonSqueezy (all major cards, Apple Pay, Google Pay).</div>
         </details>
         <details class="bg-bg-secondary border border-border rounded-xl">
           <summary class="px-6 py-4 text-text-primary font-medium">Is my data private?</summary>

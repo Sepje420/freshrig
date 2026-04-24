@@ -1,6 +1,6 @@
 [package]
 name = "freshrig"
-version = "0.7.0"
+version = "1.0.0"
 description = "The first tool you run after a fresh Windows install"
 authors = ["FreshRig"]
 edition = "2021"
@@ -32,3 +32,7 @@ tauri-plugin-updater = "2"
 tauri-plugin-process = "2"
 strsim = "0.11"
 futures-util = "0.3"
+jwalk = "0.8"
+trash = "5"
+aes-gcm = "0.10"
+rand = "0.8"

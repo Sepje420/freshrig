@@ -14,6 +14,11 @@ import { AppsPage } from "./components/apps/AppsPage";
 import { ProfilesPage } from "./components/profiles/ProfilesPage";
 import { OptimizePage } from "./components/optimize/OptimizePage";
 import { StartupPage } from "./components/startup/StartupPage";
+import { CleanupPage } from "./components/cleanup/CleanupPage";
+import { PrivacyPage } from "./components/privacy/PrivacyPage";
+import { NetworkPage } from "./components/network/NetworkPage";
+import { ContextMenuPage } from "./components/context_menu/ContextMenuPage";
+import { ServicesPage } from "./components/services/ServicesPage";
 import { SettingsPage } from "./components/settings/SettingsPage";
 import { AboutPage } from "./components/about/AboutPage";
 import { OnboardingWizard } from "./components/onboarding/OnboardingWizard";
@@ -22,6 +27,7 @@ import { ShortcutHelp } from "./components/ui/ShortcutHelp";
 import { ErrorFallback } from "./components/ErrorFallback";
 import { useSettingsStore } from "./stores/settingsStore";
 import { useUpdateStore } from "./stores/updateStore";
+import { useLicenseStore } from "./stores/licenseStore";
 import { APP_VERSION } from "./config/app";
 
 function App() {
@@ -40,6 +46,9 @@ function App() {
   useHotkeys("ctrl+4", () => navigate("profiles"), { preventDefault: true });
   useHotkeys("ctrl+5", () => navigate("optimize"), { preventDefault: true });
   useHotkeys("ctrl+6", () => navigate("startup"), { preventDefault: true });
+  useHotkeys("ctrl+7", () => navigate("cleanup"), { preventDefault: true });
+  useHotkeys("ctrl+8", () => navigate("privacy"), { preventDefault: true });
+  useHotkeys("ctrl+9", () => navigate("network"), { preventDefault: true });
   useHotkeys("ctrl+comma", () => navigate("settings"), { preventDefault: true });
   useHotkeys("ctrl+k", () => setShowCommandPalette((v) => !v), { preventDefault: true });
   useHotkeys("ctrl+shift+/", () => setShowShortcuts((v) => !v), { preventDefault: true });
@@ -58,6 +67,18 @@ function App() {
     }, 3000);
     return () => clearTimeout(timer);
   }, [settings.checkForUpdates]);
+
+  // Background license revalidation — 6h interval, initial check after 5s.
+  useEffect(() => {
+    if (!(window as unknown as Record<string, unknown>).__TAURI_INTERNALS__) return;
+    const revalidate = () => useLicenseStore.getState().revalidate();
+    const initial = setTimeout(revalidate, 5000);
+    const interval = setInterval(revalidate, 6 * 60 * 60 * 1000);
+    return () => {
+      clearTimeout(initial);
+      clearInterval(interval);
+    };
+  }, []);
 
   // Show "What's New" modal if version changed
   useEffect(() => {
@@ -117,6 +138,11 @@ function App() {
                 {currentView === "profiles" && <ProfilesPage />}
                 {currentView === "optimize" && <OptimizePage />}
                 {currentView === "startup" && <StartupPage />}
+                {currentView === "cleanup" && <CleanupPage />}
+                {currentView === "privacy" && <PrivacyPage />}
+                {currentView === "network" && <NetworkPage />}
+                {currentView === "contextMenu" && <ContextMenuPage />}
+                {currentView === "services" && <ServicesPage />}
                 {currentView === "settings" && <SettingsPage onNavigate={navigate} />}
                 {currentView === "about" && <AboutPage />}
               </motion.div>

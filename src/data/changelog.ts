@@ -1,4 +1,17 @@
 export const CHANGELOG: Record<string, string> = {
+  "1.0.0": `### FreshRig v1.0.0 — Pro Launch 🎉
+
+**New Pro Features** (free 14-day trial, then $39 one-time):
+- **Disk Cleanup** — Scan and clean temp files, browser caches, crash dumps, shader caches, and more. Preview before cleaning with per-category risk ratings.
+- **Privacy Dashboard** — Audit which apps access your camera, microphone, and location. 20+ privacy toggles with one-click hardening. Drift detection warns when Windows re-enables tracking.
+- **Network Tools** — One-click DNS flush, full network reset, DNS preset switching (Cloudflare, Google, Quad9, etc.), saved WiFi password viewer.
+- **Services Manager** — Gaming, Privacy, and Performance presets to safely disable unnecessary Windows services. Never-disable guardrails protect critical system services.
+- **Context Menu Editor** — Restore Windows 11 classic right-click menu with one toggle. View and block shell extensions.
+- **System Health Report** — Comprehensive PC diagnostic with hardware audit, SMART disk health, battery wear, security status, and an overall A-F grade. Export as PDF for selling a PC, documenting a build, or billing a repair job.
+- **LemonSqueezy licensing** — Real license activation and validation replaces placeholder keys.
+
+**Free features remain free forever.** Dashboard, Drivers, Apps, Profiles, Optimize, Startup Manager, and theme switching are all still free and open source.
+`,
   "0.7.0": `### What's New in v0.7.0
 
 - **Theme system** — 6 accent color presets (Teal, Blue, Purple, Orange, Rose, Green) with instant switching in Settings

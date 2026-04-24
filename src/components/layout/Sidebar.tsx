@@ -5,6 +5,11 @@ import {
   BookMarked,
   Sparkles,
   Rocket,
+  Trash2,
+  Shield,
+  Globe,
+  Menu,
+  Cog,
   Settings,
   Monitor,
   Keyboard,
@@ -33,6 +38,11 @@ const primaryNav: NavItem[] = [
   { id: "profiles", label: "Profiles", icon: BookMarked, shortcut: "Ctrl+4" },
   { id: "optimize", label: "Optimize", icon: Sparkles, shortcut: "Ctrl+5" },
   { id: "startup", label: "Startup", icon: Rocket, shortcut: "Ctrl+6" },
+  { id: "cleanup", label: "Cleanup", icon: Trash2, shortcut: "Ctrl+7" },
+  { id: "privacy", label: "Privacy", icon: Shield, shortcut: "Ctrl+8" },
+  { id: "network", label: "Network", icon: Globe, shortcut: "Ctrl+9" },
+  { id: "contextMenu", label: "Context Menu", icon: Menu },
+  { id: "services", label: "Services", icon: Cog },
 ];
 
 const secondaryNav: NavItem[] = [

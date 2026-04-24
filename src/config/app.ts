@@ -1,5 +1,12 @@
 // Copyright (c) 2026 Seppe Willemsens (ZIPREX420). MIT License.
 export const APP_NAME = "FreshRig";
 export const APP_TAGLINE = "The first tool you run after a fresh Windows install";
-export const APP_VERSION = "0.7.0";
+export const APP_VERSION = "1.0.0";
 export const BUILD_FINGERPRINT = `freshrig-${APP_VERSION}-${__BUILD_TIMESTAMP__}`;
+
+/** LemonSqueezy checkout URL for Pro purchases ($39 one-time). */
+export const PRO_PURCHASE_URL = "https://freshrig.lemonsqueezy.com/buy/freshrig-pro";
+/** Price shown in upsell UI. */
+export const PRO_PRICE_LABEL = "$39 one-time";
+/** Free trial duration in days. */
+export const TRIAL_DAYS = 14;

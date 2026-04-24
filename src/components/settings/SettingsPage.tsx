@@ -55,10 +55,11 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const { settings, setSetting, setAccentColor, resetSettings, isPortable } = useSettingsStore();
   const { fetchProfiles } = useProfileStore();
   const { status: updateStatus, newVersion, checkForUpdates, downloadAndInstall } = useUpdateStore();
-  const { licenseKey, validatedAt, isPro, setLicense, clearLicense } = useLicenseStore();
+  const { licenseKey, validatedAt, customerName, isPro, activate, clearLicense } = useLicenseStore();
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [licenseInput, setLicenseInput] = useState("");
+  const [activating, setActivating] = useState(false);
 
   const handleClearProfiles = async () => {
     try {
@@ -421,15 +422,20 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   Pro
                 </span>
               </SettingRow>
+              {customerName && (
+                <SettingRow label="Customer" description="Registered to">
+                  <span className="text-sm text-text-secondary">{customerName}</span>
+                </SettingRow>
+              )}
               <SettingRow
                 label="License key"
-                description={validatedAt ? `Activated ${new Date(validatedAt).toLocaleDateString()}` : ""}
+                description={validatedAt ? `Validated ${new Date(validatedAt).toLocaleDateString()}` : ""}
               >
                 <span className="text-sm text-text-secondary font-mono">
                   {licenseKey ? `${licenseKey.slice(0, 6)}${"*".repeat(Math.max(0, licenseKey.length - 6))}` : ""}
                 </span>
               </SettingRow>
-              <SettingRow label="Manage license" description="Deactivate your Pro license">
+              <SettingRow label="Manage license" description="Deactivate your Pro license on this machine">
                 <button
                   onClick={() => {
                     clearLicense();
@@ -447,16 +453,15 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                 <div className="flex items-center gap-2">
                   <Crown className="w-5 h-5 text-amber-500" />
                   <p className="text-sm font-semibold text-text-primary">Unlock Pro Features</p>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-semibold">
-                    Coming Soon
-                  </span>
                 </div>
                 <ul className="text-xs text-text-secondary space-y-1.5 ml-7">
-                  <li>Unlimited profiles & cloud sync</li>
+                  <li>Privacy Dashboard — telemetry & permission controls</li>
+                  <li>Network Tools — DNS presets & saved Wi-Fi passwords</li>
+                  <li>Context Menu Editor — classic menu & shell extensions</li>
+                  <li>Services Manager — preset-based service hardening</li>
+                  <li>PDF Diagnostic Report — branded health audit</li>
                   <li>Full debloating (Moderate + Expert tiers)</li>
-                  <li>Custom app entries</li>
-                  <li>Community profile hub</li>
-                  <li>Export to PowerShell script</li>
+                  <li>Unlimited profiles & custom apps</li>
                   <li>Priority support</li>
                 </ul>
               </div>
@@ -465,28 +470,32 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                   <input
                     type="text"
                     value={licenseInput}
-                    onChange={(e) => setLicenseInput(e.target.value)}
-                    placeholder="Enter license key (FR-...)"
+                    onChange={(e) => setLicenseInput(e.target.value.toUpperCase())}
+                    placeholder="Enter license key (FR-XXXXX-XXXXX)"
                     className="flex-1 px-3 py-1.5 rounded-md bg-bg-tertiary border border-border text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/50 font-mono"
+                    disabled={activating}
                   />
                   <button
-                    onClick={() => {
-                      const ok = setLicense(licenseInput.trim(), "pro");
-                      if (ok) {
+                    onClick={async () => {
+                      setActivating(true);
+                      const result = await activate(licenseInput);
+                      setActivating(false);
+                      if (result.ok) {
                         toast.success("Pro license activated!");
                         setLicenseInput("");
                       } else {
-                        toast.error("Invalid license key. Expected format: FR-XXXXX-XXXXX");
+                        toast.error(result.error ?? "Activation failed");
                       }
                     }}
-                    disabled={!licenseInput.trim()}
-                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                      licenseInput.trim()
+                    disabled={!licenseInput.trim() || activating}
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                      licenseInput.trim() && !activating
                         ? "bg-amber-500 text-black hover:bg-amber-400"
                         : "bg-bg-tertiary text-text-muted cursor-not-allowed"
                     }`}
                   >
-                    Activate
+                    {activating && <RefreshCw className="w-3 h-3 animate-spin" />}
+                    {activating ? "Activating..." : "Activate"}
                   </button>
                 </div>
               </div>

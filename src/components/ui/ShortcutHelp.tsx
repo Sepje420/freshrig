@@ -12,6 +12,10 @@ const shortcuts = {
     { keys: "Ctrl+3", description: "Apps" },
     { keys: "Ctrl+4", description: "Profiles" },
     { keys: "Ctrl+5", description: "Optimize Windows" },
+    { keys: "Ctrl+6", description: "Startup" },
+    { keys: "Ctrl+7", description: "Cleanup" },
+    { keys: "Ctrl+8", description: "Privacy" },
+    { keys: "Ctrl+9", description: "Network" },
     { keys: "Ctrl+,", description: "Settings" },
   ],
   Actions: [

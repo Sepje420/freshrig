@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useHardwareStore } from "../../stores/hardwareStore";
 import { APP_NAME, APP_TAGLINE } from "../../config/app";
 import { SystemOverviewCard } from "./SystemOverviewCard";
@@ -7,11 +7,13 @@ import { DiskCard } from "./DiskCard";
 import { NetworkCard } from "./NetworkCard";
 import { DriverIssuesCard } from "./DriverIssuesCard";
 import { HealthScore } from "./HealthScore";
-import { CircuitBoard, Volume2 } from "lucide-react";
+import { CircuitBoard, Volume2, FileText } from "lucide-react";
 import { HardwareCard } from "./HardwareCard";
+import { ReportPage } from "../report/ReportPage";
 
 export function Dashboard() {
   const { summary, driverIssues, loading, error, fetchHardware } = useHardwareStore();
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     fetchHardware();
@@ -47,6 +49,24 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <Header />
+
+      {/* Diagnostic Report CTA */}
+      <div className="flex items-center justify-between bg-gradient-to-r from-accent/10 to-amber-500/10 border border-accent/20 rounded-xl px-5 py-4">
+        <div>
+          <p className="text-sm font-semibold text-text-primary">Diagnostic Health Report</p>
+          <p className="text-xs text-text-secondary mt-0.5">
+            Full SMART, battery, security, and driver analysis — save as PDF.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowReport(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-bg-primary text-sm font-medium hover:bg-accent-hover transition-colors"
+        >
+          <FileText className="w-4 h-4" /> Generate Report
+        </button>
+      </div>
+
+      {showReport && <ReportPage onClose={() => setShowReport(false)} />}
 
       {/* System Overview + Health Score */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-6">

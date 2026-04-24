@@ -27,15 +27,47 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 
 ## ✨ Features
 
+### Free (Forever)
 - 🔍 **Hardware Dashboard** — Auto-detects your CPU, GPU, motherboard, storage, network, and audio via WMI
-- 🎯 **Driver Recommendations** — Detects your hardware vendors (NVIDIA, AMD, Intel, Realtek); Intel DSA installs silently via winget, NVIDIA and AMD open their official driver tools in your browser
+- 🎯 **Driver Finder** — Detects your hardware vendors (NVIDIA, AMD, Intel, Realtek); Intel DSA installs silently via winget, NVIDIA and AMD open their official driver tools in your browser
 - 📦 **App Batch Install** — 60+ popular apps organized by category, installed silently via winget with real-time progress
-- 🚀 **Startup Manager** — View and control Windows startup programs from registry Run keys and the Startup folder, with one-click enable/disable
 - 💾 **Shareable Profiles** — Save your app selection as a `.freshrig.json` profile, share via code or file, import on any PC
+- ⚙️ **Windows Optimization** — 23 tweaks across Safe, Moderate, and Expert tiers with mandatory restore points
+- 🚀 **Startup Manager** — View and control Windows startup programs from registry Run keys and the Startup folder, with one-click enable/disable
 - 🏥 **Health Score** — Instant readiness assessment of your system with driver issue detection
-- 🎨 **Theme Support** — 6 accent color presets (Teal, Blue, Purple, Orange, Rose, Green) with instant switching in Settings
+- 🎨 **6 Accent Themes** — Teal, Blue, Purple, Orange, Rose, and Green with instant switching
+- ⌨️ **Command Palette** — Ctrl+K spotlight search for quick navigation and actions
+- 🔄 **Auto-Updater** — Built-in update checks with passive install
 - 🌙 **Premium Dark UI** — Spring-physics animations, refined cards, and polished page transitions built with Tailwind CSS
 - 🎉 **Celebration Mode** — Confetti and time-saved counter when your setup completes
+
+### Pro ($39 One-Time · No Subscription · 14-Day Free Trial · 3 Activations)
+- 🧹 **Disk Cleanup** — Scan temp files, browser caches, crash dumps, shader caches with per-category risk ratings and preview before cleaning
+- 🛡️ **Privacy Dashboard** — Audit camera/microphone/location permissions per app, 20+ privacy toggles with drift detection
+- 🌐 **Network Tools** — One-click DNS flush, full network reset, DNS preset switching (Cloudflare, Google, Quad9), saved WiFi password viewer
+- ⚡ **Services Manager** — Gaming / Privacy / Performance presets with never-disable guardrails on critical system services
+- 🖱️ **Context Menu Editor** — Restore Windows 11 classic right-click menu with one toggle, view and block shell extensions
+- 📄 **System Health Report** — Comprehensive PC diagnostic with hardware audit, SMART disk health, battery wear, security status, and an overall A-F grade. Export as PDF.
+- 🗓️ **Scheduled Maintenance** (coming soon)
+- 🏷️ **White-Label Branding** (coming soon)
+
+## 💎 Pro vs Free
+
+| Feature | Free | Pro |
+| --- | :---: | :---: |
+| Hardware Dashboard, Driver Finder, App Batch Install | ✅ | ✅ |
+| Shareable Profiles, Windows Optimization, Startup Manager | ✅ | ✅ |
+| 6 Accent Themes, Command Palette, Auto-Updater | ✅ | ✅ |
+| Disk Cleanup | — | ⭐ |
+| Privacy Dashboard | — | ⭐ |
+| Network Tools | — | ⭐ |
+| Services Manager | — | ⭐ |
+| Context Menu Editor | — | ⭐ |
+| System Health Report (PDF) | — | ⭐ |
+| Scheduled Maintenance (coming soon) | — | ⭐ |
+| White-Label Branding (coming soon) | — | ⭐ |
+
+**Pro pricing:** $39 one-time · No subscription · 14-day free trial · 3 activations (covers reinstalls).
 
 ## 📸 Screenshots
 

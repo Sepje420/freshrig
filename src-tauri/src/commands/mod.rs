@@ -1,10 +1,17 @@
 pub mod apps;
+pub mod cleanup;
+pub mod context_menu;
 pub mod custom_apps;
 pub mod debloat;
 pub mod drivers;
 pub mod hardware;
 pub mod installed_apps;
+pub mod license;
+pub mod network;
 pub mod presets;
+pub mod privacy;
 pub mod profiles;
+pub mod report;
+pub mod services;
 pub mod startup;
 pub mod winget_search;
