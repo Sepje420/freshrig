@@ -98,7 +98,6 @@
   --color-bg-secondary: var(--bg-card);
   --color-bg-tertiary: var(--bg-card-hover);
   --color-accent-muted: var(--accent-subtle);
-  --color-accent-glow: var(--accent-subtle);
 
   /* Typography */
   --font-sans: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;

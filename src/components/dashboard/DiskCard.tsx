@@ -32,7 +32,7 @@ export function DiskCard({ disks }: DiskCardProps) {
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
               <div className="flex justify-between">
                 <span className="text-text-muted">Size</span>
-                <span className="text-text-secondary font-mono">{disk.sizeGb.toFixed(0)} GB</span>
+                <span className="text-text-secondary font-mono tabular-nums">{disk.sizeGb.toFixed(0)} GB</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-text-muted">Interface</span>

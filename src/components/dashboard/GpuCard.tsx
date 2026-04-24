@@ -80,7 +80,7 @@ function DataRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
       <span className="text-text-muted">{label}</span>
-      <span className="text-text-secondary font-mono">{value}</span>
+      <span className="text-text-secondary font-mono tabular-nums">{value}</span>
     </div>
   );
 }

@@ -276,7 +276,7 @@ export function OptimizePage() {
             <button
               onClick={handleApplyClick}
               disabled={isApplying}
-              className="px-4 py-2 rounded-lg text-sm font-semibold bg-accent text-bg-primary hover:bg-accent-hover shadow-[0_0_20px_rgba(0,212,170,0.3)] transition-all"
+              className="px-4 py-2 rounded-lg text-sm font-semibold bg-accent text-bg-primary hover:bg-accent-hover shadow-[0_0_20px_var(--accent-ring)] transition-all"
             >
               Apply Changes
             </button>

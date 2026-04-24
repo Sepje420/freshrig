@@ -301,7 +301,7 @@ export function AppsPage() {
               disabled={selectedIds.size === 0 || isInstalling || wingetAvailable === false}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 selectedIds.size > 0 && !isInstalling && wingetAvailable !== false
-                  ? "bg-accent text-bg-primary hover:bg-accent-hover shadow-[0_0_20px_rgba(0,212,170,0.3)] hover:shadow-[0_0_28px_rgba(0,212,170,0.45)]"
+                  ? "bg-accent text-bg-primary hover:bg-accent-hover shadow-[0_0_20px_var(--accent-subtle)] hover:shadow-[0_0_28px_var(--accent-ring)]"
                   : "bg-bg-tertiary text-text-muted cursor-not-allowed"
               }`}
             >

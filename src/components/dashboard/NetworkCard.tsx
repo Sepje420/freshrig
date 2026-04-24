@@ -33,7 +33,7 @@ export function NetworkCard({ adapters }: NetworkCardProps) {
               </div>
               <div className="flex justify-between">
                 <span className="text-text-muted">Speed</span>
-                <span className="text-text-secondary font-mono">
+                <span className="text-text-secondary font-mono tabular-nums">
                   {adapter.speedMbps > 0 ? `${adapter.speedMbps} Mbps` : "Unknown"}
                 </span>
               </div>
