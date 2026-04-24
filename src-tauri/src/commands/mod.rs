@@ -1,10 +1,17 @@
 // Cross-platform modules — always compiled on both Windows and Linux.
 pub mod presets;
 
+// Linux-only subtree — mirrors the Windows-command surface so
+// `tauri::generate_handler!` can register the same command names on either
+// OS. Gated at the `pub mod` declaration, so Windows builds don't see a
+// single file under `linux/`.
+#[cfg(target_os = "linux")]
+pub mod linux;
+
 // Windows-only modules — bodies rely on WMI, registry, winget, shell
-// extensions, or other Win32-specific APIs. Linux implementations land in
-// a follow-up commit; the frontend hides the corresponding pages behind
-// `usePlatform().isWindows`.
+// extensions, or other Win32-specific APIs. Linux equivalents live under
+// `commands::linux::*`; the frontend hides the corresponding pages behind
+// `usePlatform().isWindows` on Linux when a feature has no equivalent.
 #[cfg(target_os = "windows")]
 pub mod apps;
 #[cfg(target_os = "windows")]
