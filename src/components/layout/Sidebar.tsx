@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { APP_NAME, APP_VERSION } from "../../config/app";
+import { usePlatform } from "../../hooks/usePlatform";
 
 interface SidebarProps {
   currentView: string;
@@ -51,6 +52,11 @@ const secondaryNav: NavItem[] = [
 ];
 
 export function Sidebar({ currentView, onNavigate, onShowShortcuts }: SidebarProps) {
+  const { isLinux } = usePlatform();
+  const visibleNav = isLinux
+    ? primaryNav.filter((item) => item.id !== "optimize" && item.id !== "contextMenu")
+    : primaryNav;
+
   return (
     <aside className="flex flex-col w-[260px] shrink-0 h-full bg-[var(--bg-sidebar)] border-r border-[var(--border)] overflow-y-auto">
       {/* Logo / App Name */}
@@ -66,7 +72,7 @@ export function Sidebar({ currentView, onNavigate, onShowShortcuts }: SidebarPro
 
       {/* Primary navigation */}
       <nav className="flex-1 px-3">
-        <NavSection label="Navigate" items={primaryNav} currentView={currentView} onNavigate={onNavigate} />
+        <NavSection label="Navigate" items={visibleNav} currentView={currentView} onNavigate={onNavigate} />
       </nav>
 
       {/* Secondary navigation */}

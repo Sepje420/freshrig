@@ -31,7 +31,12 @@
       "Bash(git stash *)",
       "Bash(git show-ref *)",
       "Bash(gh run *)",
-      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --workflow=release.yml --limit=3)"
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --workflow=release.yml --limit=3)",
+      "Bash(git remote *)",
+      "Bash(curl -sSI -o /dev/null -w \"HTTP %{http_code}\\\\nfinal_url: %{url_effective}\\\\n\" -L https://github.com/ZIPREX420/freshrig/releases/latest/download/latest.json)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(echo \"clippy_exit=$?\")",
+      "Bash(echo \"tsc_exit=$?\")"
     ]
   }
 }

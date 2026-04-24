@@ -1,4 +1,6 @@
 // Copyright (c) 2026 Seppe Willemsens (ZIPREX420). MIT License.
+import { type as osType } from "@tauri-apps/plugin-os";
+
 export const APP_NAME = "FreshRig";
 export const APP_TAGLINE = "The first tool you run after a fresh Windows install";
 export const APP_VERSION = "1.0.0";
@@ -10,3 +12,15 @@ export const PRO_PURCHASE_URL = "https://freshrig.lemonsqueezy.com/buy/freshrig-
 export const PRO_PRICE_LABEL = "$39 one-time";
 /** Free trial duration in days. */
 export const TRIAL_DAYS = 14;
+
+/** Platform constants — resolved once at load from `@tauri-apps/plugin-os`. */
+function detectPlatform(): string {
+  try {
+    return osType();
+  } catch {
+    return "windows";
+  }
+}
+const PLATFORM = detectPlatform();
+export const IS_WINDOWS = PLATFORM === "windows";
+export const IS_LINUX = PLATFORM === "linux";
