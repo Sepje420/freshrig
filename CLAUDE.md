@@ -1,11 +1,11 @@
 # FreshRig — Project Context for Claude Code
 
 ## What this project is
-FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\Seppe\Desktop\PROJECTS\FreshRig` that combines hardware detection, driver recommendations, app batch installation (winget), and system optimization into one tool. Target audience: gamers, developers, PC enthusiasts.
+FreshRig is a cross-platform desktop app (Tauri v2 + React + TypeScript) at `C:\Users\Seppe\Desktop\PROJECTS\FreshRig` that combines hardware detection, driver recommendations, app batch installation, and system optimization into one tool. Runs natively on Windows (winget), Linux (apt/dnf/pacman/zypper/Flatpak), and macOS (Homebrew). Target audience: gamers, developers, PC enthusiasts.
 
 ## Tech stack
 - Frontend: React 19, TypeScript, Tailwind CSS v4, Zustand, Lucide React
-- Backend: Rust (Tauri v2), wmi crate for hardware detection
+- Backend: Rust (Tauri v2) with platform abstraction at `src-tauri/src/platform/` — `wmi` crate on Windows, `/proc` + `lspci` + `procfs` on Linux, `system_profiler` + `sysctl` + `plist` on macOS
 - Build: Vite, npm
 
 ## Project structure

@@ -1,7 +1,7 @@
 [package]
 name = "freshrig"
 version = "1.2.0"
-description = "The first tool you run after a fresh Windows install"
+description = "Hardware detection, driver setup, app batch install, and system optimization for Windows, Linux, and macOS."
 authors = ["FreshRig"]
 edition = "2021"
 

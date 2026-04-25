@@ -92,8 +92,8 @@ export function AboutPage() {
 
         {/* License */}
         <div className="px-4 py-3 rounded-lg bg-bg-card border border-border text-xs text-text-secondary space-y-1">
-          <p>{APP_NAME} is free for personal use.</p>
-          <p className="text-text-muted">Pro features coming soon.</p>
+          <p>Core features are free and open source under the MIT license.</p>
+          <p className="text-text-muted">Pro features unlock with a $39 one-time license — 14-day free trial included.</p>
         </div>
 
         {/* System Info (collapsible) */}

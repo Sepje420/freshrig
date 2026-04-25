@@ -6,6 +6,7 @@
   <title>Privacy Policy — FreshRig</title>
   <meta name="description" content="FreshRig Privacy Policy. FreshRig processes all hardware data locally and does not collect personal information.">
   <link rel="canonical" href="https://ZIPREX420.github.io/freshrig/privacy.html">
+  <link rel="icon" type="image/svg+xml" href="assets/og-image.svg">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -42,7 +43,7 @@
 
       <section>
         <h2 class="text-xl font-semibold text-text-primary mb-3">What FreshRig Does</h2>
-        <p>FreshRig reads hardware information from your computer — including CPU model, GPU model, RAM capacity, storage devices, network adapters, motherboard model, and audio devices — using Windows Management Instrumentation (WMI).</p>
+        <p>FreshRig reads hardware information from your computer — including CPU model, GPU model, RAM capacity, storage devices, network adapters, motherboard model, and audio devices — using your operating system's native APIs: Windows Management Instrumentation (WMI) on Windows, <code class="text-xs bg-bg-tertiary px-1.5 py-0.5 rounded">/proc</code> + <code class="text-xs bg-bg-tertiary px-1.5 py-0.5 rounded">lspci</code> on Linux, and <code class="text-xs bg-bg-tertiary px-1.5 py-0.5 rounded">system_profiler</code> + <code class="text-xs bg-bg-tertiary px-1.5 py-0.5 rounded">sysctl</code> on macOS.</p>
       </section>
 
       <section>

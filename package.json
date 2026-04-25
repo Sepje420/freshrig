@@ -1,6 +1,29 @@
 {
   "name": "freshrig",
   "version": "1.2.0",
+  "description": "Hardware detection, driver setup, app batch install, and system optimization for Windows, Linux, and macOS.",
+  "license": "MIT",
+  "author": "ZIPREX420 (https://github.com/ZIPREX420)",
+  "homepage": "https://ZIPREX420.github.io/freshrig/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZIPREX420/freshrig.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ZIPREX420/freshrig/issues"
+  },
+  "keywords": [
+    "tauri",
+    "windows",
+    "linux",
+    "macos",
+    "hardware-detection",
+    "driver-installer",
+    "app-installer",
+    "system-optimization",
+    "winget",
+    "homebrew"
+  ],
   "private": true,
   "type": "module",
   "scripts": {

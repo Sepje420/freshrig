@@ -1,6 +1,6 @@
 <div align="center">
   <h1>🖥️ FreshRig</h1>
-  <p><strong>The first tool you run after a fresh Windows install.</strong></p>
+  <p><strong>Set up any PC in minutes — Windows, Linux, and macOS.</strong></p>
   <p>Hardware detection • Driver recommendations • App batch install • Shareable profiles</p>
 
   <p>
@@ -21,9 +21,9 @@
 
 ## What is FreshRig?
 
-FreshRig is a **free, open-source Windows desktop app** that combines hardware detection, driver recommendations, and app batch installation into a single tool. No more juggling between Ninite, Snappy Driver Installer, and manual downloads after a fresh Windows install.
+FreshRig is a **free, open-source cross-platform desktop app** that combines hardware detection, driver recommendations, and app batch installation into a single tool. Runs natively on Windows, Linux, and macOS. No more juggling between Ninite, Snappy Driver Installer, and manual downloads after a fresh install.
 
-**No existing tool does all three.** FreshRig does.
+**No existing tool does all three across all three platforms.** FreshRig does.
 
 ## Platform Support
 
@@ -39,7 +39,7 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 ## ✨ Features
 
 ### Free (Forever)
-- 🔍 **Hardware Dashboard** — Auto-detects your CPU, GPU, motherboard, storage, network, and audio via WMI
+- 🔍 **Hardware Dashboard** — Auto-detects your CPU, GPU, motherboard, storage, network, and audio (WMI on Windows, /proc + lspci on Linux, system_profiler + sysctl on macOS)
 - 🎯 **Driver Finder** — Detects your hardware vendors (NVIDIA, AMD, Intel, Realtek); Intel DSA installs silently via winget, NVIDIA and AMD open their official driver tools in your browser
 - 📦 **App Batch Install** — 60+ popular apps organized by category, installed silently via winget with real-time progress
 - 💾 **Shareable Profiles** — Save your app selection as a `.freshrig.json` profile, share via code or file, import on any PC

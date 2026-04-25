@@ -12,22 +12,25 @@ pub fn is_portable() -> bool {
             .unwrap_or(false)
 }
 
-/// Get the data directory — either portable (next to exe) or standard (%APPDATA%)
+/// Get the data directory — either portable (next to exe) or standard (%APPDATA%).
+/// Falls back to the standard path if exe-path resolution fails so we never panic
+/// during startup (panic in this codepath would crash the tray init in `lib.rs`).
 pub fn get_data_dir() -> PathBuf {
     if is_portable() {
-        let dir = std::env::current_exe()
-            .expect("Failed to get exe path")
-            .parent()
-            .expect("Failed to get exe parent dir")
-            .join("data");
-        std::fs::create_dir_all(&dir).ok();
-        dir
-    } else {
-        let appdata = std::env::var("APPDATA").unwrap_or_else(|_| ".".to_string());
-        let dir = PathBuf::from(appdata).join("com.freshrig.app");
-        std::fs::create_dir_all(&dir).ok();
-        dir
+        if let Some(dir) = std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|d| d.join("data")))
+        {
+            std::fs::create_dir_all(&dir).ok();
+            return dir;
+        }
+        // Portable mode requested but we couldn't resolve the exe path —
+        // fall through to the standard %APPDATA% path so the app still boots.
     }
+    let appdata = std::env::var("APPDATA").unwrap_or_else(|_| ".".to_string());
+    let dir = PathBuf::from(appdata).join("com.freshrig.app");
+    std::fs::create_dir_all(&dir).ok();
+    dir
 }
 
 #[tauri::command]

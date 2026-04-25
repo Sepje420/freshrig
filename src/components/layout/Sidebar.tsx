@@ -52,12 +52,14 @@ const secondaryNav: NavItem[] = [
 ];
 
 export function Sidebar({ currentView, onNavigate, onShowShortcuts }: SidebarProps) {
-  // Optimize + Context Menu rely on Win32/WMI/shell extensions — hide on every
+  // Optimize + Context Menu rely on Win32/WMI/shell extensions and Profiles
+  // uses Windows-specific JSON profile storage — hide all three on every
   // non-Windows platform. Future platforms inherit the same hiding for free.
   const { isWindows } = usePlatform();
+  const WINDOWS_ONLY = new Set(["optimize", "contextMenu", "profiles"]);
   const visibleNav = isWindows
     ? primaryNav
-    : primaryNav.filter((item) => item.id !== "optimize" && item.id !== "contextMenu");
+    : primaryNav.filter((item) => !WINDOWS_ONLY.has(item.id));
 
   return (
     <aside className="flex flex-col w-[260px] shrink-0 h-full bg-[var(--bg-sidebar)] border-r border-[var(--border)] overflow-y-auto">
