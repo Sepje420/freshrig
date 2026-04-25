@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FreshRig — The First Tool You Run After a Fresh Windows Install</title>
-  <meta name="description" content="Free, open-source Windows app that combines hardware detection, driver recommendations, and batch app installation in one tool. Built with Rust and Tauri.">
+  <meta name="description" content="Hardware detection, driver setup, batch app install, and system optimization — in one open-source tool for Windows, Linux, and macOS. Built with Rust and Tauri.">
   <meta property="og:title" content="FreshRig — Hardware Detection + Driver Finder + App Installer">
-  <meta property="og:description" content="The complete post-install toolkit for Windows. Detect hardware, find drivers, install 60+ apps silently.">
+  <meta property="og:description" content="The complete post-install toolkit for Windows, Linux, and macOS. Detect hardware, find drivers, install apps silently.">
   <meta property="og:image" content="https://ZIPREX420.github.io/freshrig/assets/og-image.svg">
   <meta property="og:url" content="https://ZIPREX420.github.io/freshrig/">
   <meta property="og:type" content="website">
@@ -35,7 +35,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "FreshRig",
-    "operatingSystem": "Windows 10, Windows 11",
+    "operatingSystem": "Windows 10, Windows 11, Linux, macOS 11+",
     "applicationCategory": "DesktopEnhancementApplication",
     "offers": [
       { "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Free" },
@@ -43,7 +43,7 @@
     ],
     "url": "https://ZIPREX420.github.io/freshrig/",
     "downloadUrl": "https://github.com/ZIPREX420/freshrig/releases/latest",
-    "softwareVersion": "1.1.0",
+    "softwareVersion": "1.2.0",
     "author": { "@type": "Person", "name": "ZIPREX420" }
   }
   </script>
@@ -92,14 +92,14 @@
     <div class="relative max-w-4xl mx-auto px-6 text-center pt-24 pb-20">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border text-xs text-text-secondary mb-8">
         <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-        <span>v<span id="version-badge">1.0.0</span> — Pro Launch · Free Core · Open Source</span>
+        <span>v<span id="version-badge">1.2.0</span> — macOS support · Free Core · Open Source</span>
       </div>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6">
         The First Tool You Run After a<br>
-        <span class="text-accent">Fresh Windows Install</span>
+        <span class="text-accent">Fresh Install</span>
       </h1>
       <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
-        Hardware detection, driver recommendations, and app batch install — on Windows AND Linux. No more juggling between Ninite, Snappy Driver Installer, and manual downloads.
+        Hardware detection, driver setup, and app batch install — on Windows, Linux, AND macOS. No more juggling between Ninite, Snappy Driver Installer, and manual downloads.
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
         <a href="https://github.com/ZIPREX420/freshrig/releases/latest" class="download-btn inline-flex items-center gap-3 px-8 py-4 bg-accent text-bg-primary font-bold rounded-xl text-lg hover:bg-accent-hover transition-all glow">
@@ -110,13 +110,17 @@
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139z"/></svg>
           Download for Linux
         </a>
+        <a href="https://github.com/ZIPREX420/freshrig/releases/latest" class="download-btn-macos inline-flex items-center gap-3 px-8 py-4 bg-bg-secondary border border-accent/40 text-text-primary font-bold rounded-xl text-lg hover:border-accent transition-all">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Download for macOS
+        </a>
         <a href="https://github.com/ZIPREX420/freshrig" class="inline-flex items-center gap-2 px-6 py-4 border border-border text-text-secondary rounded-xl hover:text-text-primary hover:border-text-muted transition-colors" target="_blank" rel="noopener">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           View on GitHub
         </a>
       </div>
       <p class="text-sm text-text-muted">
-        Free & open source &bull; No ads &bull; No telemetry &bull; Made in Belgium 🇧🇪
+        Free & open source &bull; No ads &bull; No telemetry &bull; Runs on Windows, Linux, and macOS &bull; Made in Belgium 🇧🇪
       </p>
       <div class="flex items-center justify-center gap-3 mt-4">
         <img src="https://img.shields.io/github/stars/ZIPREX420/freshrig?style=flat-square&color=00d4aa&label=Stars" alt="GitHub Stars" class="h-5">
@@ -171,7 +175,7 @@
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-16 fade-in">
         <h2 class="text-3xl sm:text-4xl font-bold mb-4">Everything You Need,<br><span class="text-accent">Nothing You Don't</span></h2>
-        <p class="text-text-secondary text-lg max-w-xl mx-auto">Fourteen features that replace a dozen tools.</p>
+        <p class="text-text-secondary text-lg max-w-xl mx-auto">Eight core features. All free. Six more in Pro.</p>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
         <div class="group bg-bg-secondary border border-border rounded-xl p-6 hover:border-accent/30 hover:-translate-y-1 transition-all duration-300">
@@ -299,7 +303,6 @@
             <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Disk Cleanup, Privacy Dashboard, Network Tools</span></li>
             <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Services Manager, Context Menu Editor</span></li>
             <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>System Health Report (PDF export)</span></li>
-            <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Scheduled Maintenance & White-Label Branding (coming soon)</span></li>
             <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">&#9733;</span><span>Lifetime updates, priority support</span></li>
           </ul>
           <a href="https://freshrig.lemonsqueezy.com/buy/freshrig-pro" class="mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-400 text-black rounded-xl hover:bg-amber-300 transition-colors font-bold">
@@ -340,6 +343,7 @@
             <tr><td class="px-5 py-3 text-text-primary">Offline hardware scan</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
             <tr><td class="px-5 py-3 text-text-primary">Silent installs</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
             <tr><td class="px-5 py-3 text-text-primary">Linux support</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-secondary text-center">script</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
+            <tr><td class="px-5 py-3 text-text-primary">macOS support</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
             <tr><td class="px-5 py-3 text-text-primary">Open source</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-accent text-center">&#10004;</td><td class="px-5 py-3 text-text-secondary text-center">varies</td></tr>
             <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Disk cleanup <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
             <tr class="bg-amber-500/5"><td class="px-5 py-3 text-text-primary">Privacy audit per-app <span class="ml-1 text-[10px] font-bold text-amber-400">&#9733; PRO</span></td><td class="px-5 py-3 text-amber-400 text-center">&#9733;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td><td class="px-5 py-3 text-text-muted text-center">&mdash;</td></tr>
@@ -424,7 +428,7 @@
       <div class="bg-bg-secondary border border-border rounded-xl overflow-hidden">
         <div class="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] divide-y divide-border">
           <div class="px-5 py-3 text-sm font-medium text-text-muted border-r border-border">OS</div>
-          <div class="px-5 py-3 text-sm text-text-secondary">Windows 10 (1803+) / Windows 11, or Linux (Ubuntu 22.04+, Fedora 40+, Arch Linux, or any distro with WebKitGTK 4.1)</div>
+          <div class="px-5 py-3 text-sm text-text-secondary">Windows 10 (1803+) / Windows 11 &bull; Linux (Ubuntu 22.04+, Fedora 40+, Arch, or any distro with WebKitGTK 4.1) &bull; macOS 11 Big Sur and later (Intel and Apple Silicon)</div>
           <div class="px-5 py-3 text-sm font-medium text-text-muted border-r border-border">RAM</div>
           <div class="px-5 py-3 text-sm text-text-secondary">64 MB</div>
           <div class="px-5 py-3 text-sm font-medium text-text-muted border-r border-border">Disk</div>
@@ -477,6 +481,10 @@
           <summary class="px-6 py-4 text-text-primary font-medium">Does FreshRig work on Linux?</summary>
           <div class="px-6 pb-5 text-sm text-text-secondary leading-relaxed">Yes &mdash; since v1.1.0, FreshRig runs natively on Ubuntu 22.04+, Fedora 40+, Arch Linux, Linux Mint, Pop!_OS, openSUSE, and any distro with WebKitGTK 4.1. Downloads are available as <strong>.deb</strong>, <strong>.rpm</strong>, and <strong>.AppImage</strong>. Apps install via your distro's native package manager (apt, dnf, pacman, zypper) or Flatpak as a fallback.</div>
         </details>
+        <details class="bg-bg-secondary border border-border rounded-xl">
+          <summary class="px-6 py-4 text-text-primary font-medium">Does FreshRig work on macOS?</summary>
+          <div class="px-6 pb-5 text-sm text-text-secondary leading-relaxed">Yes &mdash; since v1.2.0, FreshRig runs natively on macOS 11 (Big Sur) and later, including the latest Tahoe release. The download is a single universal <strong>.dmg</strong> that runs on both Apple Silicon (M-series) and Intel Macs. Apps install via <strong>Homebrew</strong> (casks for GUI apps, formulae for CLI tools). The first launch may show a Gatekeeper warning until our Apple Developer signing certificate is configured &mdash; right-click &rarr; Open to bypass it once.</div>
+        </details>
       </div>
     </div>
   </section>
@@ -485,7 +493,7 @@
   <section class="py-24 px-6">
     <div class="max-w-4xl mx-auto bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20 rounded-2xl p-12 text-center fade-in">
       <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to set up your PC<br><span class="text-accent">the smart way?</span></h2>
-      <p class="text-text-secondary mb-8 text-lg">Join the users who've already saved hours on their fresh installs.</p>
+      <p class="text-text-secondary mb-8 text-lg">Hardware detected, drivers found, apps installed — in the time it used to take to find one driver.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="https://github.com/ZIPREX420/freshrig/releases/latest" class="download-btn inline-flex items-center gap-3 px-8 py-4 bg-accent text-bg-primary font-bold rounded-xl text-lg hover:bg-accent-hover transition-all glow">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
@@ -494,6 +502,10 @@
         <a href="https://github.com/ZIPREX420/freshrig/releases/latest" class="download-btn-linux inline-flex items-center gap-3 px-8 py-4 bg-bg-secondary border border-accent/40 text-text-primary font-bold rounded-xl text-lg hover:border-accent transition-all">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333a.632.632 0 00-.252-.2.574.574 0 00-.053-.013.637.637 0 00-.303-.068c-.111-.016-.223.04-.32.135a.95.95 0 00-.197.336 1.05 1.05 0 00-.058.402v.059a1.39 1.39 0 00.028.303c.039.216.087.402.182.534.079.119.209.208.271.27-.134.066-.205.135-.311.2a.929.929 0 00-.233.133 2.15 2.15 0 01-.408-.534c-.093-.20-.14-.4-.152-.601 0-.2 0-.333.015-.533.015-.134.087-.32.171-.5A.887.887 0 0112.55 3.4c.169-.134.354-.2.529-.2z"/></svg>
           Download for Linux
+        </a>
+        <a href="https://github.com/ZIPREX420/freshrig/releases/latest" class="download-btn-macos inline-flex items-center gap-3 px-8 py-4 bg-bg-secondary border border-accent/40 text-text-primary font-bold rounded-xl text-lg hover:border-accent transition-all">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Download for macOS
         </a>
         <a href="https://github.com/ZIPREX420/freshrig" class="inline-flex items-center gap-2 px-6 py-4 border border-border text-text-secondary rounded-xl hover:text-text-primary hover:border-text-muted transition-colors" target="_blank" rel="noopener">
           View on GitHub
@@ -508,7 +520,7 @@
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="text-center md:text-left">
           <p class="font-bold text-lg"><span class="opacity-80">Fresh</span><span class="text-accent">Rig</span></p>
-          <p class="text-sm text-text-muted mt-1">The first tool you run after a fresh Windows install.</p>
+          <p class="text-sm text-text-muted mt-1">The first tool you run after a fresh install.</p>
         </div>
         <div class="flex items-center gap-6 text-sm text-text-secondary">
           <a href="privacy.html" class="hover:text-text-primary transition-colors">Privacy Policy</a>
@@ -558,6 +570,12 @@
         if (appimage) {
           document.querySelectorAll('.download-btn-linux').forEach(btn => {
             btn.href = appimage.browser_download_url;
+          });
+        }
+        const dmg = data.assets && data.assets.find(a => a.name.endsWith('.dmg'));
+        if (dmg) {
+          document.querySelectorAll('.download-btn-macos').forEach(btn => {
+            btn.href = dmg.browser_download_url;
           });
         }
       })

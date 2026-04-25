@@ -32,9 +32,9 @@ FreshRig is a **free, open-source Windows desktop app** that combines hardware d
 | Windows 10/11 | ✅ Stable | .exe (NSIS installer) |
 | Ubuntu / Mint / Pop!_OS | ✅ Stable | .deb, .AppImage |
 | Fedora / RHEL | ✅ Stable | .rpm, .AppImage |
-| Arch / EndeavourOS / Manjaro | ✅ Stable | .AppImage, AUR |
+| Arch / EndeavourOS | ✅ Stable | .AppImage, AUR |
 | openSUSE | ✅ Stable | .rpm, .AppImage |
-| macOS | 🔜 Planned | — |
+| macOS 11+ (Big Sur → Tahoe) | ✅ Stable | .dmg (universal) |
 
 ## ✨ Features
 
@@ -87,7 +87,7 @@ See the [landing page](https://ZIPREX420.github.io/freshrig/) for screenshots an
 ## 🚀 Quick Start
 
 ### Download
-Download the latest release for [Windows (.exe)](https://github.com/ZIPREX420/freshrig/releases/latest) or [Linux (.deb / .rpm / .AppImage)](https://github.com/ZIPREX420/freshrig/releases/latest).
+Download the latest release for [Windows (.exe)](https://github.com/ZIPREX420/freshrig/releases/latest) · [Linux (.deb / .rpm / .AppImage)](https://github.com/ZIPREX420/freshrig/releases/latest) · [macOS (.dmg universal)](https://github.com/ZIPREX420/freshrig/releases/latest).
 
 > ⚠️ **Windows SmartScreen may show a warning** since the app is new and unsigned. Click "More info" → "Run anyway". This is normal for new open-source apps.
 

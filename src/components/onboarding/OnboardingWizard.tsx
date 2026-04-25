@@ -116,13 +116,23 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="onboarding-heading"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+    >
       <div className="bg-bg-elevated border border-border rounded-xl shadow-elevated w-full max-w-xl mx-4 overflow-hidden">
         {/* Step dots */}
-        <div className="flex justify-center gap-2 px-6 pt-5 pb-4">
+        <div
+          role="group"
+          aria-label={`Setup step ${step + 1} of 4`}
+          className="flex justify-center gap-2 px-6 pt-5 pb-4"
+        >
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
+              aria-current={i === step ? "step" : undefined}
               className={`w-2 h-2 rounded-full transition-colors ${
                 i === step ? "bg-accent" : i < step ? "bg-accent/40" : "bg-bg-tertiary"
               }`}
@@ -147,11 +157,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                   <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-accent-muted mb-6">
                     <Monitor className="w-8 h-8 text-accent" />
                   </div>
-                  <h2 className="text-2xl font-bold text-text-primary mb-2">{APP_NAME}</h2>
+                  <h2 id="onboarding-heading" className="text-2xl font-bold text-text-primary mb-2">{APP_NAME}</h2>
                   <p className="text-sm text-accent mb-4">{APP_TAGLINE}</p>
                   <p className="text-sm text-text-secondary max-w-sm">
-                    FreshRig detects your hardware, recommends drivers, and installs all your apps
-                    in one click.
+                    Hardware scan, driver recommendations, and batch app install — your whole setup
+                    sorted in one session.
                   </p>
                 </div>
               )}
@@ -196,12 +206,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                         </div>
                       </div>
                       <p className="text-xs text-text-muted text-center">
-                        We detected your hardware. FreshRig will recommend the right drivers.
+                        Hardware detected — driver recommendations are ready on the next page.
                       </p>
                     </div>
                   ) : (
                     <p className="text-sm text-text-muted text-center py-10">
-                      Could not detect hardware. You can still use all features.
+                      Hardware scan unavailable. No worries — all features still work.
                     </p>
                   )}
                 </div>
@@ -257,7 +267,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               {step === 3 && (
                 <div className="flex flex-col items-center text-center py-6">
                   <Sparkles className="w-10 h-10 text-accent mb-4" />
-                  <h2 className="text-xl font-bold text-text-primary mb-4">You're all set!</h2>
+                  <h2 className="text-xl font-bold text-text-primary mb-4">You're ready to go.</h2>
                   <div className="grid grid-cols-3 gap-3 w-full mb-4">
                     <div className="bg-bg-card border border-border rounded-lg p-3 text-center">
                       <Package className="w-5 h-5 text-accent mx-auto mb-1.5" />

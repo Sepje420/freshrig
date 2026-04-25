@@ -50,26 +50,26 @@ export function TitleBar() {
       <div className="flex h-full">
         <button
           onClick={handleMinimize}
-          className="flex items-center justify-center w-11 h-full hover:bg-[#ffffff12] transition-colors"
+          className="flex items-center justify-center w-11 h-full hover:bg-[var(--titlebar-btn-hover)] transition-colors"
           aria-label="Minimize"
         >
-          <svg width="10" height="10" viewBox="0 0 10 10">
+          <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10">
             <line x1="0" y1="5" x2="10" y2="5" stroke="currentColor" strokeWidth="1" className="text-text-secondary" />
           </svg>
         </button>
 
         <button
           onClick={handleMaximize}
-          className="flex items-center justify-center w-11 h-full hover:bg-[#ffffff12] transition-colors"
+          className="flex items-center justify-center w-11 h-full hover:bg-[var(--titlebar-btn-hover)] transition-colors"
           aria-label={maximized ? "Restore" : "Maximize"}
         >
           {maximized ? (
-            <svg width="10" height="10" viewBox="0 0 10 10" className="text-text-secondary">
+            <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" className="text-text-secondary">
               <rect x="2" y="0" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="1" rx="0.5" />
-              <rect x="0" y="2" width="8" height="8" fill="var(--color-bg-secondary)" stroke="currentColor" strokeWidth="1" rx="0.5" />
+              <rect x="0" y="2" width="8" height="8" fill="var(--bg-card)" stroke="currentColor" strokeWidth="1" rx="0.5" />
             </svg>
           ) : (
-            <svg width="10" height="10" viewBox="0 0 10 10" className="text-text-secondary">
+            <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" className="text-text-secondary">
               <rect x="0" y="0" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="1" rx="0.5" />
             </svg>
           )}
@@ -80,7 +80,7 @@ export function TitleBar() {
           className="flex items-center justify-center w-11 h-full hover:bg-[#c42b1c] transition-colors group"
           aria-label="Close"
         >
-          <svg width="10" height="10" viewBox="0 0 10 10">
+          <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10">
             <line x1="0" y1="0" x2="10" y2="10" stroke="currentColor" strokeWidth="1" className="text-text-secondary group-hover:text-white" />
             <line x1="10" y1="0" x2="0" y2="10" stroke="currentColor" strokeWidth="1" className="text-text-secondary group-hover:text-white" />
           </svg>

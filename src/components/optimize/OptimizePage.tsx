@@ -10,8 +10,8 @@ import type { TweakTier, TweakCategory, DebloatResult } from "../../types/debloa
 const TIER_FILTERS: { value: TweakTier | "all"; label: string; color: string; tooltip: string }[] = [
   { value: "all", label: "All", color: "", tooltip: "" },
   { value: "safe", label: "Safe", color: "text-success", tooltip: "Low-risk, easily reversible changes" },
-  { value: "moderate", label: "Moderate", color: "text-warning", tooltip: "May affect some Windows features" },
-  { value: "expert", label: "Expert", color: "text-error", tooltip: "Aggressive changes that may break functionality" },
+  { value: "moderate", label: "Moderate", color: "text-warning", tooltip: "Changes some Windows defaults — review each item before selecting" },
+  { value: "expert", label: "Expert", color: "text-error", tooltip: "Advanced tweaks that can break functionality — read descriptions carefully" },
 ];
 
 const CATEGORY_FILTERS: { value: TweakCategory | "all"; label: string }[] = [
@@ -98,8 +98,8 @@ export function OptimizePage() {
       <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-warning/10 border border-warning/20">
         <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
         <p className="text-sm text-warning">
-          These changes modify Windows settings. A system restore point will be created before any
-          changes are applied.
+          These tweaks modify Windows registry and settings. A restore point is created
+          automatically before anything changes.
         </p>
       </div>
 
@@ -246,7 +246,7 @@ export function OptimizePage() {
         <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
           <Sparkles className="w-12 h-12 text-text-muted mb-4" />
           <h3 className="text-lg font-semibold text-text-primary mb-1">No tweaks found</h3>
-          <p className="text-sm text-text-secondary">Try a different filter combination.</p>
+          <p className="text-sm text-text-secondary">Nothing matches those filters.</p>
         </div>
       )}
 

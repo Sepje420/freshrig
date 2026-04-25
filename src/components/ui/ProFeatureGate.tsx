@@ -31,9 +31,13 @@ function UpsellCard({ feature, compact = false }: { feature: string; compact?: b
   };
 
   return (
-    <div className={`flex flex-col items-center gap-2 ${compact ? "" : "max-w-xs"}`}>
+    <div
+      role="region"
+      aria-label="Pro feature required"
+      className={`flex flex-col items-center gap-2 ${compact ? "" : "max-w-xs"}`}
+    >
       <Crown className={compact ? "w-6 h-6 text-amber-400" : "w-8 h-8 text-amber-400"} />
-      <p className="text-text-primary font-semibold">{feature} is a Pro feature</p>
+      <p className="text-text-primary font-semibold">Unlock {feature}</p>
       <button
         onClick={openPurchasePage}
         className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-black px-4 py-2 rounded-lg font-semibold transition-colors"
@@ -54,7 +58,7 @@ function UpsellCard({ feature, compact = false }: { feature: string; compact?: b
           Or start a {TRIAL_DAYS}-day free trial
         </button>
       ) : (
-        <p className="text-xs text-text-muted">Free trial already used</p>
+        <p className="text-xs text-text-muted">Trial already activated</p>
       )}
     </div>
   );
@@ -91,7 +95,7 @@ export function ProFeatureGate({
   if (mode === "blur") {
     return (
       <div className="relative">
-        <div className="blur-sm pointer-events-none select-none">{children}</div>
+        <div aria-hidden="true" className="blur-sm pointer-events-none select-none">{children}</div>
         <div className="absolute inset-0 flex items-center justify-center bg-bg-primary/70 rounded-lg">
           <UpsellCard feature={feature} />
         </div>
@@ -102,7 +106,7 @@ export function ProFeatureGate({
   // overlay mode (default)
   return (
     <div className="relative group">
-      <div className="opacity-40 pointer-events-none select-none">{children}</div>
+      <div aria-hidden="true" className="opacity-40 pointer-events-none select-none">{children}</div>
       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-bg-primary/60 rounded-lg">
         <UpsellCard feature={feature} />
       </div>

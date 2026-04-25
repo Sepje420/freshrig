@@ -1,4 +1,19 @@
 export const CHANGELOG: Record<string, string> = {
+  "1.2.0": `### FreshRig v1.2.0 — macOS Support 🍎
+
+- **macOS is here** — FreshRig now runs natively on macOS 11+ (Big Sur through Tahoe), Apple Silicon and Intel
+- **Universal binary** — Single .dmg download works on both M-series and Intel Macs
+- **Homebrew integration** — Install apps via brew (40+ cask and formula mappings)
+- **macOS hardware dashboard** — CPU, GPU, memory, disk health, and battery wear via system_profiler and sysctl
+- **launchd service manager** — View and control LaunchAgents and LaunchDaemons with safety guardrails (Pro)
+- **macOS startup manager** — Manage LaunchAgents and Login Items (Pro)
+- **macOS disk cleanup** — Clear user caches, logs, Xcode DerivedData, Homebrew cache, and browser caches (Pro)
+- **macOS security audit** — SIP, Gatekeeper, FileVault, Firewall, and XProtect status checks (Pro)
+- **macOS network tools** — DNS flush, DNS preset switching, saved WiFi password viewer (Pro)
+- **Downloads available as universal .dmg** — Signed and notarized (when Apple Developer certificate is configured)
+
+**FreshRig now runs on Windows, Linux, AND macOS — the only open-source system tool that spans all three.**
+`,
   "1.1.0": `### FreshRig v1.1.0 — Linux Support 🐧
 
 - **Linux is here** — FreshRig now runs natively on Ubuntu, Fedora, Arch, Linux Mint, Pop!_OS, openSUSE, and more

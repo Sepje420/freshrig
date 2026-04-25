@@ -316,25 +316,38 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
       >
         {/* Search input */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-          <Search className="w-4 h-4 text-text-muted shrink-0" />
+          <Search aria-hidden="true" className="w-4 h-4 text-text-muted shrink-0" />
           <input
             ref={inputRef}
+            role="combobox"
+            aria-expanded="true"
+            aria-haspopup="listbox"
+            aria-controls="cp-results"
+            aria-autocomplete="list"
+            aria-activedescendant={flatFiltered[activeIndex] ? `cp-option-${flatFiltered[activeIndex].id}` : undefined}
+            aria-label="Search commands"
             type="text"
             placeholder="Search commands..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
           />
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-bg-tertiary text-text-muted border border-border">
+          <kbd aria-label="Press Escape to close" className="text-[10px] px-1.5 py-0.5 rounded bg-bg-tertiary text-text-muted border border-border">
             Esc
           </kbd>
         </div>
 
         {/* Results */}
-        <div ref={listRef} className="max-h-[300px] overflow-y-auto py-2">
+        <div
+          id="cp-results"
+          ref={listRef}
+          role="listbox"
+          aria-label="Commands"
+          className="max-h-[300px] overflow-y-auto py-2"
+        >
           {Object.entries(groups).map(([category, cmds]) => (
-            <div key={category}>
-              <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-4 py-1.5">
+            <div key={category} role="group" aria-label={category}>
+              <p aria-hidden="true" className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-4 py-1.5">
                 {category}
               </p>
               {cmds.map((cmd) => {
@@ -344,6 +357,9 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
                 return (
                   <button
                     key={cmd.id}
+                    id={`cp-option-${cmd.id}`}
+                    role="option"
+                    aria-selected={isActive}
                     data-index={globalIndex}
                     onClick={() => executeCommand(cmd)}
                     onMouseEnter={() => setActiveIndex(globalIndex)}
@@ -351,10 +367,10 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
                       isActive ? "bg-accent-muted text-accent" : "text-text-secondary hover:bg-bg-tertiary"
                     }`}
                   >
-                    <Icon className="w-4 h-4 shrink-0" />
+                    <Icon aria-hidden="true" className="w-4 h-4 shrink-0" />
                     <span className="flex-1 text-left">{cmd.label}</span>
                     {cmd.shortcut && (
-                      <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-bg-tertiary text-text-muted border border-border">
+                      <kbd aria-label={cmd.shortcut} className="text-[10px] px-1.5 py-0.5 rounded bg-bg-tertiary text-text-muted border border-border">
                         {cmd.shortcut}
                       </kbd>
                     )}
@@ -364,7 +380,7 @@ export function CommandPalette({ onClose, onNavigate }: CommandPaletteProps) {
             </div>
           ))}
           {filtered.length === 0 && (
-            <p className="text-sm text-text-muted text-center py-6">No commands found</p>
+            <p role="status" className="text-sm text-text-muted text-center py-6">No commands found</p>
           )}
         </div>
       </div>

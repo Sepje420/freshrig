@@ -17,7 +17,7 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - `src/config/` — App constants (`app.ts`)
 
 ## Key patterns & Requirements
-- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **1.1.0** (Linux support). `PRO_PURCHASE_URL`, `PRO_PRICE_LABEL`, `TRIAL_DAYS` also live in `app.ts`.
+- **App Config:** Never hardcode "FreshRig" in UI code — always use `src/config/app.ts`. Current version: **1.2.0** (macOS support). `PRO_PURCHASE_URL`, `PRO_PRICE_LABEL`, `TRIAL_DAYS` also live in `app.ts`.
 - **Tauri IPC:** Frontend calls `invoke('command_name')`, backend uses `#[tauri::command]` in `src-tauri/src/lib.rs`.
 - **Rust ↔ TS:** Rust uses snake_case, TypeScript uses camelCase — Tauri auto-converts field names.
 - **Hardware data:** All hardware info comes from WMI queries via the `wmi` crate (v0.18+, `WMIConnection::new()` takes 0 args). WMI queries have 5-second timeouts to avoid hangs.
@@ -55,7 +55,7 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 
 ## Linux support
 - Platform abstraction: `src-tauri/src/platform/` with `mod.rs`, `types.rs`, `windows.rs`, `linux.rs`.
-- Linux deps (gated via `[target.'cfg(target_os = "linux")']` in `Cargo.toml`): `sysinfo`, `nix`, `procfs`, `os_info`, `cfg-if`.
+- Linux deps (gated via `[target.'cfg(target_os = "linux")']` in `Cargo.toml`): `procfs`. Cross-platform top-level: `sysinfo`, `os_info`, `cfg-if`, `jwalk`, `trash`. `nix` lives under `[target.'cfg(unix)']` (shared with macOS).
 - Linux hardware: `/proc/cpuinfo`, `/proc/meminfo`, `/sys/class/dmi/id`, `/sys/class/net`, `/sys/class/power_supply`, `lspci`, `lsblk -JO`, `smartctl -j`.
 - Linux package managers: `apt-get`, `dnf`, `pacman`, `zypper`, `flatpak` — detected via `/etc/os-release` `ID_LIKE` (wrapped in `platform::current::get_distro_family()`).
 - Linux services: `systemctl list-units --output=json` + `is-enabled` probe; same `ServiceStartType` enum as Windows.
@@ -63,8 +63,23 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - Linux privacy: Flatpak permission audit via `flatpak info --show-permissions`, plus apport/whoopsie/popcon/firewall/auto-update toggles.
 - Linux cleanup: `~/.cache/`, `/var/log/`, distro package cache, browser cache, trash, thumbnails — via `jwalk` + `trash`.
 - Linux elevation: `pkexec` (polkit), never `sudo`. Matches the GUI-session expectation of Tauri apps.
-- CI: matrix build on `ubuntu-22.04` + `windows-latest` (`.github/workflows/ci.yml`); release on tag push produces `.exe`, `.deb`, `.rpm`, `.AppImage` (`.github/workflows/release.yml`).
-- Linux command tree: `src-tauri/src/commands/linux/` — parallel subtree mirroring the Windows command modules. `tauri::generate_handler!` entries in `lib.rs` cfg-gate a Windows twin and a Linux twin under the same command name so the frontend's `invoke()` calls are OS-agnostic.
+- CI: matrix build on `ubuntu-22.04` + `windows-latest` + `macos-latest` (`.github/workflows/ci.yml`); release on tag push produces `.exe`, `.deb`, `.rpm`, `.AppImage`, `.dmg` (`.github/workflows/release.yml`).
+- Linux command tree: `src-tauri/src/commands/linux/` — parallel subtree mirroring the Windows command modules. `tauri::generate_handler!` entries in `lib.rs` cfg-gate a Windows twin, Linux twin, and macOS twin under the same command name so the frontend's `invoke()` calls are OS-agnostic.
+
+## macOS support
+- Platform abstraction: `src-tauri/src/platform/macos.rs` (3 functions: `get_system_info`, `get_distro_family` → `"darwin"`, `is_admin`).
+- macOS deps (gated via `[target.'cfg(target_os = "macos")']` in `Cargo.toml`): `plist`, `core-foundation`. Shared with Linux via `cfg(unix)`: `nix`. Cross-platform: `sysinfo`, `os_info`, `jwalk`, `trash`.
+- macOS hardware: `system_profiler -json` (SPDisplaysDataType, SPNVMeDataType, SPSerialATADataType, SPAudioDataType, SPHardwareDataType, SPMemoryDataType, SPPowerDataType, SPApplicationsDataType), `sysctl` (hw.memsize, hw.physicalcpu, hw.logicalcpu, hw.cpufrequency_max, machdep.cpu.brand_string, hw.model, kern.boottime), `sw_vers`, `scutil --get ComputerName`, `networksetup -listallhardwareports`, `ifconfig` for connection status.
+- macOS package manager: **Homebrew only** — `/opt/homebrew/bin/brew` (Apple Silicon) or `/usr/local/bin/brew` (Intel), detected via `commands::macos::util::brew_path()`. Sets `NONINTERACTIVE=1` and `HOMEBREW_NO_AUTO_UPDATE=1`. App catalog has 25 cask + formula mappings (cask: GUI bundle, formula: CLI tool).
+- macOS services: `launchctl list` for enumeration (PID, status, label tab-separated). `launchctl print-disabled system` for the disabled-set probe. `launchctl enable/disable` + `launchctl bootstrap/bootout system /Library/LaunchDaemons/<label>.plist` for toggles. NEVER_DISABLE list protects `com.apple.WindowServer`, `loginwindow`, `coreduetd`, `opendirectoryd`, `securityd`, `notifyd`, plus anything starting with `com.apple.system.` or `com.apple.kernel.`.
+- macOS startup: LaunchAgents `.plist` parsing via the `plist` crate from `~/Library/LaunchAgents/` (CurrentUser scope) and `/Library/LaunchAgents/` (AllUsers scope). Login Items via `osascript -e 'tell application "System Events" to get the name/path of every login item'`. ID-prefix routing: `launchagent:<plist-path>` vs `loginitem:<name>` so toggle commands reach the right backing store. Toggle for LaunchAgents: `defaults write <plist-without-extension> Disabled -bool <value>`. Toggle for Login Items: osascript `make new login item` / `delete login item`.
+- macOS cleanup: `~/Library/Caches`, `~/Library/Logs`, Xcode DerivedData, `~/.Trash`, iOS Simulator caches, old downloads (90+ days), `/private/var/log` — via `jwalk`. Homebrew cache cleanup shells out to `brew cleanup -s --prune=all`. Excludes `Homebrew` subdir from the user_caches walk so the dedicated category handles it.
+- macOS privacy: `csrutil status` (SIP), `spctl --status` (Gatekeeper), `fdesetup status` (FileVault), `defaults read /Library/Preferences/com.apple.alf globalstate` (firewall), `defaults read com.apple.AdLib forceLimitAdTracking` (ad tracking). Firewall + ad_tracking are writeable; SIP/Gatekeeper/FileVault require System Settings or Recovery Mode. TCC database parsing is out of scope (requires Full Disk Access entitlement) — `get_app_permissions` returns empty list.
+- macOS network: `dscacheutil -flushcache && killall -HUP mDNSResponder` for DNS flush. `networksetup -listallhardwareports` for interface enumeration (Device → Hardware Port mapping for DNS commands). `networksetup -setdnsservers` for DNS preset switching. `security find-generic-password -wa <ssid>` for WiFi passwords (triggers a Keychain GUI prompt per call — unavoidable). `route get default | grep interface:` for the primary interface.
+- macOS elevation: `osascript -e 'do shell script "..." with administrator privileges'` (NOT `sudo`, NOT `SMAppService`). Centralized in `commands::macos::util::run_elevated(shell_cmd)` which escapes backslashes + double-quotes. The first elevated call per session triggers a Touch ID / password GUI prompt; subsequent calls in the same osascript invocation reuse credentials.
+- macOS code signing: Apple Developer ID + notarization via `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_API_KEY_ID`, `APPLE_API_ISSUER_ID`, `APPLE_TEAM_ID` GitHub Actions secrets. Empty until configured — build still succeeds unsigned, Gatekeeper warns end-users on first launch ("App can't be opened because Apple cannot check it for malicious software"). Right-click → Open bypasses the warning once.
+- CI: macos-latest runs `rustup target add aarch64-apple-darwin x86_64-apple-darwin` then `cargo clippy -D warnings` + `cargo test`. Release leg runs `tauri-action` with `--target universal-apple-darwin` (matrix-conditional `args:` value) so the `.dmg` works on both M-series and Intel Macs.
+- macOS command tree: `src-tauri/src/commands/macos/` — 12 files mirroring `commands::linux::*` (`util.rs`, `app_catalog.rs`, `apps.rs`, `cleanup.rs`, `drivers.rs`, `hardware.rs`, `network.rs`, `privacy.rs`, `report.rs`, `services.rs`, `startup.rs`). Shared helpers in `util.rs`: `run_cmd`/`run_cmd_lossy`/`which`/`home_dir`/`is_root`/`run_elevated`/`brew_path`. `commands::macos::report::ReportData` is duplicated locally (mirrors Linux pattern) so the frontend consumes identical JSON on every OS.
 
 ## Commands & Workflow
 - `npm run tauri dev` — start development

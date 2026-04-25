@@ -92,12 +92,20 @@
   --color-error: var(--error);
   --color-info: var(--info);
 
-  /* Backward-compat aliases for the v0.5 palette
-     (kept so existing className usages keep working while we migrate) */
+  /* Backward-compat aliases — TODO: migrate all usages to canonical tokens above,
+     then remove these. Canonical equivalents:
+       bg-primary  → bg-base
+       bg-secondary → bg-card
+       bg-tertiary → bg-card-hover
+       accent-muted → accent-subtle */
   --color-bg-primary: var(--bg-base);
   --color-bg-secondary: var(--bg-card);
   --color-bg-tertiary: var(--bg-card-hover);
   --color-accent-muted: var(--accent-subtle);
+
+  /* Window chrome */
+  --titlebar-btn-hover: rgba(255, 255, 255, 0.07);
+  --color-titlebar-btn-hover: var(--titlebar-btn-hover);
 
   /* Typography */
   --font-sans: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
