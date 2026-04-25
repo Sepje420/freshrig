@@ -18,7 +18,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, ubuntu-22.04, macos-latest]
+        # macos-latest intentionally omitted — see CLAUDE.md "macOS support"
+        # for re-enable steps. macOS Rust code stays cfg-gated in src-tauri/.
+        platform: [windows-latest, ubuntu-22.04]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v6
@@ -47,10 +49,6 @@ jobs:
             patchelf \
             libfuse2 \
             libssl-dev
-
-      - name: Add macOS targets
-        if: matrix.platform == 'macos-latest'
-        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
       - name: Install frontend dependencies
         run: npm ci

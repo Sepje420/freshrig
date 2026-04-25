@@ -17,8 +17,8 @@ import { useSettingsStore } from "../../stores/settingsStore";
 
 const LINKS = [
   { icon: Globe, label: "Website", url: "https://freshrig.app" },
-  { icon: GitBranch, label: "GitHub", url: "https://github.com/freshrig" },
-  { icon: Bug, label: "Report a Bug", url: "https://github.com/freshrig/freshrig/issues" },
+  { icon: GitBranch, label: "GitHub", url: "https://github.com/ZIPREX420/freshrig" },
+  { icon: Bug, label: "Report a Bug", url: "https://github.com/ZIPREX420/freshrig/issues" },
   { icon: MessageCircle, label: "Discord", url: "https://discord.gg/freshrig" },
 ];
 

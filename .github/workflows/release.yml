@@ -19,7 +19,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, ubuntu-22.04, macos-latest]
+        # macos-latest intentionally omitted — see CLAUDE.md "macOS support"
+        # for re-enable steps. Re-add macos-latest here, restore the
+        # `Add macOS targets` step, the matrix-conditional `args:` (with
+        # `--target universal-apple-darwin` on macOS), and the APPLE_*
+        # env vars once Apple Developer secrets are configured.
+        platform: [windows-latest, ubuntu-22.04]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v6
@@ -49,10 +54,6 @@ jobs:
             libfuse2 \
             libssl-dev
 
-      - name: Add macOS targets
-        if: matrix.platform == 'macos-latest'
-        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
-
       - name: Install frontend dependencies
         run: npm ci
 
@@ -61,16 +62,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-          # Apple notarization secrets — empty until configured. Build still
-          # succeeds unsigned; Gatekeeper warns end-users on first launch.
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}
-          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
-          args: ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
+          args: ''
           tagName: ${{ github.ref_name }}
           releaseName: 'FreshRig ${{ github.ref_name }}'
           releaseBody: 'See the assets below to download FreshRig.'

@@ -67,6 +67,14 @@ FreshRig is a Windows desktop app (Tauri v2 + React + TypeScript) at `C:\Users\S
 - Linux command tree: `src-tauri/src/commands/linux/` — parallel subtree mirroring the Windows command modules. `tauri::generate_handler!` entries in `lib.rs` cfg-gate a Windows twin, Linux twin, and macOS twin under the same command name so the frontend's `invoke()` calls are OS-agnostic.
 
 ## macOS support
+
+> **CI builds are currently disabled** for macOS — the code is implemented behind `#[cfg(target_os = "macos")]` but `.github/workflows/ci.yml` and `.github/workflows/release.yml` no longer include `macos-latest` in their matrices. To re-enable:
+> 1. Add `macos-latest` back to both workflow `platform:` matrices.
+> 2. Restore the `Add macOS targets` step (`rustup target add aarch64-apple-darwin x86_64-apple-darwin`) in both workflows.
+> 3. In `release.yml`, restore the matrix-conditional `args:` (`${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}`).
+> 4. Configure these GitHub secrets: `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_API_KEY_ID`, `APPLE_API_ISSUER_ID`, `APPLE_TEAM_ID`.
+> 5. In `release.yml`, restore the corresponding env vars in the `tauri-action` env block (`APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_API_KEY: ${{ secrets.APPLE_API_KEY_ID }}`, `APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER_ID }}`, `APPLE_TEAM_ID`).
+
 - Platform abstraction: `src-tauri/src/platform/macos.rs` (3 functions: `get_system_info`, `get_distro_family` → `"darwin"`, `is_admin`).
 - macOS deps (gated via `[target.'cfg(target_os = "macos")']` in `Cargo.toml`): `plist`, `core-foundation`. Shared with Linux via `cfg(unix)`: `nix`. Cross-platform: `sysinfo`, `os_info`, `jwalk`, `trash`.
 - macOS hardware: `system_profiler -json` (SPDisplaysDataType, SPNVMeDataType, SPSerialATADataType, SPAudioDataType, SPHardwareDataType, SPMemoryDataType, SPPowerDataType, SPApplicationsDataType), `sysctl` (hw.memsize, hw.physicalcpu, hw.logicalcpu, hw.cpufrequency_max, machdep.cpu.brand_string, hw.model, kern.boottime), `sw_vers`, `scutil --get ComputerName`, `networksetup -listallhardwareports`, `ifconfig` for connection status.
