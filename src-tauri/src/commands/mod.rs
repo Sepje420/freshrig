@@ -8,6 +8,13 @@ pub mod presets;
 #[cfg(target_os = "linux")]
 pub mod linux;
 
+// macOS-only subtree — same pattern as `linux/`, but every command body is
+// a stub returning `Err("macOS support coming soon".into())` until real
+// implementations land. The frontend hides the same pages it hides on Linux
+// (Optimize, Context Menu) via `usePlatform().isWindows`.
+#[cfg(target_os = "macos")]
+pub mod macos;
+
 // Windows-only modules — bodies rely on WMI, registry, winget, shell
 // extensions, or other Win32-specific APIs. Linux equivalents live under
 // `commands::linux::*`; the frontend hides the corresponding pages behind

@@ -101,19 +101,25 @@ pub fn run() {
             // Cross-platform commands (always registered):
             commands::presets::get_presets,
             portable::check_portable_mode,
-            // Windows-only commands (Linux twins below each entry):
+            // Windows-only commands (Linux + macOS twins below each entry):
             #[cfg(target_os = "windows")]
             commands::hardware::get_hardware_summary,
             #[cfg(target_os = "linux")]
             commands::linux::hardware::get_hardware_summary,
+            #[cfg(target_os = "macos")]
+            commands::macos::hardware::get_hardware_summary,
             #[cfg(target_os = "windows")]
             commands::hardware::get_driver_issues,
             #[cfg(target_os = "linux")]
             commands::linux::hardware::get_driver_issues,
+            #[cfg(target_os = "macos")]
+            commands::macos::hardware::get_driver_issues,
             #[cfg(target_os = "windows")]
             commands::hardware::get_windows_build,
             #[cfg(target_os = "linux")]
             commands::linux::hardware::get_windows_build,
+            #[cfg(target_os = "macos")]
+            commands::macos::hardware::get_windows_build,
             #[cfg(target_os = "windows")]
             commands::license::get_machine_fingerprint,
             #[cfg(target_os = "windows")]
@@ -124,30 +130,44 @@ pub fn run() {
             commands::drivers::get_driver_recommendations,
             #[cfg(target_os = "linux")]
             commands::linux::drivers::get_driver_recommendations,
+            #[cfg(target_os = "macos")]
+            commands::macos::drivers::get_driver_recommendations,
             #[cfg(target_os = "windows")]
             commands::drivers::install_driver,
             #[cfg(target_os = "linux")]
             commands::linux::drivers::install_driver,
+            #[cfg(target_os = "macos")]
+            commands::macos::drivers::install_driver,
             #[cfg(target_os = "windows")]
             commands::apps::get_app_catalog,
             #[cfg(target_os = "linux")]
             commands::linux::apps::get_app_catalog,
+            #[cfg(target_os = "macos")]
+            commands::macos::apps::get_app_catalog,
             #[cfg(target_os = "windows")]
             commands::apps::get_free_disk_space_gb,
             #[cfg(target_os = "linux")]
             commands::linux::apps::get_free_disk_space_gb,
+            #[cfg(target_os = "macos")]
+            commands::macos::apps::get_free_disk_space_gb,
             #[cfg(target_os = "windows")]
             commands::apps::check_network_connectivity,
             #[cfg(target_os = "linux")]
             commands::linux::apps::check_network_connectivity,
+            #[cfg(target_os = "macos")]
+            commands::macos::apps::check_network_connectivity,
             #[cfg(target_os = "windows")]
             commands::apps::check_winget_available,
             #[cfg(target_os = "linux")]
             commands::linux::apps::check_winget_available,
+            #[cfg(target_os = "macos")]
+            commands::macos::apps::check_winget_available,
             #[cfg(target_os = "windows")]
             commands::apps::install_apps,
             #[cfg(target_os = "linux")]
             commands::linux::apps::install_apps,
+            #[cfg(target_os = "macos")]
+            commands::macos::apps::install_apps,
             #[cfg(target_os = "windows")]
             commands::profiles::save_profile,
             #[cfg(target_os = "windows")]
@@ -198,58 +218,86 @@ pub fn run() {
             commands::startup::get_startup_entries,
             #[cfg(target_os = "linux")]
             commands::linux::startup::get_startup_entries,
+            #[cfg(target_os = "macos")]
+            commands::macos::startup::get_startup_entries,
             #[cfg(target_os = "windows")]
             commands::startup::toggle_startup_entry,
             #[cfg(target_os = "linux")]
             commands::linux::startup::toggle_startup_entry,
+            #[cfg(target_os = "macos")]
+            commands::macos::startup::toggle_startup_entry,
             #[cfg(target_os = "windows")]
             commands::cleanup::scan_cleanup,
             #[cfg(target_os = "linux")]
             commands::linux::cleanup::scan_cleanup,
+            #[cfg(target_os = "macos")]
+            commands::macos::cleanup::scan_cleanup,
             #[cfg(target_os = "windows")]
             commands::cleanup::run_cleanup,
             #[cfg(target_os = "linux")]
             commands::linux::cleanup::run_cleanup,
+            #[cfg(target_os = "macos")]
+            commands::macos::cleanup::run_cleanup,
             #[cfg(target_os = "windows")]
             commands::privacy::get_privacy_settings,
             #[cfg(target_os = "linux")]
             commands::linux::privacy::get_privacy_settings,
+            #[cfg(target_os = "macos")]
+            commands::macos::privacy::get_privacy_settings,
             #[cfg(target_os = "windows")]
             commands::privacy::get_app_permissions,
             #[cfg(target_os = "linux")]
             commands::linux::privacy::get_app_permissions,
+            #[cfg(target_os = "macos")]
+            commands::macos::privacy::get_app_permissions,
             #[cfg(target_os = "windows")]
             commands::privacy::apply_privacy_setting,
             #[cfg(target_os = "linux")]
             commands::linux::privacy::apply_privacy_setting,
+            #[cfg(target_os = "macos")]
+            commands::macos::privacy::apply_privacy_setting,
             #[cfg(target_os = "windows")]
             commands::privacy::revoke_app_permission,
             #[cfg(target_os = "linux")]
             commands::linux::privacy::revoke_app_permission,
+            #[cfg(target_os = "macos")]
+            commands::macos::privacy::revoke_app_permission,
             #[cfg(target_os = "windows")]
             commands::report::generate_health_report,
             #[cfg(target_os = "linux")]
             commands::linux::report::generate_health_report,
+            #[cfg(target_os = "macos")]
+            commands::macos::report::generate_health_report,
             #[cfg(target_os = "windows")]
             commands::network::network_reset_dns,
             #[cfg(target_os = "linux")]
             commands::linux::network::network_reset_dns,
+            #[cfg(target_os = "macos")]
+            commands::macos::network::network_reset_dns,
             #[cfg(target_os = "windows")]
             commands::network::network_reset_full,
             #[cfg(target_os = "linux")]
             commands::linux::network::network_reset_full,
+            #[cfg(target_os = "macos")]
+            commands::macos::network::network_reset_full,
             #[cfg(target_os = "windows")]
             commands::network::set_dns_servers,
             #[cfg(target_os = "linux")]
             commands::linux::network::set_dns_servers,
+            #[cfg(target_os = "macos")]
+            commands::macos::network::set_dns_servers,
             #[cfg(target_os = "windows")]
             commands::network::get_network_interfaces,
             #[cfg(target_os = "linux")]
             commands::linux::network::get_network_interfaces,
+            #[cfg(target_os = "macos")]
+            commands::macos::network::get_network_interfaces,
             #[cfg(target_os = "windows")]
             commands::network::get_wifi_passwords,
             #[cfg(target_os = "linux")]
             commands::linux::network::get_wifi_passwords,
+            #[cfg(target_os = "macos")]
+            commands::macos::network::get_wifi_passwords,
             #[cfg(target_os = "windows")]
             commands::context_menu::get_classic_menu_status,
             #[cfg(target_os = "windows")]
@@ -262,18 +310,26 @@ pub fn run() {
             commands::services::get_services,
             #[cfg(target_os = "linux")]
             commands::linux::services::get_services,
+            #[cfg(target_os = "macos")]
+            commands::macos::services::get_services,
             #[cfg(target_os = "windows")]
             commands::services::set_service_start_type,
             #[cfg(target_os = "linux")]
             commands::linux::services::set_service_start_type,
+            #[cfg(target_os = "macos")]
+            commands::macos::services::set_service_start_type,
             #[cfg(target_os = "windows")]
             commands::services::get_service_presets,
             #[cfg(target_os = "linux")]
             commands::linux::services::get_service_presets,
+            #[cfg(target_os = "macos")]
+            commands::macos::services::get_service_presets,
             #[cfg(target_os = "windows")]
             commands::services::apply_service_preset,
             #[cfg(target_os = "linux")]
             commands::linux::services::apply_service_preset,
+            #[cfg(target_os = "macos")]
+            commands::macos::services::apply_service_preset,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

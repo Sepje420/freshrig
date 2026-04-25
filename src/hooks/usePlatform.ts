@@ -7,6 +7,7 @@ export interface PlatformInfo {
   platform: Platform;
   isWindows: boolean;
   isLinux: boolean;
+  isMacos: boolean;
 }
 
 /**
@@ -26,6 +27,7 @@ export function usePlatform(): PlatformInfo {
       platform,
       isWindows: platform === "windows",
       isLinux: platform === "linux",
+      isMacos: platform === "macos",
     };
   }, []);
 }
