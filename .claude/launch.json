@@ -12,6 +12,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "tauri", "dev"],
       "port": 1420
+    },
+    {
+      "name": "Landing Page",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "4173", "site"],
+      "port": 4173
     }
   ]
 }
